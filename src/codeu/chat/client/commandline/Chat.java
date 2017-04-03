@@ -50,6 +50,7 @@ public final class Chat {
     System.out.println("   current   - show current user, conversation, message.");
     System.out.println("User commands:");
     System.out.println("   u-add <name>  - add a new user.");
+    System.out.println("   u-set <alias> - add a nickname for a user.")
     System.out.println("   u-list-all    - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
@@ -110,6 +111,14 @@ public final class Chat {
         System.out.println("ERROR: Username not supplied.");
       } else {
         addUser(tokenScanner.nextLine().trim());
+      }
+
+      else if (token.equals("u-set")){
+
+      if(!tokenScanner.hasNext()){
+        System.out.println("ERROR: Alias not supplied");
+      } else {
+        setAlias(clientContext.user.getCurrent().id, tokenScanner.hasNext());
       }
 
     } else if (token.equals("u-list-all")) {
