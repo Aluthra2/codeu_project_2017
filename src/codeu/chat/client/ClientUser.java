@@ -133,12 +133,13 @@ public final class ClientUser {
     }
   }
 
-  public void setAlias(Uuis id, String nickname){
+  public void setAlias(Uuid id, String nickname){
     final User user = lookup(id);
-    if(user == null){
+    if (user == null){
       LOG.warning("userContext.lookup() failed on ID: %s", id);
     } else {
       user.alias = nickname;
+    }
   }
 
   public Iterable<User> getUsers() {
