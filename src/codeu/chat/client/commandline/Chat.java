@@ -52,6 +52,7 @@ public final class Chat {
     System.out.println("User commands:");
     System.out.println("   u-add <name>  - add a new user.");
     System.out.println("   u-set <alias> - add a nickname for a user.");
+    System.out.println("   u-get-alias - get the nickname of the current user.");
     System.out.println("   u-list-all    - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
@@ -121,6 +122,9 @@ public final class Chat {
       } else {
         setAlias(clientContext.user.getCurrent().id, tokenScanner.next());
       }
+
+    } else if (token.equals("u-get-alias")){
+        getAlias(clientContext.user.getCurrent().id);
 
     } else if (token.equals("u-list-all")) {
 
