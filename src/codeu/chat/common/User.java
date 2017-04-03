@@ -51,12 +51,23 @@ public final class User {
   public final Uuid id;
   public final String name;
   public final Time creation;
+  public String alias;
 
-  public User(Uuid id, String name, Time creation) {
+  public User(Uuid id, String name, Time creation, String alias) {
 
     this.id = id;
     this.name = name;
     this.creation = creation;
+    this.alias = alias;
 
   }
+  //Overloaded Constructor
+  public User(Uuid id, String name, Time creation){
+
+    this.id = id;
+    this.name = name;
+    this.creation = creation;
+  
+  }
+
 }
