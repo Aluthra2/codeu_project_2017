@@ -45,13 +45,13 @@ public final class ClientUser {
   }
 
   // Validate the username string
-  static public boolean isValidName(String userName) {
+  static public boolean isValidName(String userName) { //Check for Duplicates
     boolean clean = true;
     if (userName.length() == 0) {
       clean = false;
     } else {
       //clean = usersByName.containsKey(userName)? false : true;
-      // TODO: check for invalid characters
+      // TODO: check for invalid characters - User RegEx(String replacement)
 
     }
     return clean;
@@ -88,6 +88,7 @@ public final class ClientUser {
     printUser(current);
   }
 
+//Set it up so that it works if an alias is entered!
   public void addUser(String name) {
     final boolean validInputs = isValidName(name);
 
@@ -102,7 +103,7 @@ public final class ClientUser {
     }
   }
 
-  //Deleting from Map not System yet
+  //Deleting from Map not System yet - Figure out how to delete from System
   public void deleteUser(String name){
     if(usersById.containsValue(name)){
       for(Map.Entry<Uuid, User> entry: usersById.entrySet()){
@@ -110,11 +111,12 @@ public final class ClientUser {
         User user = entry.getValue();
         if(user.name == name){
           usersById.remove(id);
+        //  usersByName.remove(user.name);
           }
         }
       }
     }
-  }
+
 
   public void showAllUsers() {
     updateUsers();
@@ -137,6 +139,7 @@ public final class ClientUser {
     }
   }
 
+//Set it up so that it works for any user not just current user
   public String getAlias(){
     final User user = getCurrent();
     if (user != null){
@@ -146,6 +149,7 @@ public final class ClientUser {
     }
   }
 
+//Set it up so that it works for any user not just current user
   public void setAlias(String nickname){
     final User user = getCurrent();
     if (user != null){
