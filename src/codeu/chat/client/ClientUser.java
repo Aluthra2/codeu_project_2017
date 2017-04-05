@@ -123,22 +123,19 @@ public final class ClientUser {
     }
   }
 
-  public String getAlias(Uuid id){
-    final User user = lookup(id);
-    if (user == null){
-      LOG.warning("userContext.lookup() failed on ID: %s", id);
-      return null;
+  public String getAlias(){
+    final User user = getCurrent();
+    if (user != null){
     } else {
       return user.alias;
     }
   }
 
-  public void setAlias(Uuid id, String nickname){
-    final User user = lookup(id);
-    if (user == null){
-      LOG.warning("userContext.lookup() failed on ID: %s", id);
-    } else {
+  public void setAlias(String nickname){
+    final User user = getCurrent();
+    if (user != null){
       user.alias = nickname;
+      LOG.info("New user alias complete, Name= \"%s\" UUID=%s Alias = %s", user.name, user.id, user.alias);
     }
   }
 
@@ -158,7 +155,7 @@ public final class ClientUser {
 
   public static String getUserInfoString(User user) {
     return (user == null) ? "Null user" :
-        String.format(" User: %s\n   Id: %s\n   created: %s\n", user.name, user.id, user.creation);
+        String.format(" User: %s\n   Id: %s\n Created: %s\n Alias: %s\n", user.name, user.id, user.creation, user.alias);
   }
 
   public String showUserInfo(String uname) {

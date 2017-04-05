@@ -21,7 +21,8 @@ import codeu.chat.client.Controller;
 import codeu.chat.client.View;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.util.Logger;
-import codeu.chat.client.ClientUser;
+import codeu.chat.client.*;
+import codeu.chat.common.*;
 
 // Chat - top-level client application.
 public final class Chat {
@@ -120,7 +121,7 @@ public final class Chat {
       if(!tokenScanner.hasNext()){
         System.out.println("ERROR: Alias not supplied");
       } else {
-        setAlias(clientContext.user.getCurrent().id, tokenScanner.next());
+        setAlias(tokenScanner.next());
       }
 
     } else if (token.equals("u-get-alias")){
@@ -282,6 +283,16 @@ public final class Chat {
   // Add a new user.
   private void addUser(String name) {
     clientContext.user.addUser(name);
+  }
+
+  //Get Alias of user
+  private String getAlias() {
+    return clientContext.user.getAlias();
+  }
+
+  //Set Alias of a user
+  private void setAlias(String nickname){
+    clientContext.user.setAlias(nickname);
   }
 
   // Display all users known to server.
