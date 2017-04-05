@@ -125,7 +125,7 @@ public final class Chat {
       }
 
     } else if (token.equals("u-get-alias")){
-        getAlias(clientContext.user.getCurrent().id);
+        getAlias();
 
     } else if (token.equals("u-list-all")) {
 
