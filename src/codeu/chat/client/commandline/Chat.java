@@ -52,6 +52,7 @@ public final class Chat {
     System.out.println("   current   - show current user, conversation, message.");
     System.out.println("User commands:");
     System.out.println("   u-add <name>  - add a new user.");
+    System.out.println("   u-delete <name> - delete a User");
     System.out.println("   u-set <alias> - add a nickname for a user.");
     System.out.println("   u-get-alias - get the nickname of the current user.");
     System.out.println("   u-list-all    - list all users known to system.");
@@ -114,6 +115,13 @@ public final class Chat {
         System.out.println("ERROR: Username not supplied.");
       } else {
         addUser(tokenScanner.nextLine().trim());
+      }
+
+    } else if (token.equals("u-delete")){
+      if(!tokenScanner.hasNext()){
+        System.out.println("ERROR: Username not supplied.");
+      } else {
+        deleteUser(tokenScanner.nextLine().trim());
       }
 
     } else if (token.equals("u-set")){
@@ -283,6 +291,11 @@ public final class Chat {
   // Add a new user.
   private void addUser(String name) {
     clientContext.user.addUser(name);
+  }
+
+  //Delete a User
+  private void deleteUser(String name){
+    clientContext.user.deleteUser(name);
   }
 
   //Get Alias of user
