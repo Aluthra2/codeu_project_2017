@@ -58,10 +58,13 @@ public final class Chat {
     System.out.println("   u-list-all    - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
+    System.out.println("   c-delete            - delete the current conversation.");//TODO
     System.out.println("   c-list-all       - list all conversations known to system.");
     System.out.println("   c-select <index> - select conversation from list.");
     System.out.println("Message commands:");
     System.out.println("   m-add <body>     - add a new message to the current conversation.");
+    System.out.println("   m-delete            - delete the current message.");//TODO
+    System.out.println("   m-del-all            - delete the current message.");//TODO
     System.out.println("   m-list-all       - list all messages in the current conversation.");
     System.out.println("   m-next <index>   - index of next message to view.");
     System.out.println("   m-show <count>   - show next <count> messages.");
@@ -152,7 +155,16 @@ public final class Chat {
         }
       }
 
-    } else if (token.equals("c-list-all")) {
+    } else if (token.equals("c-delete")) {
+
+      if (!clientContext.user.hasCurrent()) {
+        System.out.println("ERROR: Not signed in.");
+      } else {
+        clientContext.conversation.deleteConversation();
+      }
+    }
+
+    else if (token.equals("c-list-all")) {
 
       clientContext.conversation.showAllConversations();
 
@@ -171,12 +183,26 @@ public final class Chat {
           System.out.println("ERROR: Message body not supplied.");
         } else {
           clientContext.message.addMessage(clientContext.user.getCurrent().id,
-              clientContext.conversation.getCurrentId(),
-              tokenScanner.nextLine().trim());
+                  clientContext.conversation.getCurrentId(),
+                  tokenScanner.nextLine().trim());
         }
       }
+    } else if (token.equals("m-delete")) {
+        if (!clientContext.conversation.hasCurrent()) {
+          System.out.println("ERROR: No conversation selected.");
+        } else {
+          System.out.println("m-delete called");
+          clientContext.message.deleteMessage();
+         }
+    } else if (token.equals("m-del-all")) {
+      if (!clientContext.conversation.hasCurrent()) {
+        System.out.println("ERROR: No conversation selected.");
+      } else {
+        clientContext.message.deleteAllMessages();
+      }
+    }
 
-    } else if (token.equals("m-list-all")) {
+     else if (token.equals("m-list-all")) {
 
       if (!clientContext.conversation.hasCurrent()) {
         System.out.println("ERROR: No conversation selected.");
