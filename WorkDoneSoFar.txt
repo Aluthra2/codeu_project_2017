@@ -1,0 +1,9 @@
+Work Done so far by Aman:
+-Nickname feature is functional, however, it needs to work for all Users not just the Current User. 
+	-Currently, working on the fix now.
+-Delete User Feature: deletes from the Hash map, need to determine how to delete from whole system. (I have a feeling it has to do something with the server files.)
+-Handle Duplicate Usernames: Trying to understand the Serializers.java file in order to determine how exactly to retrieve all Usernames and do a comparison to see if the new user that is trying to be created has the same name as one already created.
+
+Work Done so far by Laura:
+
+Work Done so far by Cristina:
