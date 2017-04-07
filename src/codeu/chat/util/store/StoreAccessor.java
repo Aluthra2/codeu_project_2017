@@ -28,4 +28,8 @@ public interface StoreAccessor<KEY, VALUE> {
 
   Iterable<VALUE> range(KEY start, KEY end);
 
+  void delete(KEY key);
+
+  boolean contains(KEY key);
+
 }
