@@ -88,7 +88,7 @@ public final class ClientUser {
     printUser(current);
   }
 
-//Set it up so that it works if an alias is entered!
+//Adding a User
   public void addUser(String name) {
     final boolean validInputs = isValidName(name);
 
@@ -102,6 +102,23 @@ public final class ClientUser {
       updateUsers();
     }
   }
+
+  //Adding a User with a nickName
+  public void addUser(String name, String nickName) {
+    inal boolean validInputs = isValidName(name);
+
+    final User user = (validInputs) ? controller.newUser(name) : null;
+
+    if (user == null) {
+      System.out.format("Error: user not created - %s.\n",
+          (validInputs) ? "server failure" : "bad input value");
+    } else {
+      LOG.info("New user complete, Name= \"%s\" UUID=%s", user.name, user.id);
+      user.alias = nickName;
+      updateUsers();
+    }
+  }
+
 
   //Deleting from Map not System yet - Figure out how to delete from System
   public void deleteUser(String name){

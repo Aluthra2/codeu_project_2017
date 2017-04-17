@@ -51,7 +51,7 @@ public final class Chat {
     System.out.println("   sign-out  - sign out current user.");
     System.out.println("   current   - show current user, conversation, message.");
     System.out.println("User commands:");
-    System.out.println("   u-add <name>  - add a new user.");
+    System.out.println("   u-add <name> <alias>  - add a new user. (Nickname is Optional)");
     System.out.println("   u-delete <name> - delete a User");
     System.out.println("   u-set <alias> <UserName> - add a nickname for a user.");
     System.out.println("   u-get-alias <UserName> - get the nickname of chosen user.");
@@ -111,10 +111,19 @@ public final class Chat {
 
     } else if (token.equals("u-add")) {
 
+      String userName;
+      String nickName;
+
       if (!tokenScanner.hasNext()) {
         System.out.println("ERROR: Username not supplied.");
       } else {
-        addUser(tokenScanner.nextLine().trim());
+        userName = tokenScanner.nextLine().trim();
+      }
+      if (!tokenScanner.hasNext()) {
+        addUser(userName);
+      } else {
+        nickName = tokenScanner.next();
+        addUser(userName, nickName);
       }
 
     } else if (token.equals("u-delete")){
@@ -126,17 +135,20 @@ public final class Chat {
 
     } else if (token.equals("u-set")){
 
+      String uName;
+      String nickName;
+
       if(!tokenScanner.hasNext()){
         System.out.println("ERROR: Alias not supplied");
       } else {
-        String nickName = tokenScanner.next();
+        nickName = tokenScanner.next();
       }
       if(!tokenScanner.hasNext()){
         System.out.println("ERROR: User Name not supplied");
       } else {
-        String uName = tokenScanner.next();
-      }
+        uName = tokenScanner.next();
         setAlias(nickName, uName);
+      }
 
     } else if (token.equals("u-get-alias")){
         getAlias(tokenScanner.next());
@@ -297,6 +309,10 @@ public final class Chat {
   // Add a new user.
   private void addUser(String name) {
     clientContext.user.addUser(name);
+  }
+  
+  private void addUser(String name, String nickname) {
+    clientContext.user.addUser(name, nickname);
   }
 
   //Delete a User
