@@ -14,16 +14,10 @@
 
 package codeu.chat.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import codeu.chat.common.Conversation;
-import codeu.chat.common.ConversationSummary;
-import codeu.chat.common.Message;
-import codeu.chat.common.Uuid;
-import codeu.chat.common.Uuids;
+import codeu.chat.common.*;
+import codeu.chat.server.Model;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
 
@@ -42,7 +36,7 @@ public final class ClientMessage {
   private final Map<Uuid, Message> messageByUuid = new HashMap<>();
 
   private Conversation conversationHead;
-  private final List<Message> conversationContents = new ArrayList<>();
+  private final HashMap<Uuid, Message> conversationContents = new HashMap();
 
   private final ClientUser userContext;
   private final ClientConversation conversationContext;
@@ -81,6 +75,7 @@ public final class ClientMessage {
     printMessage(current, userContext);
   }
 
+
   public void resetCurrent(boolean replaceAll) {
     updateMessages(replaceAll);
   }
@@ -89,7 +84,7 @@ public final class ClientMessage {
     return (conversationContents == null) ? 0 : conversationContents.size();
   }
 
-  public List<Message> getConversationContents(ConversationSummary summary) {
+  public HashMap<Uuid, Message> getConversationContents(ConversationSummary summary) {
     if (conversationHead == null || summary == null || !conversationHead.id.equals(summary.id)) {
       updateMessages(summary, true);
     }
@@ -113,22 +108,15 @@ public final class ClientMessage {
   }
 
   // Delete message, (m-del command?).TODO
-  public void deleteMessage() {
-    if(current != null) {
-      deleteMessage(current);
-    } else {
-    }
-  }
-
   public void deleteMessage(Message msg) {
-    if(conversationContents.contains(msg)) {
+    if(conversationContents.containsKey(msg.id)) {
       conversationContents.remove(msg);
+      updateMessages(true);
     } else {
       System.out.println("Error: message not found.");
 
     }
   }
-
 
   // Delete all messages.TODO
   public void deleteAllMessages() {
