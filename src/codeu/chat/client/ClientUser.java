@@ -119,16 +119,16 @@ public final class ClientUser {
     }
   }
 
-
-  //Deleting from Map not System yet - Figure out how to delete from System
+  //Deleting a User
   public void deleteUser(String name){
-    if(usersById.containsValue(name)){
+    if(usersByName.containsValue(name)){
+      User userObject = usersByName.getValue(name);
       for(Map.Entry<Uuid, User> entry: usersById.entrySet()){
         Uuid id = entry.getKey();
         User user = entry.getValue();
-        if(user.name == name){
+        if(user.name == userObject.name){
           usersById.remove(id);
-        //  usersByName.remove(user.name);
+          usersByName.remove(userObject.name);
           }
         }
       }
