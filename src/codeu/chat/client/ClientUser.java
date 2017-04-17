@@ -140,21 +140,25 @@ public final class ClientUser {
   }
 
 //Set it up so that it works for any user not just current user
-  public String getAlias(){
-    final User user = getCurrent();
-    if (user != null){
-      return ("NULL");
-    } else {
+  public String getAlias(String name){
+    try{
+      final User user = usersByName.get(name);
       return user.alias;
+    } catch(Exception ex){
+        return "No Such User Exists!";
     }
   }
 
 //Set it up so that it works for any user not just current user
-  public void setAlias(String nickname){
-    final User user = getCurrent();
-    if (user != null){
-      user.alias = nickname;
-      LOG.info("New user alias complete, Name= \"%s\" UUID=%s Alias = %s", user.name, user.id, user.alias);
+  public void setAlias(String nickname, String uName){
+    try{
+      final User user = usersByName.get(name);
+      if (user != null){
+        user.alias = nickname;
+        LOG.info("New user alias complete, Name= \"%s\" UUID=%s Alias = %s", user.name, user.id, user.alias);
+      }
+    } catch(Exception ex){
+        return "No Such User Exists!";
     }
   }
 

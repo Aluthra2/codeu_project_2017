@@ -53,8 +53,8 @@ public final class Chat {
     System.out.println("User commands:");
     System.out.println("   u-add <name>  - add a new user.");
     System.out.println("   u-delete <name> - delete a User");
-    System.out.println("   u-set <alias> - add a nickname for a user.");
-    System.out.println("   u-get-alias - get the nickname of the current user.");
+    System.out.println("   u-set <alias> <UserName> - add a nickname for a user.");
+    System.out.println("   u-get-alias <UserName> - get the nickname of chosen user.");
     System.out.println("   u-list-all    - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
@@ -129,11 +129,17 @@ public final class Chat {
       if(!tokenScanner.hasNext()){
         System.out.println("ERROR: Alias not supplied");
       } else {
-        setAlias(tokenScanner.next());
+        String nickName = tokenScanner.next();
       }
+      if(!tokenScanner.hasNext()){
+        System.out.println("ERROR: User Name not supplied");
+      } else {
+        String uName = tokenScanner.next();
+      }
+        setAlias(nickName, uName);
 
     } else if (token.equals("u-get-alias")){
-        getAlias();
+        getAlias(tokenScanner.next());
 
     } else if (token.equals("u-list-all")) {
 
@@ -299,13 +305,13 @@ public final class Chat {
   }
 
   //Get Alias of user
-  private String getAlias() {
-    return clientContext.user.getAlias();
+  private String getAlias(String name) {
+    return clientContext.user.getAlias(name);
   }
 
   //Set Alias of a user
-  private void setAlias(String nickname){
-    clientContext.user.setAlias(nickname);
+  private void setAlias(String nickname, String id){
+    clientContext.user.setAlias(nickname, id);
   }
 
   // Display all users known to server.
