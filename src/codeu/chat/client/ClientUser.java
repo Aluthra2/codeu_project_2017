@@ -105,7 +105,7 @@ public final class ClientUser {
 
   //Adding a User with a nickName
   public void addUser(String name, String nickName) {
-    inal boolean validInputs = isValidName(name);
+    final boolean validInputs = isValidName(name);
 
     final User user = (validInputs) ? controller.newUser(name) : null;
 
@@ -122,7 +122,7 @@ public final class ClientUser {
   //Deleting a User
   public void deleteUser(String name){
     if(usersByName.containsValue(name)){
-      User userObject = usersByName.getValue(name);
+      User userObject = usersByName.first(name);
       for(Map.Entry<Uuid, User> entry: usersById.entrySet()){
         Uuid id = entry.getKey();
         User user = entry.getValue();
@@ -159,23 +159,23 @@ public final class ClientUser {
 //Set it up so that it works for any user not just current user
   public String getAlias(String name){
     try{
-      final User user = usersByName.get(name);
+      final User user = usersByName.first(name);
       return user.alias;
     } catch(Exception ex){
         return "No Such User Exists!";
-    }
   }
+}
 
 //Set it up so that it works for any user not just current user
   public void setAlias(String nickname, String uName){
     try{
-      final User user = usersByName.get(name);
+      final User user = usersByName.first(uName);
       if (user != null){
         user.alias = nickname;
         LOG.info("New user alias complete, Name= \"%s\" UUID=%s Alias = %s", user.name, user.id, user.alias);
       }
     } catch(Exception ex){
-        return "No Such User Exists!";
+        System.out.println("No Such User Exists!");
     }
   }
 

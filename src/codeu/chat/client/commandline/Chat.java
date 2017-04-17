@@ -111,8 +111,8 @@ public final class Chat {
 
     } else if (token.equals("u-add")) {
 
-      String userName;
-      String nickName;
+      String userName = "";
+      String nickName = "NULL";
 
       if (!tokenScanner.hasNext()) {
         System.out.println("ERROR: Username not supplied.");
@@ -135,8 +135,8 @@ public final class Chat {
 
     } else if (token.equals("u-set")){
 
-      String uName;
-      String nickName;
+      String uName = "";
+      String nickName = "";
 
       if(!tokenScanner.hasNext()){
         System.out.println("ERROR: Alias not supplied");
@@ -310,7 +310,7 @@ public final class Chat {
   private void addUser(String name) {
     clientContext.user.addUser(name);
   }
-  
+
   private void addUser(String name, String nickname) {
     clientContext.user.addUser(name, nickname);
   }

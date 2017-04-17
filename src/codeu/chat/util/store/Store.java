@@ -73,6 +73,14 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
     return link == null ? null : link.value;
   }
 
+  public void remove(KEY key){
+    index.remove(key);
+  }
+
+  public boolean containsValue(KEY key){
+    return index.containsValue(key);
+  }
+
   @Override
   public Iterable<VALUE> all() {
     return new LinkIterable<KEY, VALUE>(comparator, first(), last());
