@@ -55,7 +55,8 @@ public final class Message implements Comparable<Message>{
   };
 
   public final Uuid id;
-  public final Uuid previous;
+  //TODO: got rid of final privacy setting, unsure if this is the right solution
+  public Uuid previous;
   public final Time creation;
   public final Uuid author;
   public final String content;

@@ -15,6 +15,7 @@
 package codeu.chat.server;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import codeu.chat.common.BasicController;
 import codeu.chat.common.Conversation;
@@ -100,6 +101,49 @@ public final class Controller implements RawController, BasicController {
     }
 
     return message;
+  }
+
+  @Override
+  public void deleteMessage(Uuid msg, Uuid conversation) {
+    final Message foundMessage = model.messageById().first(msg);
+    final Conversation foundConversation = model.conversationById().first(conversation);
+
+    if(foundMessage != null) {
+      model.delete(foundMessage);
+      LOG.info("Message delete: %s", foundMessage.id);
+    }
+
+    // Find and update the message before the deleted message so that it's next value
+    // will point to the message after the message after the deleted message
+    if(foundMessage.next != null) {
+
+      final Message nextMessage = model.messageById().first(foundMessage.next);
+      if(foundMessage.previous != null) {
+
+        final Message previousMessage = model.messageById().first(foundMessage.previous);
+        previousMessage.next = nextMessage.id;
+
+        //TODO: ran into an error bc of privacy of previous field in Message, changed to package
+        nextMessage.previous = previousMessage.id;
+      } else {
+
+        nextMessage.previous = null;
+        foundConversation.firstMessage = nextMessage.id;
+      }
+    } else {
+      if(foundMessage.previous != null) {
+
+        final Message previousMessage = model.messageById().first(foundMessage.previous);
+        previousMessage.next = null;
+        foundConversation.lastMessage = previousMessage.id;
+
+      } else {
+        //TODO:figure out how to handle this case
+        foundConversation.firstMessage = Uuids.NULL;
+        foundConversation.lastMessage = Uuids.NULL;
+
+      }
+    }
   }
 
   @Override
