@@ -31,7 +31,7 @@ public interface RawController {
   // DELETE MESSAGE
   //
   // Delete a message from the model with a specific id.
-  void deleteMessage(Uuid msg, Uuid conversation);
+  boolean deleteMessage(Uuid msg, Uuid conversation);
 
   // NEW USER
   //

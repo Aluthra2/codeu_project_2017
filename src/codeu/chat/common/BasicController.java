@@ -34,7 +34,7 @@ public interface BasicController {
   // DELETE MESSAGE
   //
   //   Delete a message from the server.
-  void deleteMessage(Uuid msg, Uuid conversation);
+  boolean deleteMessage(Uuid msg, Uuid conversation);
 
   // NEW USER
   //

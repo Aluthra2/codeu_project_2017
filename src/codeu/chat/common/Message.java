@@ -23,6 +23,8 @@ import codeu.chat.util.Serializers;
 import codeu.chat.common.Uuid;
 import codeu.chat.common.Uuids;
 
+import static codeu.chat.common.Uuids.hash;
+
 public final class Message implements Comparable<Message>{
 
   public static final Serializer<Message> SERIALIZER = new Serializer<Message>() {
@@ -79,19 +81,17 @@ public final class Message implements Comparable<Message>{
     return this.creation.compareTo(msg.creation);
   }
 
+
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + Integer.getInteger(id.toString());
-
-    return result;
+    System.out.println("Entered hashCode");
+    return hash(id);
   }
 
   @Override
   public boolean equals(Object o) {
     if(o instanceof Message) {
-      return this.id == ((Message) o).id;
+      return Uuids.equals(this.id, ((Message) o).id);
     } else {
       return false;
     }

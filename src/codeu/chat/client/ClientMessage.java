@@ -17,7 +17,6 @@ package codeu.chat.client;
 import java.util.*;
 
 import codeu.chat.common.*;
-import codeu.chat.server.Model;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
 
@@ -107,15 +106,46 @@ public final class ClientMessage {
     updateMessages(false);
   }
 
+  // Delete message, removes last message
+  public void deleteMessage() {
+    System.out.println("Entered ClientMessage.deleteMessage()");
+    if(conversationContents.size() == 0) {
+      System.out.println(" Current Conversation has no messages");
+
+    } else {
+      System.out.println("Current Conversation has messages");
+      System.out.println("About to call controller.deleteMessage from ClientMessage");
+      if(controller.deleteMessage(conversationHead.lastMessage, conversationHead.id)) {
+        System.out.println("Just called controller.deleteMessage from ClientMessage, returns true");
+        current = conversationContents.get(conversationContents.size() - 2);//TODO: what should current be set to here?
+      } else {
+        //
+      }
+    }
+    updateMessages(false);
+  }
+
+  // Delete message, removes last message
+  public void deleteMessage(int msgIndex) {
+    if(msgIndex < conversationContents.size()) {
+      Message msg = conversationContents.get(msgIndex);
+      deleteMessage(msg);
+    } else {
+      System.out.println(" Error: message not found, please enter a valid index.");
+    }
+  }
+
+
   // Delete message, (m-del command?)
   public void deleteMessage(Message msg) {
-    if(conversationContents.contains(msg.id)) {
-      conversationContents.remove(msg);
-      updateMessages(true);
-    } else {
-      System.out.println("Error: message not found.");
+    if(conversationContents.size() == 0) {
+      System.out.println(" Current Conversation has no messages");
 
+    } else {
+      controller.deleteMessage(msg.id, conversationHead.id);
+      current = null;//TODO: what should current be set to here?
     }
+    updateMessages(true);
   }
 
   // Delete all messages.TODO

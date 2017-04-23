@@ -66,6 +66,36 @@ public class Controller implements BasicController {
   }
 
   @Override
+  public boolean deleteMessage(Uuid msg, Uuid conversation) {
+    System.out.println("Entered Client/Controller.deleteMessage()");
+    boolean succeeded = false;
+
+    System.out.println("Try source.connect()");
+    try (final Connection connection = source.connect()) {
+
+      System.out.println("within try source.connect(), about to try serializer.integer");
+      Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_MESSAGE_REQUEST);
+      System.out.println("within try source.connect(), about to try uuids.integer for msg");
+      Uuids.SERIALIZER.write(connection.out(), msg);
+      System.out.println("within try source.connect(), about to try uuids.integer for conversation");
+      Uuids.SERIALIZER.write(connection.out(), conversation);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_MESSAGE_RESPONSE) {
+        System.out.println("Server gave the correct response.");
+        succeeded = true;
+      } else {
+        System.out.println("Server response failed.");
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return succeeded;
+  }
+
+  @Override
   public User newUser(String name) {
 
     User response = null;

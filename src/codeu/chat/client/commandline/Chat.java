@@ -137,7 +137,7 @@ public final class Chat {
       if (!clientContext.user.hasCurrent()) {
         System.out.println("ERROR: Not signed in.");
       } else {
-        clientContext.conversation.deleteConversation();
+        //TODO clientContext.conversation.deleteConversation();
       }
     }
 
@@ -168,9 +168,10 @@ public final class Chat {
         if (!clientContext.conversation.hasCurrent()) {
           System.out.println("ERROR: No conversation selected.");
         } else {
-          System.out.println("m-delete called");
-          clientContext.message.deleteMessage();
-         }
+            System.out.println("m-delete called");
+            clientContext.message.deleteMessage();
+        }
+
     } else if (token.equals("m-del-all")) {
       if (!clientContext.conversation.hasCurrent()) {
         System.out.println("ERROR: No conversation selected.");
