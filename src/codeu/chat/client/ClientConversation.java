@@ -123,6 +123,8 @@ public final class ClientConversation {
       }
       }
     }
+  
+  //TODO: Remove Unused Code.
     //delete this conversation
     //   remove it from where it is being kept track of
     //   set current conversation to null
