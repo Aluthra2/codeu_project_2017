@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public final class ClientMessageTest {
+public final class ClientMessageTest { //TODO: Add Actual Test 
  /*
   ConnectionSource source1 = new ClientConnectionSource("host", 1);
   Controller controller1 = new Controller(source1);
