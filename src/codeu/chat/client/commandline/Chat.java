@@ -225,7 +225,7 @@ public final class Chat {
 
       System.out.format("Command not recognized: %s\n", token);
       System.out.format("Command line rejected: %s%s\n", token,
-          (tokenScanner.hasNext()) ? tokenScanner.nextLine() : "");
+              (tokenScanner.hasNext()) ? tokenScanner.nextLine() : "");
       System.out.println("Type \"help\" for help.");
     }
     tokenScanner.close();
@@ -251,7 +251,7 @@ public final class Chat {
       System.out.println(" -- no messages in conversation --");
     } else {
       System.out.format(" conversation has %d messages.\n",
-                        clientContext.conversation.currentMessageCount());
+              clientContext.conversation.currentMessageCount());
       if (!clientContext.message.hasCurrent()) {
         System.out.println(" -- no current message --");
       } else {
@@ -343,9 +343,9 @@ public final class Chat {
       System.out.println("Nothing to select.");
     } else {
       final ListNavigator<ConversationSummary> navigator =
-          new ListNavigator<ConversationSummary>(
-              clientContext.conversation.getConversationSummaries(),
-              lineScanner, PAGE_SIZE);
+              new ListNavigator<ConversationSummary>(
+                      clientContext.conversation.getConversationSummaries(),
+                      lineScanner, PAGE_SIZE);
       if (navigator.chooseFromList()) {
         newCurrent = navigator.getSelectedChoice();
         clientContext.message.resetCurrent(newCurrent != previous);
