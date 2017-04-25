@@ -117,10 +117,10 @@ public final class ClientMessage {
     if(current != null) {
       deleteMessage(current);
     } else {
-    }
+    } 
   }
 
-  public void deleteMessage(Message msg) {
+  public void deleteMessage(Message msg) { //TODO: Use an ordered hash map for linear time. https://github.com/google/guava
     if(conversationContents.contains(msg)) {
       conversationContents.remove(msg);
     } else {
