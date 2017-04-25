@@ -103,6 +103,19 @@ public final class ClientConversation {
     }
   }
 
+
+  // Delete conversation, (c-del command?)
+  public void deleteConversation() {
+    //delete all messages within a conversation
+    if (currentConversation == null) {
+      System.out.format("Error: conversation not deleted, - %s.\n", "no current conversation");
+    } else if () {
+      //TODO:Laura
+    }
+
+  }
+
+
   public void setCurrent(ConversationSummary conv) { currentSummary = conv; }
 
   public void showAllConversations() {
