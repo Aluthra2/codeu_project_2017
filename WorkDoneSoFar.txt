@@ -5,7 +5,8 @@ Work Done so far by Aman:
 -Handle Duplicate Usernames: Trying to understand the Serializers.java file in order to determine how exactly to retrieve all Usernames and do a comparison to see if the new user that is trying to be created has the same name as one already created.
 
 Work Done so far by Laura:
-
+- Worked on deleteMessages, have it working for deleting the last message. Currently trying to fix this, I think the issue is with my server controller delete message method for this particular case. 
+- Added .equals() and .hashCode() to Message.java
 Work Done so far by Cristina:
 -Appended both the ClientMessage.java file and the chat.java file
 -ClientMessage: I added a Hashmap to store all messages sent by a specific user. The key to the map is the string of the user's ID while the value of every key is an array list storing all of the messages sent by that user. These messages will be added to the hashmap in the add message method. The SearcbyID method takes in a string containing a user id and prints all of the messages that user has sent. This method currently is only displaying the last message and has to be fixed.
