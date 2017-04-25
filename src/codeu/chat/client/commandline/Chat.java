@@ -58,8 +58,9 @@ public final class Chat {
     System.out.println("   c-select <index> - select conversation from list.");
     System.out.println("Message commands:");
     System.out.println("   m-add <body>     - add a new message to the current conversation.");
-    System.out.println("   m-delete            - delete the current message.");//TODO
-    System.out.println("   m-del-all            - delete the current message.");//TODO
+    System.out.println("   m-delete <index>            - deletes message at a given index.");
+    System.out.println("   m-del-last           - deletes the last message.");
+    System.out.println("   m-del-all            - delete all messages in the Conversation.");
     System.out.println("   m-list-all       - list all messages in the current conversation.");
     System.out.println("   m-next <index>   - index of next message to view.");
     System.out.println("   m-show <count>   - show next <count> messages.");
@@ -164,13 +165,24 @@ public final class Chat {
                   tokenScanner.nextLine().trim());
         }
       }
+
     } else if (token.equals("m-delete")) {
-        if (!clientContext.conversation.hasCurrent()) {
-          System.out.println("ERROR: No conversation selected.");
+      if (!clientContext.conversation.hasCurrent()) {
+        System.out.println("ERROR: No conversation selected.");
+      } else {
+        if (!tokenScanner.hasNext()) {
+          System.out.println("ERROR: Message index not supplied.");
         } else {
-            System.out.println("m-delete called");
-            clientContext.message.deleteMessage();
+          clientContext.message.deleteMessage(tokenScanner.nextLine().trim());
         }
+      }
+
+    } else if (token.equals("m-del-last")) {
+      if (!clientContext.conversation.hasCurrent()) {
+        System.out.println("ERROR: No conversation selected.");
+      } else {
+        clientContext.message.deleteMessage();
+      }
 
     } else if (token.equals("m-del-all")) {
       if (!clientContext.conversation.hasCurrent()) {
@@ -180,7 +192,7 @@ public final class Chat {
       }
     }
 
-     else if (token.equals("m-list-all")) {
+    else if (token.equals("m-list-all")) {
 
       if (!clientContext.conversation.hasCurrent()) {
         System.out.println("ERROR: No conversation selected.");

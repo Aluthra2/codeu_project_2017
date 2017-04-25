@@ -108,8 +108,6 @@ public final class Controller implements RawController, BasicController {
 
   @Override
   public boolean deleteMessage(Uuid msg, Uuid conversation) {
-    LOG.info("Entered Server/Controller.deleteMessage()");
-
     final Message foundMessage = model.messageById().first(msg);
     final User foundUser = model.userById().first(foundMessage.author);
     final Conversation foundConversation = model.conversationById().first(conversation);
@@ -145,7 +143,6 @@ public final class Controller implements RawController, BasicController {
           // the deleted message was the only message in the conversation
 
           foundConversation.lastMessage = Uuids.NULL;
-
           model.delete(foundMessage);
           LOG.info("Message deleted: %s", msg);
 
@@ -165,8 +162,6 @@ public final class Controller implements RawController, BasicController {
           }
           foundConversation.lastMessage = secondPrev.id;
 
-          // model.messageById().first(foundMessage.previous).next = Uuids.NULL;
-
           model.delete(foundMessage);
           LOG.info("Message deleted: %s", msg);
 
@@ -175,27 +170,15 @@ public final class Controller implements RawController, BasicController {
 
       } else if (Uuids.equals(foundConversation.firstMessage, msg)) {
         LOG.info("Within if-branch that means the deleted message was the first one, and not the only one");
-
+        System.out.println("Null?: foundMessage.next" + Uuids.equals(foundMessage.next, Uuids.NULL));
 
         foundConversation.firstMessage = foundMessage.next;
-        Message nextMessage = model.messageById().first(foundMessage.next);
-        nextMessage.previous = Uuids.NULL;
-
-
         model.delete(foundMessage);
         LOG.info("Message deleted: %s", msg);
 
 
       } else {
         LOG.info("Within if-branch that means the deleted message was not the first one, and not the last one");
-
-        Message previousMessage = model.messageById().first(foundMessage.previous);
-        Message nextMessage = model.messageById().first(foundMessage.next);
-
-        previousMessage.next = nextMessage.id;
-        nextMessage.previous = previousMessage.id;
-
-
         model.delete(foundMessage);
         LOG.info("Message deleted: %s", msg);
 
@@ -265,9 +248,9 @@ public final class Controller implements RawController, BasicController {
          isIdInUse(candidate);
          candidate = uuidGenerator.make()) {
 
-     // Assuming that "randomUuid" is actually well implemented, this
-     // loop should never be needed, but just incase make sure that the
-     // Uuid is not actually in use before returning it.
+      // Assuming that "randomUuid" is actually well implemented, this
+      // loop should never be needed, but just incase make sure that the
+      // Uuid is not actually in use before returning it.
 
     }
 
@@ -276,8 +259,8 @@ public final class Controller implements RawController, BasicController {
 
   private boolean isIdInUse(Uuid id) {
     return model.messageById().first(id) != null ||
-           model.conversationById().first(id) != null ||
-           model.userById().first(id) != null;
+            model.conversationById().first(id) != null ||
+            model.userById().first(id) != null;
   }
 
   private boolean isIdFree(Uuid id) { return !isIdInUse(id); }

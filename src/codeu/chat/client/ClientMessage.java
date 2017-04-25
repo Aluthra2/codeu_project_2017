@@ -90,6 +90,18 @@ public final class ClientMessage {
     return conversationContents;
   }
 
+  private Message setCurrentForDelete(List<Message> conversationContents) {
+
+    Message current;
+    if(conversationContents.size() > 1) {
+      current = conversationContents.get(conversationContents.size() - 2); //TODO: what should current be set to here?
+    } else {
+      current = null;
+    }
+
+    return current;
+  }
+
   // For m-add command.
   public void addMessage(Uuid author, Uuid conversation, String body) {
     final boolean validInputs = isValidBody(body) && (author != null) && (conversation != null);
@@ -107,45 +119,55 @@ public final class ClientMessage {
   }
 
   // Delete message, removes last message
+  // m-del-last command
   public void deleteMessage() {
-    System.out.println("Entered ClientMessage.deleteMessage()");
     if(conversationContents.size() == 0) {
       System.out.println(" Current Conversation has no messages");
 
     } else {
-      System.out.println("Current Conversation has messages");
-      System.out.println("About to call controller.deleteMessage from ClientMessage");
       if(controller.deleteMessage(conversationHead.lastMessage, conversationHead.id)) {
-        System.out.println("Just called controller.deleteMessage from ClientMessage, returns true");
-        current = conversationContents.get(conversationContents.size() - 2);//TODO: what should current be set to here?
+        current = setCurrentForDelete(conversationContents);
+
       } else {
-        //
+        LOG.info("Error: Failed to delete message.");
       }
     }
+
+
+
     updateMessages(false);
   }
 
-  // Delete message, removes last message
-  public void deleteMessage(int msgIndex) {
+  // Delete message, removes message corresponding to given index, (m-delete <index> command)
+  // calls helper method
+  public void deleteMessage(String index) {
+    System.out.println("delete message called on index" + index);
+    int msgIndex = Integer.valueOf(index);
+    System.out.println("size of conversationContents: " + conversationContents.size());
+
     if(msgIndex < conversationContents.size()) {
+
       Message msg = conversationContents.get(msgIndex);
+      System.out.println("Value of msg " + Uuids.toString(conversationContents.get(msgIndex).id));
+
       deleteMessage(msg);
     } else {
-      System.out.println(" Error: message not found, please enter a valid index.");
+      System.out.println("Message not erased, please enter a valid index.");
+      LOG.error(" Error: message not found, please enter a valid index.");
     }
   }
 
 
-  // Delete message, (m-del command?)
+  // Delete message helper method
   public void deleteMessage(Message msg) {
     if(conversationContents.size() == 0) {
-      System.out.println(" Current Conversation has no messages");
+      LOG.error("Error: Message could not be deleted, current Conversation has no messages");
 
     } else {
       controller.deleteMessage(msg.id, conversationHead.id);
-      current = null;//TODO: what should current be set to here?
+      current = setCurrentForDelete(conversationContents);
     }
-    updateMessages(true);
+    updateMessages(false);
   }
 
   // Delete all messages.TODO
