@@ -153,10 +153,10 @@ public final class Chat {
         uName = tokenScanner.next();
         setAlias(nickName, uName);
       }
-      
+
     } else if (token.equals("u-get-alias")){
         getAlias(tokenScanner.next());
-      
+
     } else if (token.equals("u-list-all")) {
 
       showAllUsers();
@@ -354,7 +354,7 @@ public final class Chat {
   private void addUser(String name, String nickname) {
     clientContext.user.addUser(name, nickname);
   }
-  
+
   //Delete a User
   private void deleteUser(String name){
     clientContext.user.deleteUser(name);
