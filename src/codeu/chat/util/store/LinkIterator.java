@@ -44,6 +44,7 @@ final class LinkIterator<KEY, VALUE> implements Iterator<VALUE> {
 
   @Override
   public void remove() {
-    // do nothing
+    //TODO
+
   }
 }

@@ -98,6 +98,16 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
     return new LinkIterable<KEY, VALUE>(comparator, ceiling(start), floor(end));
   }
 
+  @Override
+  public void delete(KEY key) {
+    index.remove(key);
+  }
+
+  @Override
+  public boolean contains(KEY key) {
+    return index.containsKey(key);
+  }
+
   private StoreLink<KEY, VALUE> first() {
     return extract(index.firstEntry());
   }

@@ -112,6 +112,36 @@ public final class ClientMessage {
     updateMessages(false);
   }
 
+  // Delete message, (m-del command?).TODO
+  public void deleteMessage() {
+    if(current != null) {
+      deleteMessage(current);
+    } else {
+    } 
+  }
+
+  public void deleteMessage(Message msg) { //TODO: Use an ordered hash map for linear time. https://github.com/google/guava
+    if(conversationContents.contains(msg)) {
+      conversationContents.remove(msg);
+    } else {
+      System.out.println("Error: message not found.");
+
+    }
+  }
+
+
+  // Delete all messages.TODO
+  public void deleteAllMessages() {
+    if(conversationContents.size() == 0) {
+      System.out.println(" Current Conversation has no messages");
+    } else {
+      for(final Message m : conversationContents) {
+        System.out.println("Now deleting: " + m.content);
+        deleteMessage(m);
+      }
+    }
+  }
+
   // For m-list-all command.
   // Show all messages attached to the current conversation. This will balk if the conversation
   // has too many messages (use m-next and m-show instead).
