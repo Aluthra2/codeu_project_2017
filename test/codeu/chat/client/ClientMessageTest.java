@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public final class ClientMessageTest {
+public final class ClientMessageTest { //TODO: Add Actual Test 
  /*
   ConnectionSource source1 = new ClientConnectionSource("host", 1);
   Controller controller1 = new Controller(source1);
@@ -25,7 +25,7 @@ public final class ClientMessageTest {
   Message msg3 = controller1.newMessage(user3.id, convo2.id, "Goodbye");
 
   @Test
-  public void testAddMessage() {
+  public void testAddMessage() { //TODO: Add Mocks for the Connection Source using Mockito. http://site.mockito.org/
 
   }
 

@@ -21,6 +21,8 @@ import codeu.chat.client.Controller;
 import codeu.chat.client.View;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.util.Logger;
+import codeu.chat.client.ClientUser;
+import codeu.chat.common.Uuid;
 
 // Chat - top-level client application.
 public final class Chat {
@@ -50,6 +52,9 @@ public final class Chat {
     System.out.println("   current   - show current user, conversation, message.");
     System.out.println("User commands:");
     System.out.println("   u-add <name>  - add a new user.");
+    System.out.println("   u-delete <name> - delete a User");
+    System.out.println("   u-set <alias> - add a nickname for a user.");
+    System.out.println("   u-get-alias - get the nickname of the current user.");
     System.out.println("   u-list-all    - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
@@ -115,6 +120,24 @@ public final class Chat {
       } else {
         addUser(tokenScanner.nextLine().trim());
       }
+
+    } else if (token.equals("u-delete")){
+      if(!tokenScanner.hasNext()){
+        System.out.println("ERROR: Username not supplied.");
+      } else {
+        deleteUser(tokenScanner.nextLine().trim());
+      }
+
+    } else if (token.equals("u-set")){
+
+      if(!tokenScanner.hasNext()){
+        System.out.println("ERROR: Alias not supplied");
+      } else {
+        setAlias(tokenScanner.next());
+      }
+
+    } else if (token.equals("u-get-alias")){
+        getAlias();
 
     } else if (token.equals("u-list-all")) {
 
@@ -307,6 +330,21 @@ public final class Chat {
   // Add a new user.
   private void addUser(String name) {
     clientContext.user.addUser(name);
+  }
+
+  //Delete a User
+  private void deleteUser(String name){
+    clientContext.user.deleteUser(name);
+  }
+
+  //Get Alias of user
+  private String getAlias() {
+    return clientContext.user.getAlias();
+  }
+
+  //Set Alias of a user
+  private void setAlias(String nickname){
+    clientContext.user.setAlias(nickname);
   }
 
   // Display all users known to server.

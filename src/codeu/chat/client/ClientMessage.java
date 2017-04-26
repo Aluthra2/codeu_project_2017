@@ -125,6 +125,7 @@ public final class ClientMessage {
       System.out.println(" Current Conversation has no messages");
 
     } else {
+
       if(controller.deleteMessage(conversationHead.lastMessage, conversationHead.id)) {
         current = setCurrentForDelete(conversationContents);
 
@@ -144,6 +145,14 @@ public final class ClientMessage {
     System.out.println("delete message called on index" + index);
     int msgIndex = Integer.valueOf(index);
     System.out.println("size of conversationContents: " + conversationContents.size());
+    } 
+  }
+
+  public void deleteMessage(Message msg) { //TODO: Use an ordered hash map for linear time. https://github.com/google/guava
+    if(conversationContents.contains(msg)) {
+      conversationContents.remove(msg);
+    } else {
+      System.out.println("Error: message not found.");
 
     if(msgIndex < conversationContents.size()) {
 
