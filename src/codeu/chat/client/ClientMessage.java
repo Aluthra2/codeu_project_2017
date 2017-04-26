@@ -14,16 +14,9 @@
 
 package codeu.chat.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import codeu.chat.common.Conversation;
-import codeu.chat.common.ConversationSummary;
-import codeu.chat.common.Message;
-import codeu.chat.common.Uuid;
-import codeu.chat.common.Uuids;
+import codeu.chat.common.*;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
 
@@ -81,6 +74,7 @@ public final class ClientMessage {
     printMessage(current, userContext);
   }
 
+
   public void resetCurrent(boolean replaceAll) {
     updateMessages(replaceAll);
   }
@@ -94,6 +88,18 @@ public final class ClientMessage {
       updateMessages(summary, true);
     }
     return conversationContents;
+  }
+
+  private Message setCurrentForDelete(List<Message> conversationContents) {
+
+    Message current;
+    if(conversationContents.size() > 1) {
+      current = conversationContents.get(conversationContents.size() - 2); //TODO: what should current be set to here?
+    } else {
+      current = null;
+    }
+
+    return current;
   }
 
   // For m-add command.
@@ -112,23 +118,66 @@ public final class ClientMessage {
     updateMessages(false);
   }
 
-  // Delete message, (m-del command?).TODO
+  // Delete message, removes last message
+  // m-del-last command
   public void deleteMessage() {
-    if(current != null) {
-      deleteMessage(current);
+    if(conversationContents.size() == 0) {
+      System.out.println(" Current Conversation has no messages");
+
     } else {
+
+      if(controller.deleteMessage(conversationHead.lastMessage, conversationHead.id)) {
+        current = setCurrentForDelete(conversationContents);
+
+      } else {
+        LOG.info("Error: Failed to delete message.");
+      }
     }
+
+
+
+    updateMessages(false);
   }
 
-  public void deleteMessage(Message msg) {
+  // Delete message, removes message corresponding to given index, (m-delete <index> command)
+  // calls helper method
+  public void deleteMessage(String index) {
+    System.out.println("delete message called on index" + index);
+    int msgIndex = Integer.valueOf(index);
+    System.out.println("size of conversationContents: " + conversationContents.size());
+    } 
+  }
+
+  public void deleteMessage(Message msg) { //TODO: Use an ordered hash map for linear time. https://github.com/google/guava
     if(conversationContents.contains(msg)) {
       conversationContents.remove(msg);
     } else {
       System.out.println("Error: message not found.");
 
+    if(msgIndex < conversationContents.size()) {
+
+      Message msg = conversationContents.get(msgIndex);
+      System.out.println("Value of msg " + Uuids.toString(conversationContents.get(msgIndex).id));
+
+      deleteMessage(msg);
+    } else {
+      System.out.println("Message not erased, please enter a valid index.");
+      LOG.error(" Error: message not found, please enter a valid index.");
     }
   }
 
+
+  // Delete message helper method
+  public void deleteMessage(Message msg) {
+    if(conversationContents.size() == 0) {
+      LOG.error("Error: Message could not be deleted, current Conversation has no messages");
+
+    } else {
+      controller.deleteMessage(msg.id, conversationHead.id);
+      current = setCurrentForDelete(conversationContents);
+    }
+    updateMessages(false);
+  }
 
   // Delete all messages.TODO
   public void deleteAllMessages() {

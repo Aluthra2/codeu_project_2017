@@ -31,6 +31,11 @@ public interface BasicController {
   //   state of the message on the server.
   Message newMessage(Uuid author, Uuid conversation, String body);
 
+  // DELETE MESSAGE
+  //
+  //   Delete a message from the server.
+  boolean deleteMessage(Uuid msg, Uuid conversation);
+
   // NEW USER
   //
   //   Create a new user on the server. All parameters must be provided
