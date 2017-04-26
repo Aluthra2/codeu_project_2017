@@ -56,7 +56,6 @@ public final class Serializers {
       }
 
       return value;
-
     }
   };
 

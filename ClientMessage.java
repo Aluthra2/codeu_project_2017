@@ -14,9 +14,16 @@
 
 package codeu.chat.client;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import codeu.chat.common.*;
+import codeu.chat.common.Conversation;
+import codeu.chat.common.ConversationSummary;
+import codeu.chat.common.Message;
+import codeu.chat.common.Uuid;
+import codeu.chat.common.Uuids;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
 
@@ -32,7 +39,7 @@ public final class ClientMessage {
 
   private Message current = null;
 
-  private final Map<Uuid, Message> messageByUuid = new HashMap<>();
+  private final Map<String, ArrayList<Message>> messageByID = new HashMap<>();
 
   private Conversation conversationHead;
   private final List<Message> conversationContents = new ArrayList<>();
@@ -74,7 +81,6 @@ public final class ClientMessage {
     printMessage(current, userContext);
   }
 
-
   public void resetCurrent(boolean replaceAll) {
     updateMessages(replaceAll);
   }
@@ -90,18 +96,6 @@ public final class ClientMessage {
     return conversationContents;
   }
 
-  private Message setCurrentForDelete(List<Message> conversationContents) {
-
-    Message current;
-    if(conversationContents.size() > 1) {
-      current = conversationContents.get(conversationContents.size() - 2); //TODO: what should current be set to here?
-    } else {
-      current = null;
-    }
-
-    return current;
-  }
-
   // For m-add command.
   public void addMessage(Uuid author, Uuid conversation, String body) {
     final boolean validInputs = isValidBody(body) && (author != null) && (conversation != null);
@@ -114,82 +108,39 @@ public final class ClientMessage {
     } else {
       LOG.info("New message:, Author= %s UUID= %s", author, message.id);
       current = message;
-    }
-    updateMessages(false);
-  }
-
-  // Delete message, removes last message
-  // m-del-last command
-  public void deleteMessage() {
-    if(conversationContents.size() == 0) {
-      System.out.println(" Current Conversation has no messages");
-
-    } else {
-
-      if(controller.deleteMessage(conversationHead.lastMessage, conversationHead.id)) {
-        current = setCurrentForDelete(conversationContents);
-
-      } else {
-        LOG.info("Error: Failed to delete message.");
+      System.out.print(author.toString());
+      if(messageByID.containsKey(author.toString())){
+	messageByID.get(author.toString()).add(message);
+      }	
+      else{
+	ArrayList<Message> a = new ArrayList<>();
+        a.add(message);
+	messageByID.put(author.toString(), a);
       }
-    }
 
 
 
-    updateMessages(false);
-  }
 
-  // Delete message, removes message corresponding to given index, (m-delete <index> command)
-  // calls helper method
-  public void deleteMessage(String index) {
-    System.out.println("delete message called on index" + index);
-    int msgIndex = Integer.valueOf(index);
-    System.out.println("size of conversationContents: " + conversationContents.size());
-    } 
-  }
-
-  public void deleteMessage(Message msg) { //TODO: Use an ordered hash map for linear time. https://github.com/google/guava
-    if(conversationContents.contains(msg)) {
-      conversationContents.remove(msg);
-    } else {
-      System.out.println("Error: message not found.");
-
-    if(msgIndex < conversationContents.size()) {
-
-      Message msg = conversationContents.get(msgIndex);
-      System.out.println("Value of msg " + Uuids.toString(conversationContents.get(msgIndex).id));
-
-      deleteMessage(msg);
-    } else {
-      System.out.println("Message not erased, please enter a valid index.");
-      LOG.error(" Error: message not found, please enter a valid index.");
-    }
-  }
-
-
-  // Delete message helper method
-  public void deleteMessage(Message msg) {
-    if(conversationContents.size() == 0) {
-      LOG.error("Error: Message could not be deleted, current Conversation has no messages");
-
-    } else {
-      controller.deleteMessage(msg.id, conversationHead.id);
-      current = setCurrentForDelete(conversationContents);
     }
     updateMessages(false);
   }
 
-  // Delete all messages.TODO
-  public void deleteAllMessages() {
-    if(conversationContents.size() == 0) {
-      System.out.println(" Current Conversation has no messages");
-    } else {
-      for(final Message m : conversationContents) {
-        System.out.println("Now deleting: " + m.content);
-        deleteMessage(m);
-      }
-    }
-  }
+  //search all messages by user ID
+
+   public void searchByUserID(String authorID){
+	
+	for(Message m : messageByID.get(authorID)){
+         System.out.println(" Time: " + m.creation + " Content "  + m.content);	 
+ 
+       // printMessage(m, userContext);
+	}
+
+   }
+
+ 
+
+
+
 
   // For m-list-all command.
   // Show all messages attached to the current conversation. This will balk if the conversation

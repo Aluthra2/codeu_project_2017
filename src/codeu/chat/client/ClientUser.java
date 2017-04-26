@@ -88,7 +88,9 @@ public final class ClientUser {
     printUser(current);
   }
 
+
 //Adding a User
+//Set it up so that it works if an alias is entered!
   public void addUser(String name) {
     final boolean validInputs = isValidName(name);
 
@@ -102,6 +104,7 @@ public final class ClientUser {
       updateUsers();
     }
   }
+
 
   //Adding a User with a nickName
   public void addUser(String name, String nickName) {
@@ -118,7 +121,7 @@ public final class ClientUser {
       updateUsers();
     }
   }
-
+  
   //Deleting a User
   public void deleteUser(String name){
     if(usersByName.containsValue(name)){
@@ -129,11 +132,6 @@ public final class ClientUser {
         if(user.name == userObject.name){
           usersById.remove(id);
           usersByName.remove(userObject.name);
-          }
-        }
-      }
-    }
-
 
   public void showAllUsers() {
     updateUsers();
@@ -157,6 +155,7 @@ public final class ClientUser {
   }
 
 //Set it up so that it works for any user not just current user
+
   public String getAlias(String name){
     try{
       final User user = usersByName.first(name);
@@ -176,6 +175,7 @@ public final class ClientUser {
       }
     } catch(Exception ex){
         System.out.println("No Such User Exists!");
+
     }
   }
 

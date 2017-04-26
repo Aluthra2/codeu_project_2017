@@ -21,8 +21,6 @@ import codeu.chat.client.Controller;
 import codeu.chat.client.View;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.util.Logger;
-import codeu.chat.client.ClientUser;
-import codeu.chat.common.Uuid;
 
 // Chat - top-level client application.
 public final class Chat {
@@ -51,21 +49,14 @@ public final class Chat {
     System.out.println("   sign-out  - sign out current user.");
     System.out.println("   current   - show current user, conversation, message.");
     System.out.println("User commands:");
-    System.out.println("   u-add <name> <alias>  - add a new user. (Nickname is Optional)");
-    System.out.println("   u-delete <name> - delete a User");
-    System.out.println("   u-set <alias> <UserName> - add a nickname for a user.");
-    System.out.println("   u-get-alias <UserName> - get the nickname of chosen user.");
+    System.out.println("   u-add <name>  - add a new user.");
     System.out.println("   u-list-all    - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
-    System.out.println("   c-delete            - delete the current conversation.");//TODO
     System.out.println("   c-list-all       - list all conversations known to system.");
     System.out.println("   c-select <index> - select conversation from list.");
     System.out.println("Message commands:");
     System.out.println("   m-add <body>     - add a new message to the current conversation.");
-    System.out.println("   m-delete <index>            - deletes message at a given index.");
-    System.out.println("   m-del-last           - deletes the last message.");
-    System.out.println("   m-del-all            - delete all messages in the Conversation.");
     System.out.println("   m-list-all       - list all messages in the current conversation.");
     System.out.println("   m-next <index>   - index of next message to view.");
     System.out.println("   m-show <count>   - show next <count> messages.");
@@ -89,7 +80,13 @@ public final class Chat {
 
       alive = false;
 
-    } else if (token.equals("help")) {
+    } if (token.equals("searchId")) {
+	
+	if(tokenScanner.hasNext()){
+          clientContext.message.searchByUserID(tokenScanner.nextLine().trim());
+         }
+    }
+      else if (token.equals("help")) {
 
       help();
 
@@ -115,48 +112,12 @@ public final class Chat {
 
     } else if (token.equals("u-add")) {
 
-      String userName = "";
-      String nickName = "NULL";
-
       if (!tokenScanner.hasNext()) {
         System.out.println("ERROR: Username not supplied.");
       } else {
-        userName = tokenScanner.nextLine().trim();
-      }
-      if (!tokenScanner.hasNext()) {
-        addUser(userName);
-      } else {
-        nickName = tokenScanner.next();
-        addUser(userName, nickName);
+        addUser(tokenScanner.nextLine().trim());
       }
 
-    } else if (token.equals("u-delete")){
-      if(!tokenScanner.hasNext()){
-        System.out.println("ERROR: Username not supplied.");
-      } else {
-        deleteUser(tokenScanner.nextLine().trim());
-      }
-
-    } else if (token.equals("u-set")){
-
-      String uName = "";
-      String nickName = "";
-
-      if(!tokenScanner.hasNext()){
-        System.out.println("ERROR: Alias not supplied");
-      } else {
-        nickName = tokenScanner.next();
-      }
-      if(!tokenScanner.hasNext()){
-        System.out.println("ERROR: User Name not supplied");
-      } else {
-        uName = tokenScanner.next();
-        setAlias(nickName, uName);
-      }
-      
-    } else if (token.equals("u-get-alias")){
-        getAlias(tokenScanner.next());
-      
     } else if (token.equals("u-list-all")) {
 
       showAllUsers();
@@ -174,18 +135,11 @@ public final class Chat {
         }
       }
 
-    } else if (token.equals("c-delete")) {
-
-      if (!clientContext.user.hasCurrent()) {
-        System.out.println("ERROR: Not signed in.");
-      } else {
-        //TODO clientContext.conversation.deleteConversation();
-      }
-    }
-
-    else if (token.equals("c-list-all")) {
+    } else if (token.equals("c-list-all")) {
 
       clientContext.conversation.showAllConversations();
+
+      
 
     } else if (token.equals("c-select")) {
 
@@ -202,38 +156,13 @@ public final class Chat {
           System.out.println("ERROR: Message body not supplied.");
         } else {
           clientContext.message.addMessage(clientContext.user.getCurrent().id,
-                  clientContext.conversation.getCurrentId(),
-                  tokenScanner.nextLine().trim());
+              clientContext.conversation.getCurrentId(),
+              tokenScanner.nextLine().trim());
         }
       }
 
-    } else if (token.equals("m-delete")) {
-      if (!clientContext.conversation.hasCurrent()) {
-        System.out.println("ERROR: No conversation selected.");
-      } else {
-        if (!tokenScanner.hasNext()) {
-          System.out.println("ERROR: Message index not supplied.");
-        } else {
-          clientContext.message.deleteMessage(tokenScanner.nextLine().trim());
-        }
-      }
 
-    } else if (token.equals("m-del-last")) {
-      if (!clientContext.conversation.hasCurrent()) {
-        System.out.println("ERROR: No conversation selected.");
-      } else {
-        clientContext.message.deleteMessage();
-      }
-
-    } else if (token.equals("m-del-all")) {
-      if (!clientContext.conversation.hasCurrent()) {
-        System.out.println("ERROR: No conversation selected.");
-      } else {
-        clientContext.message.deleteAllMessages();
-      }
-    }
-
-    else if (token.equals("m-list-all")) {
+      }else if(token.equals("m-list-all")) {
 
       if (!clientContext.conversation.hasCurrent()) {
         System.out.println("ERROR: No conversation selected.");
@@ -266,7 +195,7 @@ public final class Chat {
 
       System.out.format("Command not recognized: %s\n", token);
       System.out.format("Command line rejected: %s%s\n", token,
-              (tokenScanner.hasNext()) ? tokenScanner.nextLine() : "");
+          (tokenScanner.hasNext()) ? tokenScanner.nextLine() : "");
       System.out.println("Type \"help\" for help.");
     }
     tokenScanner.close();
@@ -292,7 +221,7 @@ public final class Chat {
       System.out.println(" -- no messages in conversation --");
     } else {
       System.out.format(" conversation has %d messages.\n",
-              clientContext.conversation.currentMessageCount());
+                        clientContext.conversation.currentMessageCount());
       if (!clientContext.message.hasCurrent()) {
         System.out.println(" -- no current message --");
       } else {
@@ -350,27 +279,6 @@ public final class Chat {
     clientContext.user.addUser(name);
   }
 
-
-  private void addUser(String name, String nickname) {
-    clientContext.user.addUser(name, nickname);
-  }
-  
-  //Delete a User
-  private void deleteUser(String name){
-    clientContext.user.deleteUser(name);
-  }
-
-  //Get Alias of user
-  private String getAlias(String name) {
-    return clientContext.user.getAlias(name);
-  }
-
-  //Set Alias of a user
-  private void setAlias(String nickname, String id){
-    clientContext.user.setAlias(nickname, id);
-
-  }
-
   // Display all users known to server.
   private void showAllUsers() {
     clientContext.user.showAllUsers();
@@ -405,9 +313,9 @@ public final class Chat {
       System.out.println("Nothing to select.");
     } else {
       final ListNavigator<ConversationSummary> navigator =
-              new ListNavigator<ConversationSummary>(
-                      clientContext.conversation.getConversationSummaries(),
-                      lineScanner, PAGE_SIZE);
+          new ListNavigator<ConversationSummary>(
+              clientContext.conversation.getConversationSummaries(),
+              lineScanner, PAGE_SIZE);
       if (navigator.chooseFromList()) {
         newCurrent = navigator.getSelectedChoice();
         clientContext.message.resetCurrent(newCurrent != previous);
