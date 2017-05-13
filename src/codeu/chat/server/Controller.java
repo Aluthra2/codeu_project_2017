@@ -14,16 +14,13 @@
 
 package codeu.chat.server;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.UUID;
 
-import codeu.chat.common.BasicController;
-import codeu.chat.common.Conversation;
-import codeu.chat.common.Message;
-import codeu.chat.common.RawController;
-import codeu.chat.common.Time;
-import codeu.chat.common.User;
-import codeu.chat.common.Uuid;
-import codeu.chat.common.Uuids;
+import codeu.chat.common.*;
 import codeu.chat.util.Logger;
 
 public final class Controller implements RawController, BasicController {
@@ -86,9 +83,9 @@ public final class Controller implements RawController, BasicController {
       // not change.
 
       foundConversation.firstMessage =
-          Uuids.equals(foundConversation.firstMessage, Uuids.NULL) ?
-          message.id :
-          foundConversation.firstMessage;
+              Uuids.equals(foundConversation.firstMessage, Uuids.NULL) ?
+                      message.id :
+                      foundConversation.firstMessage;
 
       // Update the conversation to point to the new last message as it has changed.
 
@@ -103,6 +100,107 @@ public final class Controller implements RawController, BasicController {
   }
 
   @Override
+  public boolean deleteMessage(Uuid msg, Uuid conversation) {
+    final Message foundMessage = model.messageById().first(msg);
+    final Conversation foundConversation = model.conversationById().first(conversation);
+    final User foundUser = model.userById().first(foundMessage.author);
+
+    Iterator<Message> iteratorBefore;
+    Iterator<Message> iteratorAfter;
+
+    boolean success = true;
+
+
+    if (foundMessage != null && foundUser != null && foundConversation != null) {
+      System.out.println("Now deleting:  "  + foundMessage.content);
+      model.delete(foundMessage);
+
+      if (Uuids.equals(foundConversation.lastMessage, msg)) {
+        // This message was the conversation's last one
+
+        if (Uuids.equals(foundConversation.firstMessage, msg)) {
+          // This message was the conversation's only message now the conversation will have no
+          // messages in it, therefore the first and last message are NULL
+          System.out.println("Deleting the only message in the conversation");
+          foundConversation.firstMessage = Uuids.NULL;
+          foundConversation.lastMessage = Uuids.NULL;
+          System.out.println("Seems fine?");
+
+          LOG.info("Message deleted: %s", msg);
+
+        } else {
+          // This message was the conversation's last message, but not the first one
+          // Update the last message value to penultimate message,
+          // and pointer of the penultimate message to null
+          iteratorBefore = model.messageByTime().before(foundMessage.creation).iterator();
+          final Message newLastMessage = findNewLastMessage(iteratorBefore);
+
+          newLastMessage.next = Uuids.NULL;
+          foundConversation.lastMessage = newLastMessage.id;
+
+          LOG.info("Message deleted: %s", msg);
+
+        }
+
+      } else {
+
+        if (Uuids.equals(foundConversation.firstMessage, msg)) {
+          // This message was the first message in a conversation that has other messages
+          // Update the first message value to the second message,
+          // update the pointer of the second message
+          iteratorAfter = model.messageByTime().after(foundMessage.creation).iterator();
+          final Message newFirstMessage = findNewFirstMessage(iteratorAfter);
+
+          newFirstMessage.previous = Uuids.NULL;
+          foundConversation.firstMessage = newFirstMessage.id;
+
+          LOG.info("Message deleted: %s", msg);
+
+        } else {
+          // This message was not the first, nor the last message and there are more messages
+          // Update the pointers
+          iteratorBefore = model.messageByTime().before(foundMessage.creation).iterator();
+          iteratorAfter = model.messageByTime().after(foundMessage.creation).iterator();
+          final Message newPrevMessage = findNewLastMessage(iteratorBefore);
+          final Message newNextMessage = findNewFirstMessage(iteratorAfter);
+
+          newNextMessage.previous = newPrevMessage.id;
+          newPrevMessage.next = newNextMessage.id;
+          LOG.info("Message deleted: %s", msg);
+
+        }
+      }
+
+    } else {
+      success = false;
+      LOG.info("Error: Message not deleted: %s", msg);
+    }
+
+    return success;
+  }
+
+  private Message findNewFirstMessage(Iterator<Message> iterator) {
+    Message first = null;
+
+    if(iterator.hasNext()) {
+      first = iterator.next();
+    }
+    System.out.println("findNewFirstMessage found this as the second message:  " + first.id);
+    return  first;
+  }
+
+  private Message findNewLastMessage(Iterator<Message> iterator) {
+    Message last = null;
+
+    while (iterator.hasNext()) {
+      last = iterator.next();
+
+    }
+
+    return last;
+  }
+
+  @Override
   public User newUser(Uuid id, String name, Time creationTime) {
 
     User user = null;
@@ -113,18 +211,18 @@ public final class Controller implements RawController, BasicController {
       model.add(user);
 
       LOG.info(
-          "newUser success (user.id=%s user.name=%s user.time=%s)",
-          id,
-          name,
-          creationTime);
+              "newUser success (user.id=%s user.name=%s user.time=%s)",
+              id,
+              name,
+              creationTime);
 
     } else {
 
       LOG.info(
-          "newUser fail - id in use (user.id=%s user.name=%s user.time=%s)",
-          id,
-          name,
-          creationTime);
+              "newUser fail - id in use (user.id=%s user.name=%s user.time=%s)",
+              id,
+              name,
+              creationTime);
     }
 
     return user;
@@ -155,9 +253,9 @@ public final class Controller implements RawController, BasicController {
          isIdInUse(candidate);
          candidate = uuidGenerator.make()) {
 
-     // Assuming that "randomUuid" is actually well implemented, this
-     // loop should never be needed, but just incase make sure that the
-     // Uuid is not actually in use before returning it.
+      // Assuming that "randomUuid" is actually well implemented, this
+      // loop should never be needed, but just incase make sure that the
+      // Uuid is not actually in use before returning it.
 
     }
 
@@ -166,8 +264,8 @@ public final class Controller implements RawController, BasicController {
 
   private boolean isIdInUse(Uuid id) {
     return model.messageById().first(id) != null ||
-           model.conversationById().first(id) != null ||
-           model.userById().first(id) != null;
+            model.conversationById().first(id) != null ||
+            model.userById().first(id) != null;
   }
 
   private boolean isIdFree(Uuid id) { return !isIdInUse(id); }

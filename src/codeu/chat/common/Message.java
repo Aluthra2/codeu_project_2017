@@ -23,7 +23,9 @@ import codeu.chat.util.Serializers;
 import codeu.chat.common.Uuid;
 import codeu.chat.common.Uuids;
 
-public final class Message {
+import static codeu.chat.common.Uuids.hash;
+
+public final class Message implements Comparable<Message>{
 
   public static final Serializer<Message> SERIALIZER = new Serializer<Message>() {
 
@@ -55,7 +57,8 @@ public final class Message {
   };
 
   public final Uuid id;
-  public final Uuid previous;
+  //TODO: got rid of final privacy setting, unsure if this is the right solution
+  public Uuid previous;
   public final Time creation;
   public final Uuid author;
   public final String content;
@@ -70,5 +73,26 @@ public final class Message {
     this.author = author;
     this.content = content;
 
+  }
+
+  // compares by time
+  @Override
+  public int compareTo(Message msg) {
+    return this.creation.compareTo(msg.creation);
+  }
+
+
+  @Override
+  public int hashCode() {
+    return hash(id);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(o instanceof Message) {
+      return Uuids.equals(this.id, ((Message) o).id);
+    } else {
+      return false;
+    }
   }
 }
