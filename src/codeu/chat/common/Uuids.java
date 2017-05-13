@@ -184,6 +184,8 @@ public final class Uuids {
     return fromString(null, string.split("\\."), 0);
   }
 
+  public static Uuid fromInteger(int integer) { return fromString(Integer.toString(integer)); }
+
   private static Uuid fromString(final Uuid root, String[] tokens, int index) {
 
     final int id = Integer.parseInt(tokens[index]);

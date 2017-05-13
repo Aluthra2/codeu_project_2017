@@ -18,14 +18,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread;
 
-import codeu.chat.common.BasicController;
-import codeu.chat.common.Conversation;
-import codeu.chat.common.Message;
-import codeu.chat.common.NetworkCode;
-import codeu.chat.common.User;
-import codeu.chat.common.Uuid;
-import codeu.chat.common.Uuids;
+import codeu.chat.common.*;
 import codeu.chat.util.Logger;
+import codeu.chat.util.Serializer;
 import codeu.chat.util.Serializers;
 import codeu.chat.util.connections.Connection;
 import codeu.chat.util.connections.ConnectionSource;
@@ -69,7 +64,7 @@ public class Controller implements BasicController {
 
   @Override
   public boolean deleteMessage(Uuid msg, Uuid conversation) {
-    boolean succeeded = false;
+    boolean success = false;
 
     try (final Connection connection = source.connect()) {
 
@@ -77,8 +72,9 @@ public class Controller implements BasicController {
       Uuids.SERIALIZER.write(connection.out(), msg);
       Uuids.SERIALIZER.write(connection.out(), conversation);
 
+
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_MESSAGE_RESPONSE) {
-        succeeded = true;
+        success = true;
       } else {
         LOG.error("Response from server failed.");
       }
@@ -86,7 +82,7 @@ public class Controller implements BasicController {
       LOG.error(ex, "Exception during call on server.");
     }
 
-    return succeeded;
+    return success;
   }
 
   @Override

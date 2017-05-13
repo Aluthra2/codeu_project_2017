@@ -84,7 +84,6 @@ public final class Message implements Comparable<Message>{
 
   @Override
   public int hashCode() {
-    System.out.println("Entered hashCode");
     return hash(id);
   }
 

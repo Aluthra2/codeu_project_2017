@@ -135,22 +135,22 @@ public final class Model {
   }
 
   public void delete(Message message) {
-    LOG.info("Entered Server/Model.delete()");
+    LOG.info("Entered Server/Model.delete(message)");
     if(messageById.contains(message.id)) {
       messageById.delete(message.id);
-      LOG.info("Within Server/Model.delete(), deleted from messageById");
+      LOG.info("Within Server/Model.delete(message), deleted from messageById");
 
     }
 
     if(messageByTime.contains(message.creation)) {
       messageByTime.delete(message.creation);
-      LOG.info("Within Server/Model.delete(), deleted from messageByTime");
+      LOG.info("Within Server/Model.delete(message), deleted from messageByTime");
 
     }
 
     if(messageByText.contains(message.content)) {
       messageByText.delete(message.content);
-      LOG.info("Within Server/Model.delete(), deleted from messageByText");
+      LOG.info("Within Server/Model.delete(message), deleted from messageByText");
 
     }
   }

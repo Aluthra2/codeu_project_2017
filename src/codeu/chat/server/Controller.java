@@ -20,14 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
 
-import codeu.chat.common.BasicController;
-import codeu.chat.common.Conversation;
-import codeu.chat.common.Message;
-import codeu.chat.common.RawController;
-import codeu.chat.common.Time;
-import codeu.chat.common.User;
-import codeu.chat.common.Uuid;
-import codeu.chat.common.Uuids;
+import codeu.chat.common.*;
 import codeu.chat.util.Logger;
 
 public final class Controller implements RawController, BasicController {
@@ -109,90 +102,102 @@ public final class Controller implements RawController, BasicController {
   @Override
   public boolean deleteMessage(Uuid msg, Uuid conversation) {
     final Message foundMessage = model.messageById().first(msg);
-    final User foundUser = model.userById().first(foundMessage.author);
     final Conversation foundConversation = model.conversationById().first(conversation);
-    Message previous = null;
+    final User foundUser = model.userById().first(foundMessage.author);
+
+    Iterator<Message> iteratorBefore;
+    Iterator<Message> iteratorAfter;
 
     boolean success = true;
 
-    LOG.info("foundUser != null: " + Boolean.toString(foundUser != null));
-    LOG.info("foundConversation != null: " + Boolean.toString(foundConversation != null));
-    LOG.info("foundMessage != null: " + Boolean.toString(foundMessage != null));
 
-
-    if (foundUser != null && foundConversation != null && foundMessage != null) {
-      // Find and update the previous "last" message so that it's "next" value
-      // will point to either null or the deleted message's next.
-
-      LOG.info("foundConversation.lastMessage: " + foundConversation.lastMessage);
-      LOG.info("msg: " + msg);
-      LOG.info("Uuids.equals(foundConversation.lastMessage, msg): " + Uuids.equals(foundConversation.lastMessage, msg));
-
-      LOG.info("foundConversation.firstMessage: " + foundConversation.firstMessage);
-      LOG.info("msg: " + msg);
-      LOG.info("Uuids.equals(foundConversation.firstMessage, msg): " + Uuids.equals(foundConversation.firstMessage, msg));
+    if (foundMessage != null && foundUser != null && foundConversation != null) {
+      System.out.println("Now deleting:  "  + foundMessage.content);
+      model.delete(foundMessage);
 
       if (Uuids.equals(foundConversation.lastMessage, msg)) {
-
-        // The deleted message was the last one, change the previous message's next field to NULL
-        LOG.info("Entered if-branch where Uuids.equals(foundConversation.lastMessage, msg) is TRUE");
+        // This message was the conversation's last one
 
         if (Uuids.equals(foundConversation.firstMessage, msg)) {
-          LOG.info("Within if-branch that means there was only one message in the conversation");
-          // If the deleted message was the last one, and it's previous field was NULL
-          // the deleted message was the only message in the conversation
-
+          // This message was the conversation's only message now the conversation will have no
+          // messages in it, therefore the first and last message are NULL
+          System.out.println("Deleting the only message in the conversation");
+          foundConversation.firstMessage = Uuids.NULL;
           foundConversation.lastMessage = Uuids.NULL;
-          model.delete(foundMessage);
-          LOG.info("Message deleted: %s", msg);
+          System.out.println("Seems fine?");
 
+          LOG.info("Message deleted: %s", msg);
 
         } else {
-          LOG.info("Within if-branch where this message is the last one, but not the only one.");
+          // This message was the conversation's last message, but not the first one
+          // Update the last message value to penultimate message,
+          // and pointer of the penultimate message to null
+          iteratorBefore = model.messageByTime().before(foundMessage.creation).iterator();
+          final Message newLastMessage = findNewLastMessage(iteratorBefore);
 
+          newLastMessage.next = Uuids.NULL;
+          foundConversation.lastMessage = newLastMessage.id;
 
-          // TODO: Finds the message that came before the deleted one, had to do it this way, as foundMessage's previous field is null?
-          Iterator<Message> iterator = model.messageByTime().before(foundMessage.creation).iterator();
-          Message secondPrev = null;
-
-          while (iterator.hasNext()) {
-            secondPrev = previous;
-            previous = iterator.next();
-
-          }
-          foundConversation.lastMessage = secondPrev.id;
-
-          model.delete(foundMessage);
           LOG.info("Message deleted: %s", msg);
-
 
         }
 
-      } else if (Uuids.equals(foundConversation.firstMessage, msg)) {
-        LOG.info("Within if-branch that means the deleted message was the first one, and not the only one");
-        System.out.println("Null?: foundMessage.next" + Uuids.equals(foundMessage.next, Uuids.NULL));
-
-        foundConversation.firstMessage = foundMessage.next;
-        model.delete(foundMessage);
-        LOG.info("Message deleted: %s", msg);
-
-
       } else {
-        LOG.info("Within if-branch that means the deleted message was not the first one, and not the last one");
-        model.delete(foundMessage);
-        LOG.info("Message deleted: %s", msg);
 
+        if (Uuids.equals(foundConversation.firstMessage, msg)) {
+          // This message was the first message in a conversation that has other messages
+          // Update the first message value to the second message,
+          // update the pointer of the second message
+          iteratorAfter = model.messageByTime().after(foundMessage.creation).iterator();
+          final Message newFirstMessage = findNewFirstMessage(iteratorAfter);
+
+          newFirstMessage.previous = Uuids.NULL;
+          foundConversation.firstMessage = newFirstMessage.id;
+
+          LOG.info("Message deleted: %s", msg);
+
+        } else {
+          // This message was not the first, nor the last message and there are more messages
+          // Update the pointers
+          iteratorBefore = model.messageByTime().before(foundMessage.creation).iterator();
+          iteratorAfter = model.messageByTime().after(foundMessage.creation).iterator();
+          final Message newPrevMessage = findNewLastMessage(iteratorBefore);
+          final Message newNextMessage = findNewFirstMessage(iteratorAfter);
+
+          newNextMessage.previous = newPrevMessage.id;
+          newPrevMessage.next = newNextMessage.id;
+          LOG.info("Message deleted: %s", msg);
+
+        }
       }
 
     } else {
-      LOG.info("Within if-branch where one of the found fields (message, conversation, user) were null");
       success = false;
       LOG.info("Error: Message not deleted: %s", msg);
-
     }
 
     return success;
+  }
 
+  private Message findNewFirstMessage(Iterator<Message> iterator) {
+    Message first = null;
+
+    if(iterator.hasNext()) {
+      first = iterator.next();
+    }
+    System.out.println("findNewFirstMessage found this as the second message:  " + first.id);
+    return  first;
+  }
+
+  private Message findNewLastMessage(Iterator<Message> iterator) {
+    Message last = null;
+
+    while (iterator.hasNext()) {
+      last = iterator.next();
+
+    }
+
+    return last;
   }
 
   @Override
