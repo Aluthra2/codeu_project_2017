@@ -39,7 +39,7 @@ public final class ClientMessage {
 
   private Message current = null;
 
-  private final Map<Uuid, Message> messageByUuid = new HashMap<>();
+  private final Map<String, ArrayList<Message>> messageByID = new HashMap<>();
 
   private Conversation conversationHead;
   private final List<Message> conversationContents = new ArrayList<>();
@@ -108,39 +108,38 @@ public final class ClientMessage {
     } else {
       LOG.info("New message:, Author= %s UUID= %s", author, message.id);
       current = message;
+//      if(messageByID.containsKey(author.toString())){
+//	messageByID.get(author.toString()).add(message);
+  //    }	
+    //  else{
+//	ArrayList<Message> a = new ArrayList<>();
+  //      a.add(message);
+//	messageByID.put(author.toString(), a);
+  //    }
+
+
+
+
     }
     updateMessages(false);
   }
 
-  // Delete message, (m-del command?).TODO
-  public void deleteMessage() {
-    if(current != null) {
-      deleteMessage(current);
-    } else {
+  //search all messages a user has sent by using the user's ID
+
+   public void searchByUserID(String authorID){
+	 
+     ArrayList<Message>  mess =   controller.searchByUserID(authorID);
+
+     if(mess.isEmpty() == false){
+     for(Message m : mess){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
     }
-  }
+    else System.out.println("User has no messages to display");
+   }
 
-  public void deleteMessage(Message msg) {
-    if(conversationContents.contains(msg)) {
-      conversationContents.remove(msg);
-    } else {
-      System.out.println("Error: message not found.");
-
-    }
-  }
+ 
 
 
-  // Delete all messages.TODO
-  public void deleteAllMessages() {
-    if(conversationContents.size() == 0) {
-      System.out.println(" Current Conversation has no messages");
-    } else {
-      for(final Message m : conversationContents) {
-        System.out.println("Now deleting: " + m.content);
-        deleteMessage(m);
-      }
-    }
-  }
+
 
   // For m-list-all command.
   // Show all messages attached to the current conversation. This will balk if the conversation

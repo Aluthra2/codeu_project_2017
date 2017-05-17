@@ -17,7 +17,7 @@ package codeu.chat.client;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread;
-
+import java.util.Collection;
 import codeu.chat.common.BasicController;
 import codeu.chat.common.Conversation;
 import codeu.chat.common.Message;
@@ -29,6 +29,8 @@ import codeu.chat.util.Logger;
 import codeu.chat.util.Serializers;
 import codeu.chat.util.connections.Connection;
 import codeu.chat.util.connections.ConnectionSource;
+import java.util.Collection;
+import java.util.ArrayList;
 
 public class Controller implements BasicController {
 
@@ -113,4 +115,27 @@ public class Controller implements BasicController {
 
     return response;
   }
+
+  public ArrayList<Message> searchByUserID(String authorID){
+	final ArrayList <Message> messagesbyuserid = new ArrayList<>();
+ 	try (final Connection connection = source.connect()){
+		Serializers.INTEGER.write(connection.out(), NetworkCode.SEARCHREQUEST);
+		Serializers.STRING.write(connection.out(), authorID);
+		
+		if(Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE){
+
+		   messagesbyuserid.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
+		   
+               
+		}
+		}catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}	
+
+		return messagesbyuserid;
+	}
+
+
+	
+
+
+  
 }
