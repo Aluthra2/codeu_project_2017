@@ -14,7 +14,7 @@
 
 package codeu.chat.server;
 
-import java.util.Collection;
+import java.util.ArrayList;
 
 import codeu.chat.common.BasicController;
 import codeu.chat.common.Conversation;
@@ -52,6 +52,13 @@ public final class Controller implements RawController, BasicController {
   public Conversation newConversation(String title, Uuid owner) {
     return newConversation(createId(), title, owner, Time.now());
   }
+
+
+  public ArrayList<Message> searchByUserID(String authorID){
+            ArrayList<Message> messages = model.messageByUserID.get(authorID);
+	    return messages;
+
+   }
 
   @Override
   public Message newMessage(Uuid id, Uuid author, Uuid conversation, String body, Time creationTime) {
