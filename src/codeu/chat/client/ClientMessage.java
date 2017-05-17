@@ -14,11 +14,18 @@
 
 package codeu.chat.client;
 
-import java.util.*;
-
-import codeu.chat.common.*;
+import codeu.chat.common.Conversation;
+import codeu.chat.common.ConversationSummary;
+import codeu.chat.common.Message;
+import codeu.chat.common.Uuid;
+import codeu.chat.common.Uuids;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public final class ClientMessage {
@@ -117,8 +124,10 @@ public final class ClientMessage {
     } else {
       if (controller.deleteMessage(conversationHead.lastMessage, conversationHead.id)) {
         resetCurrent(currentMessageCount() == 1);
+        LOG.info("Deleted message: UUID= %s", conversationHead.lastMessage);
 
       } else {
+        LOG.error("Error: Message could not be deleted.");
 
       }
     }
@@ -138,6 +147,7 @@ public final class ClientMessage {
         Message msg = conversationContents.get(msgIndex);
         deleteMessage(msg);
         updateMessages(true);
+        LOG.info("Deleted message: UUID= %s", msg.id);
 
       } else {
 
@@ -148,12 +158,9 @@ public final class ClientMessage {
 
 
   // Delete message helper method
-  public void deleteMessage(Message msg) {
+  private void deleteMessage(Message msg) {
     if (currentMessageCount() == 0) {
       LOG.error("Error: Message could not be deleted, current Conversation has no messages");
-
-    } else if (currentMessageCount() == 1) {
-      deleteMessage();
 
     } else {
         controller.deleteMessage(msg.id, conversationHead.id);

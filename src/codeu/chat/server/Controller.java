@@ -112,7 +112,6 @@ public final class Controller implements RawController, BasicController {
 
 
     if (foundMessage != null && foundUser != null && foundConversation != null) {
-      System.out.println("Now deleting:  "  + foundMessage.content);
       model.delete(foundMessage);
 
       if (Uuids.equals(foundConversation.lastMessage, msg)) {
@@ -121,10 +120,8 @@ public final class Controller implements RawController, BasicController {
         if (Uuids.equals(foundConversation.firstMessage, msg)) {
           // This message was the conversation's only message now the conversation will have no
           // messages in it, therefore the first and last message are NULL
-          System.out.println("Deleting the only message in the conversation");
           foundConversation.firstMessage = Uuids.NULL;
           foundConversation.lastMessage = Uuids.NULL;
-          System.out.println("Seems fine?");
 
           LOG.info("Message deleted: %s", msg);
 
@@ -180,16 +177,21 @@ public final class Controller implements RawController, BasicController {
   }
 
   private Message findNewFirstMessage(Iterator<Message> iterator) {
+    // Given an iterator of all the messages that came after the message
+    // to be deleted, which was the first message in the conversation,
+    // this method finds and returns the second message in the conversation
     Message first = null;
 
     if(iterator.hasNext()) {
       first = iterator.next();
     }
-    System.out.println("findNewFirstMessage found this as the second message:  " + first.id);
     return  first;
   }
 
   private Message findNewLastMessage(Iterator<Message> iterator) {
+    // Given an iterator of all the messages that came before the message
+    // to be deleted, which was the last message in the conversation,
+    // this method finds and returns the second-to-last message in the conversation
     Message last = null;
 
     while (iterator.hasNext()) {
