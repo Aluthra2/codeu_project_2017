@@ -15,7 +15,7 @@
 package codeu.chat.client.commandline;
 
 import java.util.Scanner;
-
+import java.util.ArrayList;
 import codeu.chat.client.ClientContext;
 import codeu.chat.client.Controller;
 import codeu.chat.client.View;
@@ -60,7 +60,9 @@ public final class Chat {
     System.out.println("   m-list-all       - list all messages in the current conversation.");
     System.out.println("   m-next <index>   - index of next message to view.");
     System.out.println("   m-show <count>   - show next <count> messages.");
-  }
+    System.out.println("   searchId [UUID: xxx.xxx.xxxxxxxxxx]  -show all messages from user with specified UUID string");  
+
+ }
 
   // Prompt for new command.
   private void promptForCommand() {
@@ -83,7 +85,8 @@ public final class Chat {
     } if (token.equals("searchId")) {
 	
 	if(tokenScanner.hasNext()){
-          clientContext.message.searchByUserID(tokenScanner.nextLine().trim());
+	   clientContext.message.searchByUserID(tokenScanner.nextLine().trim());
+	  
          }
     }
       else if (token.equals("help")) {

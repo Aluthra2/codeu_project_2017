@@ -108,15 +108,14 @@ public final class ClientMessage {
     } else {
       LOG.info("New message:, Author= %s UUID= %s", author, message.id);
       current = message;
-      System.out.print(author.toString());
-      if(messageByID.containsKey(author.toString())){
-	messageByID.get(author.toString()).add(message);
-      }	
-      else{
-	ArrayList<Message> a = new ArrayList<>();
-        a.add(message);
-	messageByID.put(author.toString(), a);
-      }
+//      if(messageByID.containsKey(author.toString())){
+//	messageByID.get(author.toString()).add(message);
+  //    }	
+    //  else{
+//	ArrayList<Message> a = new ArrayList<>();
+  //      a.add(message);
+//	messageByID.put(author.toString(), a);
+  //    }
 
 
 
@@ -125,16 +124,16 @@ public final class ClientMessage {
     updateMessages(false);
   }
 
-  //search all messages by user ID
+  //search all messages a user has sent by using the user's ID
 
    public void searchByUserID(String authorID){
-	
-	for(Message m : messageByID.get(authorID)){
-         System.out.println(" Time: " + m.creation + " Content "  + m.content);	 
- 
-       // printMessage(m, userContext);
-	}
+	 
+     ArrayList<Message>  mess =   controller.searchByUserID(authorID);
 
+     if(mess.isEmpty() == false){
+     for(Message m : mess){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
+    }
+    else System.out.println("User has no messages to display");
    }
 
  
