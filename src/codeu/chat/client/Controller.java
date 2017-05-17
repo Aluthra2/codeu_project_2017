@@ -30,6 +30,8 @@ import codeu.chat.util.Serializers;
 import codeu.chat.util.connections.Connection;
 import codeu.chat.util.connections.ConnectionSource;
 
+import javax.annotation.Resource;
+
 public class Controller implements BasicController {
 
   private final static Logger.Log LOG = Logger.newLog(Controller.class);
@@ -63,6 +65,28 @@ public class Controller implements BasicController {
     }
 
     return response;
+  }
+
+  @Override
+  public boolean deleteMessage(Uuid msg, Uuid conversation) {
+    boolean succeeded = false;
+
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_MESSAGE_REQUEST);
+      Uuids.SERIALIZER.write(connection.out(), msg);
+      Uuids.SERIALIZER.write(connection.out(), conversation);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_MESSAGE_RESPONSE) {
+        succeeded = true;
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return succeeded;
   }
 
   @Override

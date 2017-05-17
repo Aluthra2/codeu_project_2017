@@ -104,7 +104,7 @@ public final class ClientConversation {
   }
 
 
-  // Delete conversation, (c-del command?). TODO
+  // Delete conversation, (c-del command?)
   public void deleteConversation() {
     //delete all messages within a conversation
     if(currentConversation == null) {
@@ -132,22 +132,12 @@ public final class ClientConversation {
     /*
     if (currentConversation == null) {
       System.out.format("Error: conversation not deleted, - %s.\n", "no current conversation");
-    } else {
-      if(view.getAllConversations().contains(currentConversation.summary)) {
-        view.getAllConversations().remove(currentConversation.summary);
-      }
-      if (summariesByUuid.containsKey(currentConversation.id)) {
-        summariesByUuid.remove(currentConversation.id);
+    } else if () {
+      //TODO:Laura
+    }
 
-        if (summariesSortedByTitle.contains(currentConversation.title)) {
-          summariesSortedByTitle.delete(currentConversation.title);
-        }
-      }
-        messageContext.resetCurrent(true);
-        setCurrent(null);
-        updateAllConversations(true);
+  }
 
-    }*/
 
   public void setCurrent(ConversationSummary conv) { currentSummary = conv; }
 
