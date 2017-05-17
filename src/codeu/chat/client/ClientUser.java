@@ -37,7 +37,7 @@ public final class ClientUser {
   private final Map<Uuid, User> usersById = new HashMap<>();
 
   // This is the set of users known to the server, sorted by name.
-  private Store<String, User> usersByName = new Store<>(String.CASE_INSENSITIVE_ORDER);
+  private static Store<String, User> usersByName = new Store<>(String.CASE_INSENSITIVE_ORDER);
 
   public ClientUser(Controller controller, View view) {
     this.controller = controller;
@@ -45,13 +45,13 @@ public final class ClientUser {
   }
 
   // Validate the username string
-  static public boolean isValidName(String userName) {
+  static public boolean isValidName(String userName) { //Check for Duplicates
     boolean clean = true;
     if (userName.length() == 0) {
       clean = false;
     } else {
-
-      // TODO: check for invalid characters
+      //clean = usersByName.containsKey(userName)? false : true;
+      // TODO: check for invalid characters - User RegEx(String replacement)
 
     }
     return clean;
@@ -88,6 +88,9 @@ public final class ClientUser {
     printUser(current);
   }
 
+
+//Adding a User
+//Set it up so that it works if an alias is entered!
   public void addUser(String name) {
     final boolean validInputs = isValidName(name);
 
@@ -101,6 +104,34 @@ public final class ClientUser {
       updateUsers();
     }
   }
+
+
+  //Adding a User with a nickName
+  public void addUser(String name, String nickName) {
+    final boolean validInputs = isValidName(name);
+
+    final User user = (validInputs) ? controller.newUser(name) : null;
+
+    if (user == null) {
+      System.out.format("Error: user not created - %s.\n",
+          (validInputs) ? "server failure" : "bad input value");
+    } else {
+      LOG.info("New user complete, Name= \"%s\" UUID=%s", user.name, user.id);
+      user.alias = nickName;
+      updateUsers();
+    }
+  }
+  
+  //Deleting a User
+  public void deleteUser(String name){
+    if(usersByName.containsValue(name)){
+      User userObject = usersByName.first(name);
+      for(Map.Entry<Uuid, User> entry: usersById.entrySet()){
+        Uuid id = entry.getKey();
+        User user = entry.getValue();
+        if(user.name == userObject.name){
+          usersById.remove(id);
+          usersByName.remove(userObject.name);
 
   public void showAllUsers() {
     updateUsers();
@@ -123,6 +154,31 @@ public final class ClientUser {
     }
   }
 
+//Set it up so that it works for any user not just current user
+
+  public String getAlias(String name){
+    try{
+      final User user = usersByName.first(name);
+      return user.alias;
+    } catch(Exception ex){
+        return "No Such User Exists!";
+  }
+}
+
+//Set it up so that it works for any user not just current user
+  public void setAlias(String nickname, String uName){
+    try{
+      final User user = usersByName.first(uName);
+      if (user != null){
+        user.alias = nickname;
+        LOG.info("New user alias complete, Name= \"%s\" UUID=%s Alias = %s", user.name, user.id, user.alias);
+      }
+    } catch(Exception ex){
+        System.out.println("No Such User Exists!");
+
+    }
+  }
+
   public Iterable<User> getUsers() {
     return usersByName.all();
   }
@@ -137,9 +193,20 @@ public final class ClientUser {
     }
   }
 
+ public void updateUsers(Collection<Uuid> deletion) {
+    usersById.clear();
+    usersByName = new Store<>(String.CASE_INSENSITIVE_ORDER);
+
+    for (final User user : view.getUsersExcluding(deletion)) {
+      usersById.put(user.id, user);
+      usersByName.insert(user.name, user);
+    }
+  }
+
+
   public static String getUserInfoString(User user) {
     return (user == null) ? "Null user" :
-        String.format(" User: %s\n   Id: %s\n   created: %s\n", user.name, user.id, user.creation);
+        String.format(" User: %s\n   Id: %s\n Created: %s\n Alias: %s\n", user.name, user.id, user.creation, user.alias);
   }
 
   public String showUserInfo(String uname) {

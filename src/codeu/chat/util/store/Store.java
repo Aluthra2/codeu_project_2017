@@ -73,6 +73,14 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
     return link == null ? null : link.value;
   }
 
+  public void remove(KEY key){
+    index.remove(key);
+  }
+
+  public boolean containsValue(KEY key){
+    return index.containsValue(key);
+  }
+
   @Override
   public Iterable<VALUE> all() {
     return new LinkIterable<KEY, VALUE>(comparator, first(), last());
@@ -96,6 +104,16 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
   @Override
   public Iterable<VALUE> range(KEY start, KEY end) {
     return new LinkIterable<KEY, VALUE>(comparator, ceiling(start), floor(end));
+  }
+
+  @Override
+  public void delete(KEY key) {
+    index.remove(key);
+  }
+
+  @Override
+  public boolean contains(KEY key) {
+    return index.containsKey(key);
   }
 
   private StoreLink<KEY, VALUE> first() {

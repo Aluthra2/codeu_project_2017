@@ -30,6 +30,12 @@ public interface RawController {
   // in use, the call will fail and null will be returned.
   Message newMessage(Uuid id, Uuid author, Uuid conversation, String body, Time creationTime);
 
+
+  // DELETE MESSAGE
+  //
+  // Delete a message from the model with a specific id.
+  boolean deleteMessage(Uuid msg, Uuid conversation);
+
   // NEW USER
   //
   // Add a new user to the model with a specific id. If the id is already in

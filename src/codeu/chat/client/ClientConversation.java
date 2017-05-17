@@ -103,6 +103,42 @@ public final class ClientConversation {
     }
   }
 
+
+  // Delete conversation, (c-del command?)
+  public void deleteConversation() {
+    //delete all messages within a conversation
+    if(currentConversation == null) {
+      System.out.format("Error: conversation not deleted, - %s.\n", "no current conversation");
+    } else {
+        messageContext.deleteAllMessages();
+      if(view.getAllConversations().contains(currentConversation.summary)) {
+        view.getAllConversations().remove(currentConversation.summary);
+      }
+      if (summariesByUuid.containsKey(currentConversation.id)) {
+        summariesByUuid.remove(currentConversation.id);
+
+        if (summariesSortedByTitle.contains(currentConversation.title)) {
+          summariesSortedByTitle.delete(currentConversation.title);
+        }
+      }
+      }
+    }
+  
+  //TODO: Remove Unused Code.
+    //delete this conversation
+    //   remove it from where it is being kept track of
+    //   set current conversation to null
+
+    /*
+    if (currentConversation == null) {
+      System.out.format("Error: conversation not deleted, - %s.\n", "no current conversation");
+    } else if () {
+      //TODO:Laura
+    }
+
+  }
+
+
   public void setCurrent(ConversationSummary conv) { currentSummary = conv; }
 
   public void showAllConversations() {

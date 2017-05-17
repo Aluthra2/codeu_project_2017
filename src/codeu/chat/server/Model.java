@@ -21,12 +21,20 @@ import codeu.chat.common.ConversationSummary;
 import codeu.chat.common.LinearUuidGenerator;
 import codeu.chat.common.Message;
 import codeu.chat.common.User;
+<<<<<<< HEAD
 import codeu.chat.util.Time;
 import codeu.chat.util.Uuid;
+=======
+import codeu.chat.common.Uuid;
+import codeu.chat.util.Logger;
+>>>>>>> d99fe339a0334049b04c67cabb37cc5c545f70a3
 import codeu.chat.util.store.Store;
 import codeu.chat.util.store.StoreAccessor;
 
 public final class Model {
+
+  private final static Logger.Log LOG = Logger.newLog(Controller.class);
+
 
   private static final Comparator<Uuid> UUID_COMPARE = new Comparator<Uuid>() {
 
@@ -98,6 +106,20 @@ public final class Model {
     conversationByText.insert(conversation.title, conversation);
   }
 
+  public void delete(Conversation conversation) {
+    if(conversationById.contains(conversation.id)) {
+      conversationById.delete(conversation.id);
+    }
+
+    if(conversationByTime.contains(conversation.creation)) {
+      conversationByTime.delete(conversation.creation);
+    }
+
+    if(conversationByText.contains(conversation.title)) {
+      conversationByText.delete(conversation.title);
+    }
+  }
+
   public StoreAccessor<Uuid, Conversation> conversationById() {
     return conversationById;
   }
@@ -115,6 +137,28 @@ public final class Model {
     messageByTime.insert(message.creation, message);
     messageByText.insert(message.content, message);
   }
+
+  public void delete(Message message) {
+    LOG.info("Entered Server/Model.delete()");
+    if(messageById.contains(message.id)) {
+      messageById.delete(message.id);
+      LOG.info("Within Server/Model.delete(), deleted from messageById");
+
+    }
+
+    if(messageByTime.contains(message.creation)) {
+      messageByTime.delete(message.creation);
+      LOG.info("Within Server/Model.delete(), deleted from messageByTime");
+
+    }
+
+    if(messageByText.contains(message.content)) {
+      messageByText.delete(message.content);
+      LOG.info("Within Server/Model.delete(), deleted from messageByText");
+
+    }
+  }
+
 
   public StoreAccessor<Uuid, Message> messageById() {
     return messageById;
