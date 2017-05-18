@@ -14,20 +14,13 @@
 
 package codeu.chat.client;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.common.Message;
-=======
-import java.util.*;
-
-import codeu.chat.common.*;
->>>>>>> d99fe339a0334049b04c67cabb37cc5c545f70a3
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
 import codeu.chat.util.Uuid;

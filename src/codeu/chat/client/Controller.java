@@ -73,8 +73,8 @@ public class Controller implements BasicController {
     try (final Connection connection = source.connect()) {
 
       Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_MESSAGE_REQUEST);
-      Uuids.SERIALIZER.write(connection.out(), msg);
-      Uuids.SERIALIZER.write(connection.out(), conversation);
+      Uuid.SERIALIZER.write(connection.out(), msg);
+      Uuid.SERIALIZER.write(connection.out(), conversation);
 
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_MESSAGE_RESPONSE) {
         succeeded = true;

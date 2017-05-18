@@ -22,7 +22,7 @@ import codeu.chat.client.View;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.util.Logger;
 import codeu.chat.client.ClientUser;
-import codeu.chat.common.Uuid;
+import codeu.chat.util.Uuid;
 
 // Chat - top-level client application.
 public final class Chat {

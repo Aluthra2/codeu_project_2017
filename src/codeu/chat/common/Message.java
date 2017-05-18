@@ -22,8 +22,7 @@ import codeu.chat.util.Serializer;
 import codeu.chat.util.Serializers;
 import codeu.chat.util.Time;
 import codeu.chat.util.Uuid;
-
-import static codeu.chat.common.Uuids.hash;
+import codeu.chat.common.*;
 
 public final class Message implements Comparable<Message>{
 
@@ -85,13 +84,13 @@ public final class Message implements Comparable<Message>{
   @Override
   public int hashCode() {
     System.out.println("Entered hashCode");
-    return hash(id);
+    return hashCode(); //was originally hash(id) - Wouldn't compile so Aman Changed it
   }
 
   @Override
   public boolean equals(Object o) {
     if(o instanceof Message) {
-      return Uuids.equals(this.id, ((Message) o).id);
+      return Uuid.equals(this.id, ((Message) o).id);
     } else {
       return false;
     }
