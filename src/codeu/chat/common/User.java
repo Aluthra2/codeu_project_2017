@@ -67,8 +67,7 @@ public final class User {
     this.id = id;
     this.name = name;
     this.creation = creation;
-    this.alias = "NULL";
-
+    this.alias = "Not Entered";
   }
 
 }

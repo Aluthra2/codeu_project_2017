@@ -241,6 +241,13 @@ public final class Server {
       Serializers.INTEGER.write(out, NetworkCode.GET_MESSAGES_BY_RANGE_RESPONSE);
       Serializers.collection(Message.SERIALIZER).write(out, messages);
 
+    } else if (type == NetworkCode.DELETE_USER_REQUEST) {
+        final String name = Serializers.STRING.read(in);
+        final User user = controller.deleteUser(name);
+
+        Serializers.INTEGER.write(out, NetworkCode.DELETE_USER_RESPONSE);
+        Serializers.nullable(User.SERIALIZER).write(out, user);
+
     } else if (type == NetworkCode.DELETE_MESSAGE_REQUEST) {
 
       final Uuid msg = Uuid.SERIALIZER.read(in);

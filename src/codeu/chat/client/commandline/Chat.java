@@ -116,18 +116,17 @@ public final class Chat {
     } else if (token.equals("u-add")) {
 
       String userName = "";
-      String nickName = "NULL";
 
-      if (!tokenScanner.hasNext()) {
+     if (!tokenScanner.hasNext()) {
         System.out.println("ERROR: Username not supplied.");
       } else {
         userName = tokenScanner.next();
-      }
-      if (!tokenScanner.hasNext()) {
-        addUser(userName);
-      } else {
-        nickName = tokenScanner.next();
-        addUser(userName, nickName);
+          if (!tokenScanner.hasNext()) {
+            addUser(userName);
+          } else {
+            String nickName = tokenScanner.next(); //Problem Line - Won't detect Alias When Entered
+            addUser(userName, nickName);
+          }
       }
 
     } else if (token.equals("u-delete")){
