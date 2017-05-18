@@ -1,0 +1,8 @@
+Aman's Work:
+-getAlias() method works - returns the nickname of the user
+-deletUser() method works and server code is fully implemented
+Problems:
+	-Nicknames won't work
+		-I need more help on this becasue I have no clue why it won't work
+Still Need to implement:
+-Duplicate Users - Probably will have it return an error if the username is already taken-Can be done fairly quickly
