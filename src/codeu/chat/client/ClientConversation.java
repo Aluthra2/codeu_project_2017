@@ -20,9 +20,9 @@ import java.util.Map;
 
 import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
-import codeu.chat.common.Uuid;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
+import codeu.chat.util.Uuid;
 import codeu.chat.util.store.Store;
 
 public final class ClientConversation {
@@ -104,7 +104,7 @@ public final class ClientConversation {
   }
 
 
-  // Delete conversation, (c-del command?). TODO
+  // Delete conversation, (c-del command?)
   public void deleteConversation() {
     //delete all messages within a conversation
     if(currentConversation == null) {
@@ -123,6 +123,8 @@ public final class ClientConversation {
       }
       }
     }
+
+  //TODO: Remove Unused Code.
     //delete this conversation
     //   remove it from where it is being kept track of
     //   set current conversation to null
@@ -130,23 +132,13 @@ public final class ClientConversation {
     /*
     if (currentConversation == null) {
       System.out.format("Error: conversation not deleted, - %s.\n", "no current conversation");
-    } else {
-      if(view.getAllConversations().contains(currentConversation.summary)) {
-        view.getAllConversations().remove(currentConversation.summary);
-      }
-      if (summariesByUuid.containsKey(currentConversation.id)) {
-        summariesByUuid.remove(currentConversation.id);
+    } else if () {
+      //TODO:Laura
+    }
 
-        if (summariesSortedByTitle.contains(currentConversation.title)) {
-          summariesSortedByTitle.delete(currentConversation.title);
-        }
-      }
-        messageContext.resetCurrent(true);
-        setCurrent(null);
-        updateAllConversations(true);
+  }
 
-    }*/
-
+  */
   public void setCurrent(ConversationSummary conv) { currentSummary = conv; }
 
   public void showAllConversations() {

@@ -20,9 +20,10 @@ import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.common.LinearUuidGenerator;
 import codeu.chat.common.Message;
-import codeu.chat.common.Time;
 import codeu.chat.common.User;
-import codeu.chat.common.Uuid;
+import codeu.chat.util.Time;
+import codeu.chat.util.Uuid;
+import codeu.chat.util.Logger;
 import codeu.chat.util.store.Store;
 import codeu.chat.util.store.StoreAccessor;
 import java.util.Map;
@@ -30,6 +31,9 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 public final class Model {
+
+  private final static Logger.Log LOG = Logger.newLog(Controller.class);
+
 
   private static final Comparator<Uuid> UUID_COMPARE = new Comparator<Uuid>() {
 
@@ -81,6 +85,12 @@ public final class Model {
     userByText.insert(user.name, user);
   }
 
+  public void remove(User user){
+    userById.remove(user.id);
+    userByTime.remove(user.creation);
+    userByText.remove(user.name);
+  }
+
   public StoreAccessor<Uuid, User> userById() {
     return userById;
   }
@@ -101,6 +111,20 @@ public final class Model {
     conversationById.insert(conversation.id, conversation);
     conversationByTime.insert(conversation.creation, conversation);
     conversationByText.insert(conversation.title, conversation);
+  }
+
+  public void delete(Conversation conversation) {
+    if(conversationById.contains(conversation.id)) {
+      conversationById.delete(conversation.id);
+    }
+
+    if(conversationByTime.contains(conversation.creation)) {
+      conversationByTime.delete(conversation.creation);
+    }
+
+    if(conversationByText.contains(conversation.title)) {
+      conversationByText.delete(conversation.title);
+    }
   }
 
   public StoreAccessor<Uuid, Conversation> conversationById() {
@@ -130,6 +154,28 @@ public final class Model {
 	}
 
   }
+
+  public void delete(Message message) {
+    LOG.info("Entered Server/Model.delete()");
+    if(messageById.contains(message.id)) {
+      messageById.delete(message.id);
+      LOG.info("Within Server/Model.delete(), deleted from messageById");
+
+    }
+
+    if(messageByTime.contains(message.creation)) {
+      messageByTime.delete(message.creation);
+      LOG.info("Within Server/Model.delete(), deleted from messageByTime");
+
+    }
+
+    if(messageByText.contains(message.content)) {
+      messageByText.delete(message.content);
+      LOG.info("Within Server/Model.delete(), deleted from messageByText");
+
+    }
+  }
+
 
   public StoreAccessor<Uuid, Message> messageById() {
     return messageById;
