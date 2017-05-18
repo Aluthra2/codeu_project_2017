@@ -158,13 +158,13 @@ public final class ClientUser {
     }
   }
 
-//Set it up so that it works for any user not just current user
-
   public String getAlias(String name){
     try{
       final User user = usersByName.first(name);
+      System.out.println(user.alias);
       return user.alias;
     } catch(Exception ex){
+      System.out.println("No Such User Exists!");
         return "No Such User Exists!";
   }
 }
@@ -179,7 +179,6 @@ public final class ClientUser {
       }
     } catch(Exception ex){
         System.out.println("No Such User Exists!");
-
     }
   }
 
