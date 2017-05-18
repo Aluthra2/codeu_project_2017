@@ -98,7 +98,7 @@ public final class Chat {
       if (!tokenScanner.hasNext()) {
         System.out.println("ERROR: No user name supplied.");
       } else {
-        signInUser(tokenScanner.nextLine().trim());
+        signInUser(tokenScanner.next());
       }
 
     } else if (token.equals("sign-out")) {
@@ -116,25 +116,24 @@ public final class Chat {
     } else if (token.equals("u-add")) {
 
       String userName = "";
-      String nickName = "NULL";
 
-      if (!tokenScanner.hasNext()) {
+     if (!tokenScanner.hasNext()) {
         System.out.println("ERROR: Username not supplied.");
       } else {
-        userName = tokenScanner.nextLine().trim();
-      }
-      if (!tokenScanner.hasNext()) {
-        addUser(userName);
-      } else {
-        nickName = tokenScanner.next();
-        addUser(userName, nickName);
+        userName = tokenScanner.next();
+          if (!tokenScanner.hasNext()) {
+            addUser(userName);
+          } else {
+            String nickName = tokenScanner.next(); //Problem Line - Won't detect Alias When Entered
+            addUser(userName, nickName);
+          }
       }
 
     } else if (token.equals("u-delete")){
       if(!tokenScanner.hasNext()){
         System.out.println("ERROR: Username not supplied.");
       } else {
-        deleteUser(tokenScanner.nextLine().trim());
+        deleteUser(tokenScanner.next());
       }
 
     } else if (token.equals("u-set")){
@@ -361,8 +360,8 @@ public final class Chat {
   }
 
   //Get Alias of user
-  private String getAlias(String name) {
-    return clientContext.user.getAlias(name);
+  private void getAlias(String name) {
+    clientContext.user.getAlias(name);
   }
 
   //Set Alias of a user

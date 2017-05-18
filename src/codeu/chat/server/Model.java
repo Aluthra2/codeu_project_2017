@@ -80,6 +80,12 @@ public final class Model {
     userByText.insert(user.name, user);
   }
 
+  public void remove(User user){
+    userById.remove(user.id);
+    userByTime.remove(user.creation);
+    userByText.remove(user.name);
+  }
+
   public StoreAccessor<Uuid, User> userById() {
     return userById;
   }
