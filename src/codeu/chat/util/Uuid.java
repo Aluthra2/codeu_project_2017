@@ -186,7 +186,13 @@ public final class Uuid {
     return parse(null, string.split("\\."), 0);
   }
 
+<<<<<<< HEAD:src/codeu/chat/common/Uuids.java
+  public static Uuid fromInteger(int integer) { return fromString(Integer.toString(integer)); }
+
+  private static Uuid fromString(final Uuid root, String[] tokens, int index) {
+=======
   private static Uuid parse(final Uuid root, String[] tokens, int index) throws IOException {
+>>>>>>> Project_Review:src/codeu/chat/util/Uuid.java
 
     final long id = Long.parseLong(tokens[index]);
 

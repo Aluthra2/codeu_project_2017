@@ -13,7 +13,6 @@
 // limitations under the License.
 
 package codeu.chat.client;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread;
@@ -30,8 +29,6 @@ import codeu.chat.util.connections.Connection;
 import codeu.chat.util.connections.ConnectionSource;
 import java.util.Collection;
 import java.util.ArrayList;
-
-import javax.annotation.Resource;
 
 public class Controller implements BasicController {
 
@@ -70,7 +67,7 @@ public class Controller implements BasicController {
 
   @Override
   public boolean deleteMessage(Uuid msg, Uuid conversation) {
-    boolean succeeded = false;
+    boolean success = false;
 
     try (final Connection connection = source.connect()) {
 
@@ -78,8 +75,9 @@ public class Controller implements BasicController {
       Uuid.SERIALIZER.write(connection.out(), msg);
       Uuid.SERIALIZER.write(connection.out(), conversation);
 
+
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_MESSAGE_RESPONSE) {
-        succeeded = true;
+        success = true;
       } else {
         LOG.error("Response from server failed.");
       }
@@ -87,7 +85,7 @@ public class Controller implements BasicController {
       LOG.error(ex, "Exception during call on server.");
     }
 
-    return succeeded;
+    return success;
   }
 
   @Override
