@@ -20,9 +20,9 @@ import java.util.Map;
 
 import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
-import codeu.chat.common.Uuid;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
+import codeu.chat.util.Uuid;
 import codeu.chat.util.store.Store;
 
 public final class ClientConversation {
@@ -123,7 +123,7 @@ public final class ClientConversation {
       }
       }
     }
-  
+
   //TODO: Remove Unused Code.
     //delete this conversation
     //   remove it from where it is being kept track of
@@ -138,7 +138,7 @@ public final class ClientConversation {
 
   }
 
-
+  */
   public void setCurrent(ConversationSummary conv) { currentSummary = conv; }
 
   public void showAllConversations() {

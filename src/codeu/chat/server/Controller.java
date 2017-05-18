@@ -23,12 +23,12 @@ import java.util.UUID;
 import codeu.chat.common.BasicController;
 import codeu.chat.common.Conversation;
 import codeu.chat.common.Message;
+import codeu.chat.common.RandomUuidGenerator;
 import codeu.chat.common.RawController;
-import codeu.chat.common.Time;
 import codeu.chat.common.User;
-import codeu.chat.common.Uuid;
-import codeu.chat.common.Uuids;
 import codeu.chat.util.Logger;
+import codeu.chat.util.Time;
+import codeu.chat.util.Uuid;
 
 public final class Controller implements RawController, BasicController {
 
@@ -67,14 +67,14 @@ public final class Controller implements RawController, BasicController {
 
     if (foundUser != null && foundConversation != null && isIdFree(id)) {
 
-      message = new Message(id, Uuids.NULL, Uuids.NULL, creationTime, author, body);
+      message = new Message(id, Uuid.NULL, Uuid.NULL, creationTime, author, body);
       model.add(message);
       LOG.info("Message added: %s", message.id);
 
       // Find and update the previous "last" message so that it's "next" value
       // will point to the new message.
 
-      if (Uuids.equals(foundConversation.lastMessage, Uuids.NULL)) {
+      if (Uuid.equals(foundConversation.lastMessage, Uuid.NULL)) {
 
         // The conversation has no messages in it, that's why the last message is NULL (the first
         // message should be NULL too. Since there is no last message, then it is not possible
@@ -90,7 +90,7 @@ public final class Controller implements RawController, BasicController {
       // not change.
 
       foundConversation.firstMessage =
-              Uuids.equals(foundConversation.firstMessage, Uuids.NULL) ?
+              Uuid.equals(foundConversation.firstMessage, Uuid.NULL) ?
                       message.id :
                       foundConversation.firstMessage;
 
@@ -126,23 +126,23 @@ public final class Controller implements RawController, BasicController {
 
       LOG.info("foundConversation.lastMessage: " + foundConversation.lastMessage);
       LOG.info("msg: " + msg);
-      LOG.info("Uuids.equals(foundConversation.lastMessage, msg): " + Uuids.equals(foundConversation.lastMessage, msg));
+      LOG.info("Uuids.equals(foundConversation.lastMessage, msg): " + Uuid.equals(foundConversation.lastMessage, msg));
 
       LOG.info("foundConversation.firstMessage: " + foundConversation.firstMessage);
       LOG.info("msg: " + msg);
-      LOG.info("Uuids.equals(foundConversation.firstMessage, msg): " + Uuids.equals(foundConversation.firstMessage, msg));
+      LOG.info("Uuids.equals(foundConversation.firstMessage, msg): " + Uuid.equals(foundConversation.firstMessage, msg));
 
-      if (Uuids.equals(foundConversation.lastMessage, msg)) {
+      if (Uuid.equals(foundConversation.lastMessage, msg)) {
 
         // The deleted message was the last one, change the previous message's next field to NULL
         LOG.info("Entered if-branch where Uuids.equals(foundConversation.lastMessage, msg) is TRUE");
 
-        if (Uuids.equals(foundConversation.firstMessage, msg)) {
+        if (Uuid.equals(foundConversation.firstMessage, msg)) {
           LOG.info("Within if-branch that means there was only one message in the conversation");
           // If the deleted message was the last one, and it's previous field was NULL
           // the deleted message was the only message in the conversation
 
-          foundConversation.lastMessage = Uuids.NULL;
+          foundConversation.lastMessage = Uuid.NULL;
           model.delete(foundMessage);
           LOG.info("Message deleted: %s", msg);
 
@@ -168,9 +168,9 @@ public final class Controller implements RawController, BasicController {
 
         }
 
-      } else if (Uuids.equals(foundConversation.firstMessage, msg)) {
+      } else if (Uuid.equals(foundConversation.firstMessage, msg)) {
         LOG.info("Within if-branch that means the deleted message was the first one, and not the only one");
-        System.out.println("Null?: foundMessage.next" + Uuids.equals(foundMessage.next, Uuids.NULL));
+        System.out.println("Null?: foundMessage.next" + Uuid.equals(foundMessage.next, Uuid.NULL));
 
         foundConversation.firstMessage = foundMessage.next;
         model.delete(foundMessage);

@@ -20,10 +20,9 @@ import java.io.OutputStream;
 
 import codeu.chat.util.Serializer;
 import codeu.chat.util.Serializers;
-import codeu.chat.common.Uuid;
-import codeu.chat.common.Uuids;
-
-import static codeu.chat.common.Uuids.hash;
+import codeu.chat.util.Time;
+import codeu.chat.util.Uuid;
+import codeu.chat.common.*;
 
 public final class Message implements Comparable<Message>{
 
@@ -32,11 +31,11 @@ public final class Message implements Comparable<Message>{
     @Override
     public void write(OutputStream out, Message value) throws IOException {
 
-      Uuids.SERIALIZER.write(out, value.id);
-      Uuids.SERIALIZER.write(out, value.next);
-      Uuids.SERIALIZER.write(out, value.previous);
+      Uuid.SERIALIZER.write(out, value.id);
+      Uuid.SERIALIZER.write(out, value.next);
+      Uuid.SERIALIZER.write(out, value.previous);
       Time.SERIALIZER.write(out, value.creation);
-      Uuids.SERIALIZER.write(out, value.author);
+      Uuid.SERIALIZER.write(out, value.author);
       Serializers.STRING.write(out, value.content);
 
     }
@@ -45,11 +44,11 @@ public final class Message implements Comparable<Message>{
     public Message read(InputStream in) throws IOException {
 
       return new Message(
-          Uuids.SERIALIZER.read(in),
-          Uuids.SERIALIZER.read(in),
-          Uuids.SERIALIZER.read(in),
+          Uuid.SERIALIZER.read(in),
+          Uuid.SERIALIZER.read(in),
+          Uuid.SERIALIZER.read(in),
           Time.SERIALIZER.read(in),
-          Uuids.SERIALIZER.read(in),
+          Uuid.SERIALIZER.read(in),
           Serializers.STRING.read(in)
       );
 
@@ -85,13 +84,13 @@ public final class Message implements Comparable<Message>{
   @Override
   public int hashCode() {
     System.out.println("Entered hashCode");
-    return hash(id);
+    return hashCode(); //was originally hash(id) - Wouldn't compile so Aman Changed it
   }
 
   @Override
   public boolean equals(Object o) {
     if(o instanceof Message) {
-      return Uuids.equals(this.id, ((Message) o).id);
+      return Uuid.equals(this.id, ((Message) o).id);
     } else {
       return false;
     }
