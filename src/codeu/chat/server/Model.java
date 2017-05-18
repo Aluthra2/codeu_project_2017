@@ -21,13 +21,9 @@ import codeu.chat.common.ConversationSummary;
 import codeu.chat.common.LinearUuidGenerator;
 import codeu.chat.common.Message;
 import codeu.chat.common.User;
-<<<<<<< HEAD
 import codeu.chat.util.Time;
 import codeu.chat.util.Uuid;
-=======
-import codeu.chat.common.Uuid;
 import codeu.chat.util.Logger;
->>>>>>> d99fe339a0334049b04c67cabb37cc5c545f70a3
 import codeu.chat.util.store.Store;
 import codeu.chat.util.store.StoreAccessor;
 

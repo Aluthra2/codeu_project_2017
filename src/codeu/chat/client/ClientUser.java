@@ -121,7 +121,7 @@ public final class ClientUser {
       updateUsers();
     }
   }
-  
+
   //Deleting a User
   public void deleteUser(String name){
     if(usersByName.containsValue(name)){
@@ -132,6 +132,10 @@ public final class ClientUser {
         if(user.name == userObject.name){
           usersById.remove(id);
           usersByName.remove(userObject.name);
+        }
+      }
+    }
+  }
 
   public void showAllUsers() {
     updateUsers();

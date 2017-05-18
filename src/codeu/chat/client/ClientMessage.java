@@ -14,20 +14,13 @@
 
 package codeu.chat.client;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.common.Message;
-=======
-import java.util.*;
-
-import codeu.chat.common.*;
->>>>>>> d99fe339a0334049b04c67cabb37cc5c545f70a3
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
 import codeu.chat.util.Uuid;
@@ -157,27 +150,7 @@ public final class ClientMessage {
     System.out.println("delete message called on index" + index);
     int msgIndex = Integer.valueOf(index);
     System.out.println("size of conversationContents: " + conversationContents.size());
-    } 
-  }
-
-  public void deleteMessage(Message msg) { //TODO: Use an ordered hash map for linear time. https://github.com/google/guava
-    if(conversationContents.contains(msg)) {
-      conversationContents.remove(msg);
-    } else {
-      System.out.println("Error: message not found.");
-
-    if(msgIndex < conversationContents.size()) {
-
-      Message msg = conversationContents.get(msgIndex);
-      System.out.println("Value of msg " + Uuids.toString(conversationContents.get(msgIndex).id));
-
-      deleteMessage(msg);
-    } else {
-      System.out.println("Message not erased, please enter a valid index.");
-      LOG.error(" Error: message not found, please enter a valid index.");
     }
-  }
-
 
   // Delete message helper method
   public void deleteMessage(Message msg) {

@@ -243,8 +243,8 @@ public final class Server {
 
     } else if (type == NetworkCode.DELETE_MESSAGE_REQUEST) {
 
-      final Uuid msg = Uuids.SERIALIZER.read(in);
-      final Uuid conversation = Uuids.SERIALIZER.read(in);
+      final Uuid msg = Uuid.SERIALIZER.read(in);
+      final Uuid conversation = Uuid.SERIALIZER.read(in);
 
       final boolean succeeded = controller.deleteMessage(msg, conversation);
 
