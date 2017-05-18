@@ -14,7 +14,7 @@
 
 
 package codeu.chat.server;
-
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,7 +22,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
-
 import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.common.LinearUuidGenerator;
@@ -153,6 +152,14 @@ public final class Server {
       Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_RESPONSE);
       Serializers.nullable(Conversation.SERIALIZER).write(out, conversation);
 
+      } else if (type == NetworkCode.SEARCHREQUEST){
+
+        final String authorID = Serializers.STRING.read(in);
+	ArrayList<Message> mes = controller.searchByUserID(authorID);
+	Serializers.INTEGER.write(out, NetworkCode.SEARCHRESPONSE);
+	Serializers.collection(Message.SERIALIZER).write(out, mes);
+
+
     } else if (type == NetworkCode.GET_USERS_BY_ID_REQUEST) {
 
       final Collection<Uuid> ids = Serializers.collection(Uuid.SERIALIZER).read(in);
@@ -240,6 +247,13 @@ public final class Server {
 
       Serializers.INTEGER.write(out, NetworkCode.GET_MESSAGES_BY_RANGE_RESPONSE);
       Serializers.collection(Message.SERIALIZER).write(out, messages);
+
+    } else if (type == NetworkCode.DELETE_USER_REQUEST) {
+        final String name = Serializers.STRING.read(in);
+        final User user = controller.deleteUser(name);
+
+        Serializers.INTEGER.write(out, NetworkCode.DELETE_USER_RESPONSE);
+        Serializers.nullable(User.SERIALIZER).write(out, user);
 
     } else if (type == NetworkCode.DELETE_MESSAGE_REQUEST) {
 

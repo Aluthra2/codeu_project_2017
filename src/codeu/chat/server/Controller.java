@@ -14,18 +14,25 @@
 
 package codeu.chat.server;
 
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
 
+<<<<<<< HEAD
+import codeu.chat.common.*;
+=======
 import codeu.chat.common.BasicController;
 import codeu.chat.common.Conversation;
 import codeu.chat.common.Message;
 import codeu.chat.common.RandomUuidGenerator;
 import codeu.chat.common.RawController;
 import codeu.chat.common.User;
+>>>>>>> Project_Review
 import codeu.chat.util.Logger;
 import codeu.chat.util.Time;
 import codeu.chat.util.Uuid;
@@ -33,6 +40,8 @@ import codeu.chat.util.Uuid;
 public final class Controller implements RawController, BasicController {
 
   private final static Logger.Log LOG = Logger.newLog(Controller.class);
+
+  private Map<String, User> userNames = new HashMap<>();
 
   private final Model model;
   private final Uuid.Generator uuidGenerator;
@@ -53,9 +62,21 @@ public final class Controller implements RawController, BasicController {
   }
 
   @Override
+  public User deleteUser(String name){
+    return deleteUser(name, Time.now());
+  }
+
+  @Override
   public Conversation newConversation(String title, Uuid owner) {
     return newConversation(createId(), title, owner, Time.now());
   }
+
+
+  public ArrayList<Message> searchByUserID(String authorID){
+            ArrayList<Message> messages = model.messageByUserID.get(authorID);
+	    return messages;
+
+   }
 
   @Override
   public Message newMessage(Uuid id, Uuid author, Uuid conversation, String body, Time creationTime) {
@@ -109,21 +130,28 @@ public final class Controller implements RawController, BasicController {
   @Override
   public boolean deleteMessage(Uuid msg, Uuid conversation) {
     final Message foundMessage = model.messageById().first(msg);
-    final User foundUser = model.userById().first(foundMessage.author);
     final Conversation foundConversation = model.conversationById().first(conversation);
-    Message previous = null;
+    final User foundUser = model.userById().first(foundMessage.author);
+
+    Iterator<Message> iteratorBefore;
+    Iterator<Message> iteratorAfter;
 
     boolean success = true;
 
-    LOG.info("foundUser != null: " + Boolean.toString(foundUser != null));
-    LOG.info("foundConversation != null: " + Boolean.toString(foundConversation != null));
-    LOG.info("foundMessage != null: " + Boolean.toString(foundMessage != null));
+<<<<<<< HEAD
 
+    if (foundMessage != null && foundUser != null && foundConversation != null) {
+      model.delete(foundMessage);
 
-    if (foundUser != null && foundConversation != null && foundMessage != null) {
-      // Find and update the previous "last" message so that it's "next" value
-      // will point to either null or the deleted message's next.
+      if (Uuids.equals(foundConversation.lastMessage, msg)) {
+        // This message was the conversation's last one
 
+        if (Uuids.equals(foundConversation.firstMessage, msg)) {
+          // This message was the conversation's only message now the conversation will have no
+          // messages in it, therefore the first and last message are NULL
+          foundConversation.firstMessage = Uuids.NULL;
+          foundConversation.lastMessage = Uuids.NULL;
+=======
       LOG.info("foundConversation.lastMessage: " + foundConversation.lastMessage);
       LOG.info("msg: " + msg);
       LOG.info("Uuids.equals(foundConversation.lastMessage, msg): " + Uuid.equals(foundConversation.lastMessage, msg));
@@ -145,54 +173,91 @@ public final class Controller implements RawController, BasicController {
           foundConversation.lastMessage = Uuid.NULL;
           model.delete(foundMessage);
           LOG.info("Message deleted: %s", msg);
+>>>>>>> Project_Review
 
-
-        } else {
-          LOG.info("Within if-branch where this message is the last one, but not the only one.");
-
-
-          // TODO: Finds the message that came before the deleted one, had to do it this way, as foundMessage's previous field is null?
-          Iterator<Message> iterator = model.messageByTime().before(foundMessage.creation).iterator();
-          Message secondPrev = null;
-
-          while (iterator.hasNext()) {
-            secondPrev = previous;
-            previous = iterator.next();
-
-          }
-          foundConversation.lastMessage = secondPrev.id;
-
-          model.delete(foundMessage);
           LOG.info("Message deleted: %s", msg);
 
+        } else {
+          // This message was the conversation's last message, but not the first one
+          // Update the last message value to penultimate message,
+          // and pointer of the penultimate message to null
+          iteratorBefore = model.messageByTime().before(foundMessage.creation).iterator();
+          final Message newLastMessage = findNewLastMessage(iteratorBefore);
+
+          newLastMessage.next = Uuids.NULL;
+          foundConversation.lastMessage = newLastMessage.id;
+
+          LOG.info("Message deleted: %s", msg);
 
         }
 
+<<<<<<< HEAD
+      } else {
+=======
       } else if (Uuid.equals(foundConversation.firstMessage, msg)) {
         LOG.info("Within if-branch that means the deleted message was the first one, and not the only one");
         System.out.println("Null?: foundMessage.next" + Uuid.equals(foundMessage.next, Uuid.NULL));
+>>>>>>> Project_Review
 
-        foundConversation.firstMessage = foundMessage.next;
-        model.delete(foundMessage);
-        LOG.info("Message deleted: %s", msg);
+        if (Uuids.equals(foundConversation.firstMessage, msg)) {
+          // This message was the first message in a conversation that has other messages
+          // Update the first message value to the second message,
+          // update the pointer of the second message
+          iteratorAfter = model.messageByTime().after(foundMessage.creation).iterator();
+          final Message newFirstMessage = findNewFirstMessage(iteratorAfter);
 
+          newFirstMessage.previous = Uuids.NULL;
+          foundConversation.firstMessage = newFirstMessage.id;
 
-      } else {
-        LOG.info("Within if-branch that means the deleted message was not the first one, and not the last one");
-        model.delete(foundMessage);
-        LOG.info("Message deleted: %s", msg);
+          LOG.info("Message deleted: %s", msg);
 
+        } else {
+          // This message was not the first, nor the last message and there are more messages
+          // Update the pointers
+          iteratorBefore = model.messageByTime().before(foundMessage.creation).iterator();
+          iteratorAfter = model.messageByTime().after(foundMessage.creation).iterator();
+          final Message newPrevMessage = findNewLastMessage(iteratorBefore);
+          final Message newNextMessage = findNewFirstMessage(iteratorAfter);
+
+          newNextMessage.previous = newPrevMessage.id;
+          newPrevMessage.next = newNextMessage.id;
+          LOG.info("Message deleted: %s", msg);
+
+        }
       }
 
     } else {
-      LOG.info("Within if-branch where one of the found fields (message, conversation, user) were null");
       success = false;
       LOG.info("Error: Message not deleted: %s", msg);
-
     }
 
     return success;
+  }
 
+  private Message findNewFirstMessage(Iterator<Message> iterator) {
+    // Given an iterator of all the messages that came after the message
+    // to be deleted, which was the first message in the conversation,
+    // this method finds and returns the second message in the conversation
+    Message first = null;
+
+    if(iterator.hasNext()) {
+      first = iterator.next();
+    }
+    return  first;
+  }
+
+  private Message findNewLastMessage(Iterator<Message> iterator) {
+    // Given an iterator of all the messages that came before the message
+    // to be deleted, which was the last message in the conversation,
+    // this method finds and returns the second-to-last message in the conversation
+    Message last = null;
+
+    while (iterator.hasNext()) {
+      last = iterator.next();
+
+    }
+
+    return last;
   }
 
   @Override
@@ -203,6 +268,7 @@ public final class Controller implements RawController, BasicController {
     if (isIdFree(id)) {
 
       user = new User(id, name, creationTime);
+      userNames.put(name,user);
       model.add(user);
 
       LOG.info(
@@ -220,6 +286,26 @@ public final class Controller implements RawController, BasicController {
               creationTime);
     }
 
+    return user;
+  }
+
+  @Override
+  public User deleteUser(String name, Time deletionTime){
+    User user = null;
+    if (userNames.containsKey(name)) {
+      user = userNames.get(name);
+      userNames.remove(name);
+      model.remove(user);
+      LOG.info(
+          "deleteUser success (user.id=%s user.name=%s user.time=%s)",
+          user.id,
+          user.name,
+          user.creation);
+    } else {
+      LOG.info(
+          "deleteUser failed - User not found (user.id=%s)",
+          name);
+    }
     return user;
   }
 

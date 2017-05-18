@@ -47,6 +47,11 @@ public interface BasicController {
   //   is undefined.
   User newUser(String name);
 
+  //DELETE USER
+  //
+  // Delete a user from the server
+  User deleteUser(String name);
+
   // NEW CONVERSATION
   //
   //  Create a new conversation on the server. All parameters must be
