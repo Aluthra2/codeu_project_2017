@@ -14,13 +14,24 @@
 
 package codeu.chat.client;
 
+<<<<<<< HEAD
 import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.common.Message;
 import codeu.chat.common.Uuid;
 import codeu.chat.common.Uuids;
+=======
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import codeu.chat.common.Conversation;
+import codeu.chat.common.ConversationSummary;
+import codeu.chat.common.Message;
+>>>>>>> Project_Review
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
+import codeu.chat.util.Uuid;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,6 +148,7 @@ public final class ClientMessage {
   // calls helper method
   public void deleteMessage(String index) { //TODO: Use an ordered hash map for linear time. https://github.com/google/guava
     int msgIndex = Integer.valueOf(index);
+<<<<<<< HEAD
     if (msgIndex == (currentMessageCount() - 1)) {
       // Message to be deleted is the last message in the conversation,
       // so m-del-last command is called
@@ -153,9 +165,10 @@ public final class ClientMessage {
 
         LOG.error(" Error: message not found, please enter a valid index.");
       }
+=======
+    System.out.println("size of conversationContents: " + conversationContents.size());
+>>>>>>> Project_Review
     }
-  }
-
 
   // Delete message helper method
   private void deleteMessage(Message msg) {
@@ -286,16 +299,20 @@ public final class ClientMessage {
       Uuid nextMessageId = getCurrentMessageFetchId(replaceAll);
 
       //  Stay in loop until all messages read (up to safety limit)
+<<<<<<< HEAD
 
       while (!nextMessageId.equals(Uuids.NULL) && conversationContents.size() < MESSAGE_MAX_COUNT) {
+=======
+      while (!nextMessageId.equals(Uuid.NULL) && conversationContents.size() < MESSAGE_MAX_COUNT) {
+>>>>>>> Project_Review
 
         for (final Message msg : view.getMessages(nextMessageId, MESSAGE_FETCH_COUNT)) {
           conversationContents.add(msg);
 
           // Race: message possibly added since conversation fetched.  If that occurs,
           // pretend the newer messages do not exist - they'll get picked up next time).
-          if (msg.next.equals(Uuids.NULL) || msg.id.equals(conversationHead.lastMessage)) {
-            msg.next = Uuids.NULL;
+          if (msg.next.equals(Uuid.NULL) || msg.id.equals(conversationHead.lastMessage)) {
+            msg.next = Uuid.NULL;
             break;
           }
         }

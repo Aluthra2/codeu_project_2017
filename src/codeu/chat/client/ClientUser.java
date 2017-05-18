@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import codeu.chat.common.User;
-import codeu.chat.common.Uuid;
 import codeu.chat.util.Logger;
+import codeu.chat.util.Uuid;
 import codeu.chat.util.store.Store;
 
 public final class ClientUser {
@@ -88,6 +88,8 @@ public final class ClientUser {
     printUser(current);
   }
 
+
+//Adding a User
 //Set it up so that it works if an alias is entered!
   public void addUser(String name) {
     final boolean validInputs = isValidName(name);
@@ -103,20 +105,37 @@ public final class ClientUser {
     }
   }
 
-  //Deleting from Map not System yet - Figure out how to delete from System
+
+  //Adding a User with a nickName
+  public void addUser(String name, String nickName) {
+    final boolean validInputs = isValidName(name);
+
+    final User user = (validInputs) ? controller.newUser(name) : null;
+
+    if (user == null) {
+      System.out.format("Error: user not created - %s.\n",
+          (validInputs) ? "server failure" : "bad input value");
+    } else {
+      LOG.info("New user complete, Name= \"%s\" UUID=%s", user.name, user.id);
+      user.alias = nickName;
+      updateUsers();
+    }
+  }
+
+  //Deleting a User
   public void deleteUser(String name){
-    if(usersById.containsValue(name)){
+    if(usersByName.containsValue(name)){
+      User userObject = usersByName.first(name);
       for(Map.Entry<Uuid, User> entry: usersById.entrySet()){
         Uuid id = entry.getKey();
         User user = entry.getValue();
-        if(user.name == name){
+        if(user.name == userObject.name){
           usersById.remove(id);
-        //  usersByName.remove(user.name);
-          }
+          usersByName.remove(userObject.name);
         }
       }
     }
-
+  }
 
   public void showAllUsers() {
     updateUsers();
@@ -140,21 +159,27 @@ public final class ClientUser {
   }
 
 //Set it up so that it works for any user not just current user
-  public String getAlias(){
-    final User user = getCurrent();
-    if (user != null){
-      return ("NULL");
-    } else {
+
+  public String getAlias(String name){
+    try{
+      final User user = usersByName.first(name);
       return user.alias;
-    }
+    } catch(Exception ex){
+        return "No Such User Exists!";
   }
+}
 
 //Set it up so that it works for any user not just current user
-  public void setAlias(String nickname){
-    final User user = getCurrent();
-    if (user != null){
-      user.alias = nickname;
-      LOG.info("New user alias complete, Name= \"%s\" UUID=%s Alias = %s", user.name, user.id, user.alias);
+  public void setAlias(String nickname, String uName){
+    try{
+      final User user = usersByName.first(uName);
+      if (user != null){
+        user.alias = nickname;
+        LOG.info("New user alias complete, Name= \"%s\" UUID=%s Alias = %s", user.name, user.id, user.alias);
+      }
+    } catch(Exception ex){
+        System.out.println("No Such User Exists!");
+
     }
   }
 

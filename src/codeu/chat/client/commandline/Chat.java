@@ -22,7 +22,7 @@ import codeu.chat.client.View;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.util.Logger;
 import codeu.chat.client.ClientUser;
-import codeu.chat.common.Uuid;
+import codeu.chat.util.Uuid;
 
 // Chat - top-level client application.
 public final class Chat {
@@ -51,10 +51,10 @@ public final class Chat {
     System.out.println("   sign-out  - sign out current user.");
     System.out.println("   current   - show current user, conversation, message.");
     System.out.println("User commands:");
-    System.out.println("   u-add <name>  - add a new user.");
+    System.out.println("   u-add <name> <alias>  - add a new user. (Nickname is Optional)");
     System.out.println("   u-delete <name> - delete a User");
-    System.out.println("   u-set <alias> - add a nickname for a user.");
-    System.out.println("   u-get-alias - get the nickname of the current user.");
+    System.out.println("   u-set <alias> <UserName> - add a nickname for a user.");
+    System.out.println("   u-get-alias <UserName> - get the nickname of chosen user.");
     System.out.println("   u-list-all    - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
@@ -115,10 +115,19 @@ public final class Chat {
 
     } else if (token.equals("u-add")) {
 
+      String userName = "";
+      String nickName = "NULL";
+
       if (!tokenScanner.hasNext()) {
         System.out.println("ERROR: Username not supplied.");
       } else {
-        addUser(tokenScanner.nextLine().trim());
+        userName = tokenScanner.nextLine().trim();
+      }
+      if (!tokenScanner.hasNext()) {
+        addUser(userName);
+      } else {
+        nickName = tokenScanner.next();
+        addUser(userName, nickName);
       }
 
     } else if (token.equals("u-delete")){
@@ -130,14 +139,23 @@ public final class Chat {
 
     } else if (token.equals("u-set")){
 
+      String uName = "";
+      String nickName = "";
+
       if(!tokenScanner.hasNext()){
         System.out.println("ERROR: Alias not supplied");
       } else {
-        setAlias(tokenScanner.next());
+        nickName = tokenScanner.next();
+      }
+      if(!tokenScanner.hasNext()){
+        System.out.println("ERROR: User Name not supplied");
+      } else {
+        uName = tokenScanner.next();
+        setAlias(nickName, uName);
       }
 
     } else if (token.equals("u-get-alias")){
-        getAlias();
+        getAlias(tokenScanner.next());
 
     } else if (token.equals("u-list-all")) {
 
@@ -332,19 +350,25 @@ public final class Chat {
     clientContext.user.addUser(name);
   }
 
+
+  private void addUser(String name, String nickname) {
+    clientContext.user.addUser(name, nickname);
+  }
+
   //Delete a User
   private void deleteUser(String name){
     clientContext.user.deleteUser(name);
   }
 
   //Get Alias of user
-  private String getAlias() {
-    return clientContext.user.getAlias();
+  private String getAlias(String name) {
+    return clientContext.user.getAlias(name);
   }
 
   //Set Alias of a user
-  private void setAlias(String nickname){
-    clientContext.user.setAlias(nickname);
+  private void setAlias(String nickname, String id){
+    clientContext.user.setAlias(nickname, id);
+
   }
 
   // Display all users known to server.
