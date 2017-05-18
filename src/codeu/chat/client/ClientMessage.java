@@ -113,7 +113,7 @@ public final class ClientMessage {
       current = message;
 //      if(messageByID.containsKey(author.toString())){
 //	messageByID.get(author.toString()).add(message);
-  //    }	
+  //    }
     //  else{
 //	ArrayList<Message> a = new ArrayList<>();
   //      a.add(message);
@@ -128,7 +128,7 @@ public final class ClientMessage {
   //search all messages a user has sent by using the user's ID
 
    public void searchByUserID(String authorID){
-	 
+
      ArrayList<Message>  mess =   controller.searchByUserID(authorID);
 
      if(mess.isEmpty() == false){
@@ -176,6 +176,7 @@ public final class ClientMessage {
       }
     System.out.println("size of conversationContents: " + conversationContents.size());
     }
+  }
 
   // Delete message helper method
   private void deleteMessage(Message msg) {
@@ -307,7 +308,7 @@ public final class ClientMessage {
 
       //  Stay in loop until all messages read (up to safety limit)
 
-      while (!nextMessageId.equals(Uuids.NULL) && conversationContents.size() < MESSAGE_MAX_COUNT) {
+      while (!nextMessageId.equals(Uuid.NULL) && conversationContents.size() < MESSAGE_MAX_COUNT) {
 
         for (final Message msg : view.getMessages(nextMessageId, MESSAGE_FETCH_COUNT)) {
           conversationContents.add(msg);
