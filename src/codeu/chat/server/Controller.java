@@ -14,11 +14,14 @@
 
 package codeu.chat.server;
 
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
 
 <<<<<<< HEAD
 import codeu.chat.common.*;
@@ -37,6 +40,8 @@ import codeu.chat.util.Uuid;
 public final class Controller implements RawController, BasicController {
 
   private final static Logger.Log LOG = Logger.newLog(Controller.class);
+
+  private Map<String, User> userNames = new HashMap<>();
 
   private final Model model;
   private final Uuid.Generator uuidGenerator;
@@ -57,9 +62,21 @@ public final class Controller implements RawController, BasicController {
   }
 
   @Override
+  public User deleteUser(String name){
+    return deleteUser(name, Time.now());
+  }
+
+  @Override
   public Conversation newConversation(String title, Uuid owner) {
     return newConversation(createId(), title, owner, Time.now());
   }
+
+
+  public ArrayList<Message> searchByUserID(String authorID){
+            ArrayList<Message> messages = model.messageByUserID.get(authorID);
+	    return messages;
+
+   }
 
   @Override
   public Message newMessage(Uuid id, Uuid author, Uuid conversation, String body, Time creationTime) {
@@ -251,6 +268,7 @@ public final class Controller implements RawController, BasicController {
     if (isIdFree(id)) {
 
       user = new User(id, name, creationTime);
+      userNames.put(name,user);
       model.add(user);
 
       LOG.info(
@@ -268,6 +286,26 @@ public final class Controller implements RawController, BasicController {
               creationTime);
     }
 
+    return user;
+  }
+
+  @Override
+  public User deleteUser(String name, Time deletionTime){
+    User user = null;
+    if (userNames.containsKey(name)) {
+      user = userNames.get(name);
+      userNames.remove(name);
+      model.remove(user);
+      LOG.info(
+          "deleteUser success (user.id=%s user.name=%s user.time=%s)",
+          user.id,
+          user.name,
+          user.creation);
+    } else {
+      LOG.info(
+          "deleteUser failed - User not found (user.id=%s)",
+          name);
+    }
     return user;
   }
 

@@ -58,6 +58,27 @@ public final class RawControllerTest {
   }
 
   @Test
+  public void testDeleteUser(){
+    final User user = controller.newUser(userId, "user", Time.now());
+
+    assertFalse(
+        "Check that user has a valid reference",
+        user == null);
+    assertTrue(
+        "Check that the user has the correct id",
+        Uuid.equals(user.id, userId));
+
+    final User deletedUser = controller.deleteUser("user", Time.now());
+
+    assertFalse(
+        "Check that the deletedUser has a valid reference",
+        deletedUser == null);
+    assertTrue(
+        "Check that the deletedUser has the correct name",
+        Uuid.equals(deletedUser.id, userId));
+  }
+
+  @Test
   public void testAddConversation() {
 
     final User user = controller.newUser(userId, "user", Time.now());

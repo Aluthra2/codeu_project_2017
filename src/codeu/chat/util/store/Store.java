@@ -74,7 +74,23 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
   }
 
   public void remove(KEY key){
-    index.remove(key);
+    StoreLink<KEY, VALUE> current = rootLink;
+
+    while (current.next != null && comparator.compare(current.next.key, key) < 0) {
+      current = current.next;
+    }
+
+    StoreLink<KEY, VALUE> previous = current;
+
+    if (current.next != null && current.next.key.equals(key)) {
+      index.remove(key);
+      current = current.next;
+      if (current.next == null) {
+        previous.next = null;
+      } else {
+        previous.next = current.next;
+      }
+    }
   }
 
   public boolean containsValue(KEY key){
@@ -108,7 +124,23 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
 
   @Override
   public void delete(KEY key) {
-    index.remove(key);
+    StoreLink<KEY, VALUE> current = rootLink;
+
+    while (current.next != null && comparator.compare(current.next.key, key) < 0) {
+      current = current.next;
+    }
+
+    StoreLink<KEY, VALUE> previous = current;
+
+    if (current.next != null && current.next.key.equals(key)) {
+      index.remove(key);
+      current = current.next;
+      if (current.next == null) {
+        previous.next = null;
+      } else {
+        previous.next = current.next;
+      }
+    }
   }
 
   @Override
