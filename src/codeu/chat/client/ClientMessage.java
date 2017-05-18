@@ -145,27 +145,7 @@ public final class ClientMessage {
     System.out.println("delete message called on index" + index);
     int msgIndex = Integer.valueOf(index);
     System.out.println("size of conversationContents: " + conversationContents.size());
-    } 
-  }
-
-  public void deleteMessage(Message msg) { //TODO: Use an ordered hash map for linear time. https://github.com/google/guava
-    if(conversationContents.contains(msg)) {
-      conversationContents.remove(msg);
-    } else {
-      System.out.println("Error: message not found.");
-
-    if(msgIndex < conversationContents.size()) {
-
-      Message msg = conversationContents.get(msgIndex);
-      System.out.println("Value of msg " + Uuids.toString(conversationContents.get(msgIndex).id));
-
-      deleteMessage(msg);
-    } else {
-      System.out.println("Message not erased, please enter a valid index.");
-      LOG.error(" Error: message not found, please enter a valid index.");
     }
-  }
-
 
   // Delete message helper method
   public void deleteMessage(Message msg) {

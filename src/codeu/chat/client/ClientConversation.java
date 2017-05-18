@@ -123,7 +123,7 @@ public final class ClientConversation {
       }
       }
     }
-  
+
   //TODO: Remove Unused Code.
     //delete this conversation
     //   remove it from where it is being kept track of
@@ -138,7 +138,7 @@ public final class ClientConversation {
 
   }
 
-
+  */
   public void setCurrent(ConversationSummary conv) { currentSummary = conv; }
 
   public void showAllConversations() {

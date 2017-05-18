@@ -1,0 +1,79 @@
+May 17, 2017 7:49:55 PM codeu.chat.ClientMain main
+INFO: ============================= START OF LOG =============================
+May 17, 2017 7:49:55 PM codeu.chat.ClientMain main
+INFO: Starting chat client...
+May 17, 2017 7:49:55 PM codeu.chat.ClientMain main
+INFO: Creating client...
+May 17, 2017 7:49:55 PM codeu.chat.ClientMain main
+INFO: Created client
+May 17, 2017 7:50:26 PM codeu.chat.client.Controller newUser
+INFO: newUser: Request completed.
+May 17, 2017 7:50:27 PM codeu.chat.client.Controller newUser
+INFO: newUser: Response completed.
+May 17, 2017 7:50:27 PM codeu.chat.client.ClientUser addUser
+INFO: New user complete, Name= "Aman" UUID=[UUID:100.101.1718669053]
+May 17, 2017 7:51:04 PM codeu.chat.client.ClientConversation startConversation
+INFO: New conversation: Title= "helloWorld" UUID= [UUID:100.101.2372203360]
+May 17, 2017 7:51:04 PM codeu.chat.client.ClientConversation updateCurrentConversation
+INFO: Get Conversation: Title="helloWorld" UUID=[UUID:100.101.2372203360] first=[UUID:0] last=[UUID:0]
+
+May 17, 2017 7:51:04 PM codeu.chat.client.ClientMessage updateMessages
+INFO: ConversationHead: Title="helloWorld" UUID=[UUID:100.101.2372203360] first=[UUID:0] last=[UUID:0]
+
+May 17, 2017 7:51:04 PM codeu.chat.client.ClientMessage getCurrentMessageFetchId
+INFO: Refetch all messages: replaceAll=true firstMessage=[UUID:0]
+May 17, 2017 7:51:04 PM codeu.chat.client.ClientMessage updateMessages
+INFO: Retrieved 0 messages for conversation [UUID:100.101.2372203360] (helloWorld).
+
+May 17, 2017 7:51:11 PM codeu.chat.client.ClientMessage addMessage
+INFO: New message:, Author= [UUID:100.101.1718669053] UUID= [UUID:100.101.1242064985]
+May 17, 2017 7:51:11 PM codeu.chat.client.ClientMessage updateMessages
+INFO: ConversationHead: Title="helloWorld" UUID=[UUID:100.101.2372203360] first=[UUID:100.101.1242064985] last=[UUID:100.101.1242064985]
+
+May 17, 2017 7:51:11 PM codeu.chat.client.ClientMessage getCurrentMessageFetchId
+INFO: Refetch all messages: replaceAll=false firstMessage=[UUID:100.101.1242064985]
+May 17, 2017 7:51:11 PM codeu.chat.client.ClientMessage updateMessages
+INFO: Retrieved 1 messages for conversation [UUID:100.101.2372203360] (helloWorld).
+
+May 17, 2017 7:51:16 PM codeu.chat.client.ClientMessage addMessage
+INFO: New message:, Author= [UUID:100.101.1718669053] UUID= [UUID:100.101.2408476646]
+May 17, 2017 7:51:16 PM codeu.chat.client.ClientMessage updateMessages
+INFO: ConversationHead: Title="helloWorld" UUID=[UUID:100.101.2372203360] first=[UUID:100.101.1242064985] last=[UUID:100.101.2408476646]
+
+May 17, 2017 7:51:16 PM codeu.chat.client.ClientMessage updateMessages
+INFO: Retrieved 2 messages for conversation [UUID:100.101.2372203360] (helloWorld).
+
+May 17, 2017 7:51:44 PM codeu.chat.client.commandline.Chat handleCommand
+SEVERE: Exception during command processing
+java.util.ConcurrentModificationException
+	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:901)
+	at java.util.ArrayList$Itr.next(ArrayList.java:851)
+	at codeu.chat.client.ClientMessage.deleteAllMessages(ClientMessage.java:138)
+	at codeu.chat.client.commandline.Chat.doOneCommand(Chat.java:178)
+	at codeu.chat.client.commandline.Chat.handleCommand(Chat.java:308)
+	at codeu.chat.ClientMain.main(ClientMain.java:57)
+
+May 17, 2017 7:59:07 PM codeu.chat.ClientMain main
+INFO: ============================= START OF LOG =============================
+May 17, 2017 7:59:07 PM codeu.chat.ClientMain main
+INFO: Starting chat client...
+May 17, 2017 7:59:07 PM codeu.chat.ClientMain main
+INFO: Creating client...
+May 17, 2017 7:59:07 PM codeu.chat.ClientMain main
+INFO: Created client
+May 17, 2017 8:23:33 PM codeu.chat.ClientMain main
+INFO: ============================= START OF LOG =============================
+May 17, 2017 8:23:33 PM codeu.chat.ClientMain main
+INFO: Starting chat client...
+May 17, 2017 8:23:33 PM codeu.chat.ClientMain main
+INFO: Creating client...
+May 17, 2017 8:23:33 PM codeu.chat.ClientMain main
+INFO: Created client
+May 17, 2017 8:23:42 PM codeu.chat.client.Controller newUser
+INFO: newUser: Request completed.
+May 17, 2017 8:23:42 PM codeu.chat.client.Controller newUser
+INFO: newUser: Response completed.
+May 17, 2017 8:23:42 PM codeu.chat.client.ClientUser addUser
+INFO: New user complete, Name= "Aman" UUID=[UUID:100.101.2437881286]
+May 17, 2017 8:24:03 PM codeu.chat.client.ClientUser setAlias
+INFO: New user alias complete, Name= "Aman" UUID=[UUID:100.101.2437881286] Alias = Luthra
