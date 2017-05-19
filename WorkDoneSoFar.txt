@@ -6,3 +6,11 @@ Problems:
 		-I need more help on this becasue I have no clue why it won't work
 Still Need to implement:
 -Duplicate Users - Probably will have it return an error if the username is already taken-Can be done fairly quickly
+
+
+
+
+Cristina's Work
+-implemented a searchbyID that returns all of the messages sent by a user
+-model stores a hashmap containing arraylist of messages mapped by a the uuid string of the author of those messages
+-Still need to handle cases where the user types in an invalid string for the uuid string of the user
