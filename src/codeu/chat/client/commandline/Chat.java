@@ -129,7 +129,6 @@ public final class Chat {
         userName = tokenScanner.next();
           if (tokenScanner.hasNext()) {
             nickName = tokenScanner.next();
-            System.out.println(nickName); //Problem Line - Won't detect Alias When Entered
             addUser(userName, nickName);
           } else {
             addUser(userName);
