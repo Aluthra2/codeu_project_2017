@@ -46,7 +46,7 @@ public final class ClientUser {
   }
 
   // Validate the username string
-  static public boolean isValidName(String userName) { //Check for Duplicates
+  static public boolean isValidName(String userName) {
     boolean clean = true;
     if (userName.length() == 0) {
       clean = false;
@@ -56,6 +56,15 @@ public final class ClientUser {
 
     }
     return clean;
+  }
+
+  public boolean duplicateUser(String uName){
+    User user = usersByName.first(uName);
+    if (user == null){
+      return false;
+    } else {
+      return true;
+    }
   }
 
   public boolean hasCurrent() {
@@ -94,12 +103,14 @@ public final class ClientUser {
 //Set it up so that it works if an alias is entered!
   public void addUser(String name) {
     final boolean validInputs = isValidName(name);
+    final boolean duplicates = duplicateUser(name);
+    final boolean validAndNotDuplicate = (!duplicates && validInputs);
 
-    final User user = (validInputs) ? controller.newUser(name) : null;
+    final User user = validAndNotDuplicate ? controller.newUser(name) : null;
 
     if (user == null) {
       System.out.format("Error: user not created - %s.\n",
-          (validInputs) ? "server failure" : "bad input value");
+          validAndNotDuplicate ? "bad input vale" : ((duplicates) ? "Username already taken" : "Server Failure!"));
     } else {
       LOG.info("New user complete, Name= \"%s\" UUID=%s", user.name, user.id);
       userNames.put(user.name, user);
@@ -111,12 +122,14 @@ public final class ClientUser {
   //Adding a User with a nickName
   public void addUser(String name, String nickName) {
     final boolean validInputs = isValidName(name);
+    final boolean duplicates = duplicateUser(name);
+    final boolean validAndNotDuplicate = (!duplicates && validInputs);
 
-    final User user = (validInputs) ? controller.newUser(name) : null;
+    final User user = validAndNotDuplicate ? controller.newUser(name) : null;
 
     if (user == null) {
       System.out.format("Error: user not created - %s.\n",
-          (validInputs) ? "server failure" : "bad input value");
+          validAndNotDuplicate ? "bad input vale" : ((duplicates) ? "Username already taken" : "Server Failure!"));
     } else {
       LOG.info("New user complete, Name= \"%s\" UUID=%s", user.name, user.id);
       user.alias = nickName;
@@ -174,13 +187,15 @@ public final class ClientUser {
   }
 }
 
-//Set it up so that it works for any user not just current user
   public void setAlias(String nickname, String uName){
     try{
       final User user = usersByName.first(uName);
-      if (user != null){
-        user.alias = nickname;
+      boolean result = controller.setAlias(user, nickname);
+      if (result){
         LOG.info("New user alias complete, Name= \"%s\" UUID=%s Alias = %s", user.name, user.id, user.alias);
+        updateUsers();
+      } else {
+        LOG.info("Something Went Wrong!");
       }
     } catch(Exception ex){
         System.out.println("No Such User Exists!");
