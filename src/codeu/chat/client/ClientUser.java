@@ -125,7 +125,7 @@ public final class ClientUser {
     final boolean duplicates = duplicateUser(name);
     final boolean validAndNotDuplicate = (!duplicates && validInputs);
 
-    final User user = validAndNotDuplicate ? controller.newUser(name) : null;
+    final User user = validAndNotDuplicate ? controller.newUser(name, nickName) : null;
 
     if (user == null) {
       System.out.format("Error: user not created - %s.\n",
