@@ -112,7 +112,7 @@ public final class ClientUser {
   public void addUser(String name, String nickName) {
     final boolean validInputs = isValidName(name);
 
-    final User user = (validInputs) ? controller.newUser(name) : null;
+    final User user = (validInputs) ? controller.newUser(name, nickName) : null;
 
     if (user == null) {
       System.out.format("Error: user not created - %s.\n",

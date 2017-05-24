@@ -15,7 +15,7 @@
 package codeu.chat.client.commandline;
 
 import java.util.Scanner;
-
+import java.util.ArrayList;
 import codeu.chat.client.ClientContext;
 import codeu.chat.client.Controller;
 import codeu.chat.client.View;
@@ -51,14 +51,13 @@ public final class Chat {
     System.out.println("   sign-out  - sign out current user.");
     System.out.println("   current   - show current user, conversation, message.");
     System.out.println("User commands:");
-    System.out.println("   u-add <name> <alias>  - add a new user. (Nickname is Optional)");
+    System.out.println("   u-add <name> [alias] - add a new user. [Optional Nickname]");
     System.out.println("   u-delete <name> - delete a User");
     System.out.println("   u-set <alias> <UserName> - add a nickname for a user.");
     System.out.println("   u-get-alias <UserName> - get the nickname of chosen user.");
     System.out.println("   u-list-all    - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
-    System.out.println("   c-delete            - delete the current conversation.");//TODO
     System.out.println("   c-list-all       - list all conversations known to system.");
     System.out.println("   c-select <index> - select conversation from list.");
     System.out.println("Message commands:");
@@ -69,7 +68,8 @@ public final class Chat {
     System.out.println("   m-list-all       - list all messages in the current conversation.");
     System.out.println("   m-next <index>   - index of next message to view.");
     System.out.println("   m-show <count>   - show next <count> messages.");
-  }
+    System.out.println("   searchId [UUID: xxx.xxx.xxxxxxxxxx]  -show all messages from user with specified UUID string");
+}
 
   // Prompt for new command.
   private void promptForCommand() {
@@ -89,7 +89,13 @@ public final class Chat {
 
       alive = false;
 
-    } else if (token.equals("help")) {
+    } if (token.equals("searchId")) {
+
+	if(tokenScanner.hasNext()){
+	   //clientContext.message.searchByUserID(tokenScanner.nextLine().trim());
+         }
+    }
+      else if (token.equals("help")) {
 
       help();
 
@@ -116,16 +122,17 @@ public final class Chat {
     } else if (token.equals("u-add")) {
 
       String userName = "";
-
+      String nickName = "";
      if (!tokenScanner.hasNext()) {
         System.out.println("ERROR: Username not supplied.");
       } else {
         userName = tokenScanner.next();
-          if (!tokenScanner.hasNext()) {
-            addUser(userName);
-          } else {
-            String nickName = tokenScanner.next(); //Problem Line - Won't detect Alias When Entered
+          if (tokenScanner.hasNext()) {
+            nickName = tokenScanner.next();
+            System.out.println(nickName); //Problem Line - Won't detect Alias When Entered
             addUser(userName, nickName);
+          } else {
+            addUser(userName);
           }
       }
 
@@ -201,8 +208,8 @@ public final class Chat {
           System.out.println("ERROR: Message body not supplied.");
         } else {
           clientContext.message.addMessage(clientContext.user.getCurrent().id,
-                  clientContext.conversation.getCurrentId(),
-                  tokenScanner.nextLine().trim());
+              clientContext.conversation.getCurrentId(),
+              tokenScanner.nextLine().trim());
         }
       }
 
@@ -348,7 +355,6 @@ public final class Chat {
   private void addUser(String name) {
     clientContext.user.addUser(name);
   }
-
 
   private void addUser(String name, String nickname) {
     clientContext.user.addUser(name, nickname);
