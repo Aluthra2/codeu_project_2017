@@ -132,9 +132,11 @@ public final class ClientMessage {
      ArrayList<Message>  mess =   controller.searchByUserID(authorID);
 
      if(mess.isEmpty() == false){
-     for(Message m : mess){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
-    }
-    else System.out.println("User has no messages to display");
+       for(Message m : mess){
+         System.out.println(" Time: " + m.creation + " Content "  + m.content);
+       } else {
+       System.out.println("User has no messages to display");
+     }
    }
   // Delete message, removes last message
   // m-del-last command
@@ -338,7 +340,7 @@ public final class ClientMessage {
 
   // Print Message.  User context is used to map from author UUID to name.
   public static void printMessage(Message m, ClientUser userContext) {
-    if (m == null) {
+    if (m != null) {
     } else {
 
       // Display author name if available.  Otherwise display the author UUID.

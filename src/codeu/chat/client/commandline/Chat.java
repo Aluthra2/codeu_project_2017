@@ -69,7 +69,7 @@ public final class Chat {
     System.out.println("   m-list-all       - list all messages in the current conversation.");
     System.out.println("   m-next <index>   - index of next message to view.");
     System.out.println("   m-show <count>   - show next <count> messages.");
-    System.out.println("   searchId [UUID: xxx.xxx.xxxxxxxxxx]  -show all messages from user with specified UUID string");  
+    System.out.println("   searchId [UUID: xxx.xxx.xxxxxxxxxx]  -show all messages from user with specified UUID string");
 
  }
 
@@ -92,10 +92,10 @@ public final class Chat {
       alive = false;
 
     } if (token.equals("searchId")) {
-	
+
 	if(tokenScanner.hasNext()){
 	   clientContext.message.searchByUserID(tokenScanner.nextLine().trim());
-	  
+
          }
     }
       else if (token.equals("help")) {
@@ -126,7 +126,7 @@ public final class Chat {
 
       String userName = "";
 
-     if (!tokenScanner.hasNext()) {
+      if (!tokenScanner.hasNext()) {
         System.out.println("ERROR: Username not supplied.");
       } else {
         userName = tokenScanner.next();
@@ -195,7 +195,7 @@ public final class Chat {
 
       clientContext.conversation.showAllConversations();
 
-      
+
 
     } else if (token.equals("c-select")) {
 
@@ -379,7 +379,7 @@ public final class Chat {
     clientContext.user.setAlias(nickname, id);
 
   }
-  
+
   // Display all users known to server.
   private void showAllUsers() {
     clientContext.user.showAllUsers();

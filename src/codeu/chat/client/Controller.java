@@ -163,23 +163,18 @@ public class Controller implements BasicController {
   public ArrayList<Message> searchByUserID(String authorID){
 	final ArrayList <Message> messagesbyuserid = new ArrayList<>();
  	try (final Connection connection = source.connect()){
+
 		Serializers.INTEGER.write(connection.out(), NetworkCode.SEARCHREQUEST);
 		Serializers.STRING.write(connection.out(), authorID);
-		
-		if(Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE){
 
+		if (Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE) {
 		   messagesbyuserid.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
-		   
-               
-		}
-		}catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}	
-
+		   }
+		} catch(Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+    }
 		return messagesbyuserid;
 	}
 
 
-	
-
-
-  
 }
