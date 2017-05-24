@@ -92,7 +92,7 @@ public final class Chat {
     } if (token.equals("searchId")) {
 
 	if(tokenScanner.hasNext()){
-	   //clientContext.message.searchByUserID(tokenScanner.nextLine().trim());
+	   clientContext.message.searchByUserID(tokenScanner.nextLine().trim());
          }
     }
       else if (token.equals("help")) {
@@ -191,6 +191,8 @@ public final class Chat {
     else if (token.equals("c-list-all")) {
 
       clientContext.conversation.showAllConversations();
+
+
 
     } else if (token.equals("c-select")) {
 

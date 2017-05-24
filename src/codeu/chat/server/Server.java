@@ -14,7 +14,7 @@
 
 
 package codeu.chat.server;
-
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,7 +22,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
-
 import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.common.LinearUuidGenerator;
@@ -163,6 +162,14 @@ public final class Server {
 
       Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_RESPONSE);
       Serializers.nullable(Conversation.SERIALIZER).write(out, conversation);
+
+      } else if (type == NetworkCode.SEARCHREQUEST){
+
+        final String authorID = Serializers.STRING.read(in);
+	ArrayList<Message> mes = controller.searchByUserID(authorID);
+	Serializers.INTEGER.write(out, NetworkCode.SEARCHRESPONSE);
+	Serializers.collection(Message.SERIALIZER).write(out, mes);
+
 
     } else if (type == NetworkCode.GET_USERS_BY_ID_REQUEST) {
 
