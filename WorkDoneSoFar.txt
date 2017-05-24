@@ -1,42 +1,46 @@
-Pull Request #1
+-Pull Request #1
+ -Work Done so far by Aman:
+ --Nickname feature is functional, however, it needs to work for all Users not just the Current User.
+ --Currently, working on the fix now.
+ --Delete User Feature: deletes from the Hash map, need to determine how to delete from whole system. (I have a feeling it has to do something with the server files.)
+ --Handle Duplicate Usernames: Trying to understand the Serializers.java file in order to determine how exactly to retrieve all Usernames and do a comparison to see if the new user that is trying to be created has the same name as one already created.
 
-Work Done so far by Aman:
--Nickname feature is functional, however, it needs to work for all Users not just the Current User. 
-	-Currently, working on the fix now.
--Delete User Feature: deletes from the Hash map, need to determine how to delete from whole system. (I have a feeling it has to do something with the server files.)
--Handle Duplicate Usernames: Trying to understand the Serializers.java file in order to determine how exactly to retrieve all Usernames and do a comparison to see if the new user that is trying to be created has the same name as one already created.
+ -Work Done so far by Laura:
 
-Work Done so far by Laura:
+ -Work Done so far by Cristina:
+ --Appended both the ClientMessage.java file and the chat.java file
+ --ClientMessage: I added a Hashmap to store all messages sent by a specific user. The key to the map is the string of the user's ID while the value of every key is an array list storing all of the messages sent by that user. These messages will be added to the hashmap in the add message method. The SearcbyID method takes in a string containing a user id and prints all of the messages that user has sent. This method currently is only displaying the last message and has to be fixed.
+ --Chat.java: In this file I added the case where the user enters searchid. This will call the searchbyID method using the user typed string as a parameter. I want to change this in the future to make it so that the user will only have to type the name of the user rather than the entire id.
+ --In the future this search method may also take another parameter for tags to search and display all of the messages where a user used a tag. i
 
-Work Done so far by Cristina:
--Appended both the ClientMessage.java file and the chat.java file
--ClientMessage: I added a Hashmap to store all messages sent by a specific user. The key to the map is the string of the user's ID while the value of every key is an array list storing all of the messages sent by that user. These messages will be added to the hashmap in the add message method. The SearcbyID method takes in a string containing a user id and prints all of the messages that user has sent. This method currently is only displaying the last message and has to be fixed.
--Chat.java: In this file I added the case where the user enters searchid. This will call the searchbyID method using the user typed string as a parameter. I want to change this in the future to make it so that the user will only have to type the name of the user rather than the entire id.
--In the future this search method may also take another parameter for tags to search and display all of the messages where a user used a tag. i
+ -Pull Request #2
+ -Work Done so far by Aman:
+ --Nickname works and is functional, currently in the testing process.
+ --Delete User Works - currently in the testing process
+ --Working on bug that will make both nickname and deleteUser() more functional.
+ --Using regular expression or string substitution to fix space issues.
+ --Added overloaded constructor for addUser() to incorporate nickname
+ --Testing is of those two parts is the plan for this week. (04/24/17)
 
+ -Work Done so far by Laura:
+ --Worked on deleteMessages, have it working for deleting the last message. Currently trying to fix this, I think the issue is with my server controller delete message method for this particular case.
+ --Added .equals() and .hashCode() to Message.java
 
-Pull Request #2
+ -Work Done so far by Cristina:
 
-Work Done so far by Aman:
--Nickname works and is functional, currently in the testing process.
--Delete User Works - currently in the testing process
--Working on bug that will make both nickname and deleteUser() more functional.
-	-Using regular expression or string subsustition to fix space issues.
--Added overloaded constructor for addUser() to incorporate nickname
--Testing is of those two parts is the plan for this week. (04/24/17)
+ -Pull Request #3
+-Aman's Work:
+--getAlias() method works - returns the nickname of the user
+--deletUser() method works and server code is fully implemented
+Problems:
+	-Nicknames won't work
+		-I need more help on this becasue I have no clue why it won't work
+Still Need to implement:
+-Duplicate Users - Probably will have it return an error if the username is already taken-Can be done fairly quickly
 
-Work Done so far by Laura:
-- Worked on deleteMessages, have it working for deleting the last message. Currently trying to fix this, I think the issue is with my server controller delete message method for this particular case.
-- Added .equals() and .hashCode() to Message.java
+-Laura's Work:
 
-Work Done so far by Cristina:
-
-
-
-
-
-
-
-
-
-
+--Cristina's Work
+--implemented a searchbyID that returns all of the messages sent by a user
+--model stores a hashmap containing arraylist of messages mapped by a the uuid string of the author of those messages
+--Still need to handle cases where the user types in an invalid string for the uuid string of the user

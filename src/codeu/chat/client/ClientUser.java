@@ -34,6 +34,7 @@ public final class ClientUser {
 
   private User current = null;
 
+  private final Map<String, User> userNames = new HashMap<>();
   private final Map<Uuid, User> usersById = new HashMap<>();
 
   // This is the set of users known to the server, sorted by name.
@@ -101,6 +102,7 @@ public final class ClientUser {
           (validInputs) ? "server failure" : "bad input value");
     } else {
       LOG.info("New user complete, Name= \"%s\" UUID=%s", user.name, user.id);
+      userNames.put(user.name, user);
       updateUsers();
     }
   }
@@ -118,22 +120,25 @@ public final class ClientUser {
     } else {
       LOG.info("New user complete, Name= \"%s\" UUID=%s", user.name, user.id);
       user.alias = nickName;
+      userNames.put(user.name, user);
       updateUsers();
     }
   }
 
   //Deleting a User
   public void deleteUser(String name){
-    if(usersByName.containsValue(name)){
-      User userObject = usersByName.first(name);
-      for(Map.Entry<Uuid, User> entry: usersById.entrySet()){
-        Uuid id = entry.getKey();
-        User user = entry.getValue();
-        if(user.name == userObject.name){
-          usersById.remove(id);
-          usersByName.remove(userObject.name);
-        }
+    if(userNames.containsKey(name)){
+      User userObject = userNames.get(name);
+      User removeUser = controller.deleteUser(name);
+      if(removeUser == null){
+        System.out.println("ERROR: NO USER FOUND");
+      } else {
+        LOG.info("User Deleted, Name=\"%s\" UUID=%s", removeUser.name, removeUser.id);
+        userNames.remove(removeUser.name);
+        updateUsers();
       }
+    } else {
+      System.out.println("ERROR: NO USER FOUND");
     }
   }
 
@@ -158,13 +163,13 @@ public final class ClientUser {
     }
   }
 
-//Set it up so that it works for any user not just current user
-
   public String getAlias(String name){
     try{
       final User user = usersByName.first(name);
+      System.out.println(user.alias);
       return user.alias;
     } catch(Exception ex){
+      System.out.println("No Such User Exists!");
         return "No Such User Exists!";
   }
 }
@@ -179,7 +184,6 @@ public final class ClientUser {
       }
     } catch(Exception ex){
         System.out.println("No Such User Exists!");
-
     }
   }
 
