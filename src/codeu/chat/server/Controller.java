@@ -60,6 +60,15 @@ public final class Controller implements RawController, BasicController {
     return newUser(createId(), name, Time.now(), nickName);
   }
 
+  public User setAlias(Uuid id, String alias){
+    if(model.userById().first(id) == null){
+      return null;
+    } else {
+      model.userById().first(id).setAlias(alias);
+      return model.userById().first(id);
+    }
+  }
+
   @Override
   public User deleteUser(String name){
     return deleteUser(name, Time.now());

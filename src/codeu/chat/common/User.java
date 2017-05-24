@@ -72,4 +72,8 @@ public final class User {
     this.alias = "Not Entered";
   }
 
+  public void setAlias(String alias){
+    this.alias = alias;
+  }
+
 }

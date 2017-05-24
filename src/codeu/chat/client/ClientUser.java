@@ -178,9 +178,12 @@ public final class ClientUser {
   public void setAlias(String nickname, String uName){
     try{
       final User user = usersByName.first(uName);
-      if (user != null){
-        user.alias = nickname;
+      boolean result = controller.setAlias(user, nickname);
+      if (result){
         LOG.info("New user alias complete, Name= \"%s\" UUID=%s Alias = %s", user.name, user.id, user.alias);
+        updateUsers();
+      } else {
+        LOG.info("Something Went Wrong!");
       }
     } catch(Exception ex){
         System.out.println("No Such User Exists!");

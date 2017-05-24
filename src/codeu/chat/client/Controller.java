@@ -162,6 +162,29 @@ public class Controller implements BasicController {
     return response;
   }
 
+  public boolean setAlias(User user, String nickName){
+    User response = null;
+
+    try (final Connection connection = source.connect()) {
+      Serializers.INTEGER.write(connection.out(), NetworkCode.NICKNAME_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), user.id);
+      Serializers.STRING.write(connection.out(), nickName);
+      LOG.info("setAlias: Request completed.");
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.NICKNAME_RESPONSE) {
+        response = Serializers.nullable(User.SERIALIZER).read(connection.in());
+        LOG.info("setAlias: Response completed.");
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return response != null;
+  }
+
   @Override
   public Conversation newConversation(String title, Uuid owner)  {
 
