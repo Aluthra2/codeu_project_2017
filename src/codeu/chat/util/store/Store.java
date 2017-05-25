@@ -73,6 +73,30 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
     return link == null ? null : link.value;
   }
 
+  public void remove(KEY key){
+    StoreLink<KEY, VALUE> current = rootLink;
+
+    while (current.next != null && comparator.compare(current.next.key, key) < 0) {
+      current = current.next;
+    }
+
+    StoreLink<KEY, VALUE> previous = current;
+
+    if (current.next != null && current.next.key.equals(key)) {
+      index.remove(key);
+      current = current.next;
+      if (current.next == null) {
+        previous.next = null;
+      } else {
+        previous.next = current.next;
+      }
+    }
+  }
+
+  public boolean containsValue(KEY key){
+    return index.containsValue(key);
+  }
+
   @Override
   public Iterable<VALUE> all() {
     return new LinkIterable<KEY, VALUE>(comparator, first(), last());
@@ -96,6 +120,32 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
   @Override
   public Iterable<VALUE> range(KEY start, KEY end) {
     return new LinkIterable<KEY, VALUE>(comparator, ceiling(start), floor(end));
+  }
+
+  @Override
+  public void delete(KEY key) {
+    StoreLink<KEY, VALUE> current = rootLink;
+
+    while (current.next != null && comparator.compare(current.next.key, key) < 0) {
+      current = current.next;
+    }
+
+    StoreLink<KEY, VALUE> previous = current;
+
+    if (current.next != null && current.next.key.equals(key)) {
+      index.remove(key);
+      current = current.next;
+      if (current.next == null) {
+        previous.next = null;
+      } else {
+        previous.next = current.next;
+      }
+    }
+  }
+
+  @Override
+  public boolean contains(KEY key) {
+    return index.containsKey(key);
   }
 
   private StoreLink<KEY, VALUE> first() {

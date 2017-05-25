@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import codeu.chat.common.User;
-import codeu.chat.common.Uuid;
 import codeu.chat.util.Logger;
+import codeu.chat.util.Uuid;
 import codeu.chat.util.store.Store;
 
 public final class ClientUser {
@@ -34,10 +34,11 @@ public final class ClientUser {
 
   private User current = null;
 
+  private final Map<String, User> userNames = new HashMap<>();
   private final Map<Uuid, User> usersById = new HashMap<>();
 
   // This is the set of users known to the server, sorted by name.
-  private Store<String, User> usersByName = new Store<>(String.CASE_INSENSITIVE_ORDER);
+  private static Store<String, User> usersByName = new Store<>(String.CASE_INSENSITIVE_ORDER);
 
   public ClientUser(Controller controller, View view) {
     this.controller = controller;
@@ -50,11 +51,20 @@ public final class ClientUser {
     if (userName.length() == 0) {
       clean = false;
     } else {
-
-      // TODO: check for invalid characters
+      //clean = usersByName.containsKey(userName)? false : true;
+      // TODO: check for invalid characters - User RegEx(String replacement)
 
     }
     return clean;
+  }
+
+  public boolean duplicateUser(String uName){
+    User user = usersByName.first(uName);
+    if (user == null){
+      return false;
+    } else {
+      return true;
+    }
   }
 
   public boolean hasCurrent() {
@@ -88,17 +98,60 @@ public final class ClientUser {
     printUser(current);
   }
 
+
+//Adding a User
+//Set it up so that it works if an alias is entered!
   public void addUser(String name) {
     final boolean validInputs = isValidName(name);
+    final boolean duplicates = duplicateUser(name);
+    final boolean validAndNotDuplicate = (!duplicates && validInputs);
 
-    final User user = (validInputs) ? controller.newUser(name) : null;
+    final User user = validAndNotDuplicate ? controller.newUser(name) : null;
 
     if (user == null) {
       System.out.format("Error: user not created - %s.\n",
-          (validInputs) ? "server failure" : "bad input value");
+          validAndNotDuplicate ? "bad input vale" : ((duplicates) ? "Username already taken" : "Server Failure!"));
     } else {
       LOG.info("New user complete, Name= \"%s\" UUID=%s", user.name, user.id);
+      userNames.put(user.name, user);
       updateUsers();
+    }
+  }
+
+
+  //Adding a User with a nickName
+  public void addUser(String name, String nickName) {
+    final boolean validInputs = isValidName(name);
+    final boolean duplicates = duplicateUser(name);
+    final boolean validAndNotDuplicate = (!duplicates && validInputs);
+
+    final User user = validAndNotDuplicate ? controller.newUser(name, nickName) : null;
+
+    if (user == null) {
+      System.out.format("Error: user not created - %s.\n",
+          validAndNotDuplicate ? "bad input vale" : ((duplicates) ? "Username already taken" : "Server Failure!"));
+    } else {
+      LOG.info("New user complete, Name= \"%s\" UUID=%s", user.name, user.id);
+      user.alias = nickName;
+      userNames.put(user.name, user);
+      updateUsers();
+    }
+  }
+
+  //Deleting a User
+  public void deleteUser(String name){
+    if(userNames.containsKey(name)){
+      User userObject = userNames.get(name);
+      User removeUser = controller.deleteUser(name);
+      if(removeUser == null){
+        System.out.println("ERROR: NO USER FOUND");
+      } else {
+        LOG.info("User Deleted, Name=\"%s\" UUID=%s", removeUser.name, removeUser.id);
+        userNames.remove(removeUser.name);
+        updateUsers();
+      }
+    } else {
+      System.out.println("ERROR: NO USER FOUND");
     }
   }
 
@@ -123,6 +176,32 @@ public final class ClientUser {
     }
   }
 
+  public String getAlias(String name){
+    try{
+      final User user = usersByName.first(name);
+      System.out.println(user.alias);
+      return user.alias;
+    } catch(Exception ex){
+      System.out.println("No Such User Exists!");
+        return "No Such User Exists!";
+  }
+}
+
+  public void setAlias(String nickname, String uName){
+    try{
+      final User user = usersByName.first(uName);
+      boolean result = controller.setAlias(user, nickname);
+      if (result){
+        LOG.info("New user alias complete, Name= \"%s\" UUID=%s Alias = %s", user.name, user.id, user.alias);
+        updateUsers();
+      } else {
+        LOG.info("Something Went Wrong!");
+      }
+    } catch(Exception ex){
+        System.out.println("No Such User Exists!");
+    }
+  }
+
   public Iterable<User> getUsers() {
     return usersByName.all();
   }
@@ -137,9 +216,20 @@ public final class ClientUser {
     }
   }
 
+ public void updateUsers(Collection<Uuid> deletion) {
+    usersById.clear();
+    usersByName = new Store<>(String.CASE_INSENSITIVE_ORDER);
+
+    for (final User user : view.getUsersExcluding(deletion)) {
+      usersById.put(user.id, user);
+      usersByName.insert(user.name, user);
+    }
+  }
+
+
   public static String getUserInfoString(User user) {
     return (user == null) ? "Null user" :
-        String.format(" User: %s\n   Id: %s\n   created: %s\n", user.name, user.id, user.creation);
+        String.format(" User: %s\n   Id: %s\n Created: %s\n Alias: %s\n", user.name, user.id, user.creation, user.alias);
   }
 
   public String showUserInfo(String uname) {

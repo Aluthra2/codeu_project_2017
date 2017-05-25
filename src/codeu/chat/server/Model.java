@@ -20,13 +20,20 @@ import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.common.LinearUuidGenerator;
 import codeu.chat.common.Message;
-import codeu.chat.common.Time;
 import codeu.chat.common.User;
-import codeu.chat.common.Uuid;
+import codeu.chat.util.Time;
+import codeu.chat.util.Uuid;
+import codeu.chat.util.Logger;
 import codeu.chat.util.store.Store;
 import codeu.chat.util.store.StoreAccessor;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 public final class Model {
+
+  private final static Logger.Log LOG = Logger.newLog(Controller.class);
+
 
   private static final Comparator<Uuid> UUID_COMPARE = new Comparator<Uuid>() {
 
@@ -64,6 +71,8 @@ public final class Model {
   private final Store<Uuid, Message> messageById = new Store<>(UUID_COMPARE);
   private final Store<Time, Message> messageByTime = new Store<>(TIME_COMPARE);
   private final Store<String, Message> messageByText = new Store<>(STRING_COMPARE);
+  
+  public final HashMap<String, ArrayList<Message>> messageByUserID = new HashMap<>();
 
   private final Uuid.Generator userGenerations = new LinearUuidGenerator(null, 1, Integer.MAX_VALUE);
   private Uuid currentUserGeneration = userGenerations.make();
@@ -74,6 +83,12 @@ public final class Model {
     userById.insert(user.id, user);
     userByTime.insert(user.creation, user);
     userByText.insert(user.name, user);
+  }
+
+  public void remove(User user){
+    userById.remove(user.id);
+    userByTime.remove(user.creation);
+    userByText.remove(user.name);
   }
 
   public StoreAccessor<Uuid, User> userById() {
@@ -98,6 +113,20 @@ public final class Model {
     conversationByText.insert(conversation.title, conversation);
   }
 
+  public void delete(Conversation conversation) {
+    if(conversationById.contains(conversation.id)) {
+      conversationById.delete(conversation.id);
+    }
+
+    if(conversationByTime.contains(conversation.creation)) {
+      conversationByTime.delete(conversation.creation);
+    }
+
+    if(conversationByText.contains(conversation.title)) {
+      conversationByText.delete(conversation.title);
+    }
+  }
+
   public StoreAccessor<Uuid, Conversation> conversationById() {
     return conversationById;
   }
@@ -114,7 +143,38 @@ public final class Model {
     messageById.insert(message.id, message);
     messageByTime.insert(message.creation, message);
     messageByText.insert(message.content, message);
+    if(messageByUserID.containsKey(message.author.toString())){
+	    messageByUserID.get(message.author.toString()).add(message);
+	}
+    else{
+
+	ArrayList<Message> a = new ArrayList<>();
+	a.add(message);
+	messageByUserID.put(message.author.toString(), a);
+	}
+
   }
+
+  public void delete(Message message) {
+    if(messageById.contains(message.id)) {
+      messageById.delete(message.id);
+      LOG.info("Message: %s, was deleted from messageById", message.id);
+
+    }
+
+    if(messageByTime.contains(message.creation)) {
+      messageByTime.delete(message.creation);
+      LOG.info("Message: %s, was deleted from messageByTime", message.id);
+
+    }
+
+    if(messageByText.contains(message.content)) {
+      messageByText.delete(message.content);
+      LOG.info("Message: %s, was deleted from messageByText", message.id);
+
+    }
+  }
+
 
   public StoreAccessor<Uuid, Message> messageById() {
     return messageById;

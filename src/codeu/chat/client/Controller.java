@@ -13,22 +13,22 @@
 // limitations under the License.
 
 package codeu.chat.client;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread;
-
+import java.util.Collection;
 import codeu.chat.common.BasicController;
 import codeu.chat.common.Conversation;
 import codeu.chat.common.Message;
 import codeu.chat.common.NetworkCode;
 import codeu.chat.common.User;
-import codeu.chat.common.Uuid;
-import codeu.chat.common.Uuids;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Serializers;
+import codeu.chat.util.Uuid;
 import codeu.chat.util.connections.Connection;
 import codeu.chat.util.connections.ConnectionSource;
+import java.util.Collection;
+import java.util.ArrayList;
 
 public class Controller implements BasicController {
 
@@ -48,8 +48,8 @@ public class Controller implements BasicController {
     try (final Connection connection = source.connect()) {
 
       Serializers.INTEGER.write(connection.out(), NetworkCode.NEW_MESSAGE_REQUEST);
-      Uuids.SERIALIZER.write(connection.out(), author);
-      Uuids.SERIALIZER.write(connection.out(), conversation);
+      Uuid.SERIALIZER.write(connection.out(), author);
+      Uuid.SERIALIZER.write(connection.out(), conversation);
       Serializers.STRING.write(connection.out(), body);
 
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.NEW_MESSAGE_RESPONSE) {
@@ -66,6 +66,29 @@ public class Controller implements BasicController {
   }
 
   @Override
+  public boolean deleteMessage(Uuid msg, Uuid conversation) {
+    boolean success = false;
+
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_MESSAGE_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), msg);
+      Uuid.SERIALIZER.write(connection.out(), conversation);
+
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_MESSAGE_RESPONSE) {
+        success = true;
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return success;
+  }
+
+  @Override
   public User newUser(String name) {
 
     User response = null;
@@ -74,6 +97,32 @@ public class Controller implements BasicController {
 
       Serializers.INTEGER.write(connection.out(), NetworkCode.NEW_USER_REQUEST);
       Serializers.STRING.write(connection.out(), name);
+      Serializers.STRING.write(connection.out(), "Not Entered");
+      LOG.info("newUser: Request completed.");
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.NEW_USER_RESPONSE) {
+        response = Serializers.nullable(User.SERIALIZER).read(connection.in());
+        LOG.info("newUser: Response completed.");
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return response;
+  }
+
+  public User newUser(String name, String nickName) {
+
+    User response = null;
+
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.NEW_USER_REQUEST);
+      Serializers.STRING.write(connection.out(), name);
+      Serializers.STRING.write(connection.out(), nickName);
       LOG.info("newUser: Request completed.");
 
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.NEW_USER_RESPONSE) {
@@ -91,6 +140,52 @@ public class Controller implements BasicController {
   }
 
   @Override
+  public User deleteUser(String name){
+    User response = null;
+
+    try (final Connection connection = source.connect()) {
+      Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_USER_REQUEST);
+      Serializers.STRING.write(connection.out(), name);
+      LOG.info("Delete User: Request completed.");
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_USER_RESPONSE) {
+        response = Serializers.nullable(User.SERIALIZER).read(connection.in());
+        LOG.info("deleteUser: Response completed.");
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return response;
+  }
+
+  public boolean setAlias(User user, String nickName){
+    User response = null;
+
+    try (final Connection connection = source.connect()) {
+      Serializers.INTEGER.write(connection.out(), NetworkCode.NICKNAME_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), user.id);
+      Serializers.STRING.write(connection.out(), nickName);
+      LOG.info("setAlias: Request completed.");
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.NICKNAME_RESPONSE) {
+        response = Serializers.nullable(User.SERIALIZER).read(connection.in());
+        LOG.info("setAlias: Response completed.");
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return response != null;
+  }
+
+  @Override
   public Conversation newConversation(String title, Uuid owner)  {
 
     Conversation response = null;
@@ -99,7 +194,7 @@ public class Controller implements BasicController {
 
       Serializers.INTEGER.write(connection.out(), NetworkCode.NEW_CONVERSATION_REQUEST);
       Serializers.STRING.write(connection.out(), title);
-      Uuids.SERIALIZER.write(connection.out(), owner);
+      Uuid.SERIALIZER.write(connection.out(), owner);
 
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.NEW_CONVERSATION_RESPONSE) {
         response = Serializers.nullable(Conversation.SERIALIZER).read(connection.in());
@@ -113,4 +208,22 @@ public class Controller implements BasicController {
 
     return response;
   }
+
+  public ArrayList<Message> searchByUserID(String authorID){
+	final ArrayList <Message> messagesbyuserid = new ArrayList<>();
+ 	try (final Connection connection = source.connect()){
+
+		Serializers.INTEGER.write(connection.out(), NetworkCode.SEARCHREQUEST);
+		Serializers.STRING.write(connection.out(), authorID);
+
+		if (Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE) {
+		   messagesbyuserid.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
+		   }
+		} catch(Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+    }
+		return messagesbyuserid;
+	}
+
+
 }
