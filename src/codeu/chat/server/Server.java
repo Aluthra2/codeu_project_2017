@@ -136,11 +136,22 @@ public final class Server {
     } else if (type == NetworkCode.NEW_USER_REQUEST) {
 
       final String name = Serializers.STRING.read(in);
+      final String nickName = Serializers.STRING.read(in);
 
-      final User user = controller.newUser(name);
+      final User user = controller.newUser(name, nickName);
 
       Serializers.INTEGER.write(out, NetworkCode.NEW_USER_RESPONSE);
       Serializers.nullable(User.SERIALIZER).write(out, user);
+
+    } else if (type == NetworkCode.NICKNAME_REQUEST){
+
+      final Uuid uuid = Uuid.SERIALIZER.read(in);
+      final String alias = Serializers.STRING.read(in);
+
+      final User result = controller.setAlias(uuid, alias);
+
+      Serializers.INTEGER.write(out, NetworkCode.NICKNAME_RESPONSE);
+      Serializers.nullable(User.SERIALIZER).write(out,result);
 
     } else if (type == NetworkCode.NEW_CONVERSATION_REQUEST) {
 

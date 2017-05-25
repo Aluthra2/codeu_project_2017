@@ -57,6 +57,19 @@ public final class Controller implements RawController, BasicController {
     return newUser(createId(), name, Time.now());
   }
 
+  public User newUser(String name, String nickName){
+    return newUser(createId(), name, Time.now(), nickName);
+  }
+
+  public User setAlias(Uuid id, String alias){
+    if(model.userById().first(id) == null){
+      return null;
+    } else {
+      model.userById().first(id).setAlias(alias);
+      return model.userById().first(id);
+    }
+  }
+
   @Override
   public User deleteUser(String name){
     return deleteUser(name, Time.now());
@@ -248,6 +261,36 @@ public final class Controller implements RawController, BasicController {
               id,
               name,
               creationTime);
+    }
+
+    return user;
+  }
+
+  public User newUser(Uuid id, String name, Time creationTime, String nickName) {
+
+    User user = null;
+
+    if (isIdFree(id)) {
+
+      user = new User(id, name, creationTime, nickName);
+      userNames.put(name,user);
+      model.add(user);
+
+      LOG.info(
+              "newUser success (user.id=%s user.name=%s user.time=%s user.nickName=%s)",
+              id,
+              name,
+              creationTime,
+              nickName);
+
+    } else {
+
+      LOG.info(
+              "newUser fail - id in use (user.id=%s user.name=%s user.time=%s user.nickName=%s)",
+              id,
+              name,
+              creationTime,
+              nickName);
     }
 
     return user;
