@@ -69,8 +69,8 @@ public final class Chat {
     System.out.println("   m-list-all       - list all messages in the current conversation.");
     System.out.println("   m-next <index>   - index of next message to view.");
     System.out.println("   m-show <count>   - show next <count> messages.");
-    System.out.println("   searchId [UUID: xxx.xxx.xxxxxxxxxx]  -show all messages from user with specified UUID string");  
-
+    System.out.println("   searchByName <username>  -show all messages from user");  
+    System.out.println("   searchTag <#hashtagName>  -show all messages with specified hashtag");
  }
 
   // Prompt for new command.
@@ -91,14 +91,19 @@ public final class Chat {
 
       alive = false;
 
-    } if (token.equals("searchId")) {
+    }else if (token.equals("searchByName")) {
 	
 	if(tokenScanner.hasNext()){
 	   clientContext.message.searchByUserID(tokenScanner.nextLine().trim());
 	  
          }
-    }
-      else if (token.equals("help")) {
+    }else if (token.equals("searchTag")){
+	
+	if(tokenScanner.hasNext()){
+	   clientContext.message.searchByTag(tokenScanner.nextLine().trim());
+	}
+
+    } else if (token.equals("help")) {
 
       help();
 
