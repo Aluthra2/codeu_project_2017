@@ -69,11 +69,28 @@ public final class Controller implements RawController, BasicController {
 
 
   public ArrayList<Message> searchByUserID(String authorName){
-	    String ID = model.userByText.first(authorName).id.toString();
-            ArrayList<Message> messages = model.messageByUserID.get(ID);
-	    return messages;
+    
+     String ID = model.userByText.first(authorName).id.toString();
+    
+     ArrayList<Message> messages = new ArrayList<>(); 
+
+     if(model.messageByUserID.containsKey(ID)){
+        messages = model.messageByUserID.get(ID);
+     }
+    
+     return messages;
 
    }
+
+  public ArrayList<Message> searchByTag(String tag){
+
+      ArrayList<Message> messages = new ArrayList<>();
+    
+      if(model.tags.containsKey(tag)){
+ 	messages = model.tags.get(tag);
+      }
+     return messages;
+  }
 
   @Override
   public Message newMessage(Uuid id, Uuid author, Uuid conversation, String body, Time creationTime) {

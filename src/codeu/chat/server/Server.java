@@ -152,13 +152,22 @@ public final class Server {
       Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_RESPONSE);
       Serializers.nullable(Conversation.SERIALIZER).write(out, conversation);
 
-      } else if (type == NetworkCode.SEARCHREQUEST){
+    } else if (type == NetworkCode.SEARCHREQUEST){
 
-        final String authorID = Serializers.STRING.read(in);
-	ArrayList<Message> mes = controller.searchByUserID(authorID);
-	Serializers.INTEGER.write(out, NetworkCode.SEARCHRESPONSE);
-	Serializers.collection(Message.SERIALIZER).write(out, mes);
+      final String authorID = Serializers.STRING.read(in);
+      ArrayList<Message> mes = controller.searchByUserID(authorID);
+ 
+      Serializers.INTEGER.write(out, NetworkCode.SEARCHRESPONSE);
+      Serializers.collection(Message.SERIALIZER).write(out, mes);
 
+
+    } else if(type == NetworkCode.TAGREQUEST){
+
+      final String tag = Serializers.STRING.read(in);
+      ArrayList<Message> messagesByTag = controller.searchByTag(tag);
+     
+      Serializers.INTEGER.write(out, NetworkCode.TAGRESPONSE);
+      Serializers.collection(Message.SERIALIZER).write(out, messagesByTag);
 
     } else if (type == NetworkCode.GET_USERS_BY_ID_REQUEST) {
 
