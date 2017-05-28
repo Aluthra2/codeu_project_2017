@@ -55,5 +55,7 @@ public final class NetworkCode {
       DELETE_USER_REQUEST = 35,
       DELETE_USER_RESPONSE = 36,
       SEARCHREQUEST = 40,
-      SEARCHRESPONSE = 41;
+      SEARCHRESPONSE = 41,
+      TAGREQUEST = 42,
+      TAGRESPONSE = 43;
 }
