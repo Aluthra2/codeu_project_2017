@@ -180,7 +180,23 @@ public class Controller implements BasicController {
 	}
 
 
-	
+    public ArrayList<Message> searchByTag(String tag){
+        final ArrayList <Message> messagesByTag = new ArrayList<>();
+        try (final Connection connection = source.connect()){
+                Serializers.INTEGER.write(connection.out(), NetworkCode.TAGREQUEST);
+                Serializers.STRING.write(connection.out(), tag);
+
+                if(Serializers.INTEGER.read(connection.in()) == NetworkCode.TAGRESPONSE){
+
+                   messagesByTag.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
+
+
+                }
+
+                }catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}
+
+                return messagesByTag;
+        }
 
 
   
