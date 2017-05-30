@@ -126,29 +126,23 @@ public final class ClientMessage {
   }
 
 
-  //search all messages a user has sent by using the user's name
-
-   public void searchByUserID(String authorID){
+  //diplay all messages a user has sent by using the user's name
+  public void searchByUser(String user){
 	 
-     ArrayList<Message>  mess =   controller.searchByUserID(authorID);
+    ArrayList<Message>  mess =   controller.searchByUserID(user);
 
-     if(mess.isEmpty() == false){
-     for(Message m : mess){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
-     }
+    if(!mess.isEmpty()){
+      for(Message m : mess){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
+    }
     else System.out.println("User has no messages to display");
-    }
-    
-    public void searchByTag(String tag){
+  }
+ 
+  //display all messages sent containing a specified hashtag  
+  public void searchByTag(String tag){
 
-      ArrayList<Message> messagesByTag = controller.searchByTag(tag);
-      for(Message m : messagesByTag){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
-     
-
-
-    }
-    
-  
-
+    ArrayList<Message> messagesByTag = controller.searchByTag(tag);
+    for(Message m : messagesByTag){System.out.println( " Time: " + m.creation + " Content "  + m.content);}
+  }
 
   // Delete message, removes last message
   // m-del-last command
@@ -170,13 +164,6 @@ public final class ClientMessage {
 
     updateMessages(false);
   }
-
-
-  
-
-
-
-
 
   // Delete message, removes message corresponding to given index, (m-delete <index> command)
   // calls helper method
