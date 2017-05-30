@@ -93,15 +93,15 @@ public final class Chat {
 
     }else if (token.equals("searchByName")) {
 	
-	if(tokenScanner.hasNext()){
-	   clientContext.message.searchByUserID(tokenScanner.nextLine().trim());
-	  
-         }
+     if (tokenScanner.hasNext()){
+       clientContext.message.searchByUser(tokenScanner.nextLine().trim());
+     }
+
     }else if (token.equals("searchTag")){
 	
-	if(tokenScanner.hasNext()){
-	   clientContext.message.searchByTag(tokenScanner.nextLine().trim());
-	}
+     if(tokenScanner.hasNext()){
+       clientContext.message.searchByTag(tokenScanner.nextLine().trim());
+     }
 
     } else if (token.equals("help")) {
 
