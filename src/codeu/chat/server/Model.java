@@ -190,6 +190,10 @@ public final class Model {
     if(messageByText.contains(message.content)) {
       messageByText.delete(message.content);
     }
+
+    if(messageByUserID.containsKey(message.author)) {
+      messageByUserID.remove(message.author);
+    }
   }
 
 
