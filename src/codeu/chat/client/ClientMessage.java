@@ -41,7 +41,7 @@ public final class ClientMessage {
 
   private Message current = null;
 
-  private final Map<String, ArrayList<Message>> messageByID = new HashMap<>();
+  private final Map<Uuid, Message> messageByUuid = new HashMap<>();
 
   private Conversation conversationHead;
   private final List<Message> conversationContents = new ArrayList<>();
@@ -111,16 +111,7 @@ public final class ClientMessage {
     } else {
       LOG.info("New message:, Author= %s UUID= %s", author, message.id);
       current = message;
-//      if(messageByID.containsKey(author.toString())){
-//	messageByID.get(author.toString()).add(message);
-  //    }
-    //  else{
-//	ArrayList<Message> a = new ArrayList<>();
-  //      a.add(message);
-//	messageByID.put(author.toString(), a);
-  //    }
     }
-
     updateMessages(false);
   }
 
@@ -341,7 +332,8 @@ public final class ClientMessage {
 
   // Print Message.  User context is used to map from author UUID to name.
   public static void printMessage(Message m, ClientUser userContext) {
-    if (m != null) {
+    if (m == null) {
+      System.out.println("Null Message!");
     } else {
 
       // Display author name if available.  Otherwise display the author UUID.
