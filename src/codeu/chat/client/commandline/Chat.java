@@ -51,8 +51,7 @@ public final class Chat {
     System.out.println("   sign-out  - sign out current user.");
     System.out.println("   current   - show current user, conversation, message.");
     System.out.println("User commands:");
-    System.out.println("   u-add <name>  - add a new user.");
-    System.out.println("   u-add <name> <alias>  - add a new user. (Nickname is Optional)");
+    System.out.println("   u-add <name> [alias] - add a new user. [Optional Nickname]");
     System.out.println("   u-delete <name> - delete a User");
     System.out.println("   u-set <alias> <UserName> - add a nickname for a user.");
     System.out.println("   u-get-alias <UserName> - get the nickname of chosen user.");
@@ -105,6 +104,7 @@ public final class Chat {
 
     } else if (token.equals("help")) {
 
+
       help();
 
     } else if (token.equals("sign-in")) {
@@ -130,16 +130,16 @@ public final class Chat {
     } else if (token.equals("u-add")) {
 
       String userName = "";
-
+      String nickName = "";
      if (!tokenScanner.hasNext()) {
         System.out.println("ERROR: Username not supplied.");
       } else {
         userName = tokenScanner.next();
-          if (!tokenScanner.hasNext()) {
-            addUser(userName);
-          } else {
-            String nickName = tokenScanner.next(); //Problem Line - Won't detect Alias When Entered
+          if (tokenScanner.hasNext()) {
+            nickName = tokenScanner.next();
             addUser(userName, nickName);
+          } else {
+            addUser(userName);
           }
       }
 
@@ -200,7 +200,7 @@ public final class Chat {
 
       clientContext.conversation.showAllConversations();
 
-      
+
 
     } else if (token.equals("c-select")) {
 
@@ -384,7 +384,7 @@ public final class Chat {
     clientContext.user.setAlias(nickname, id);
 
   }
-  
+
   // Display all users known to server.
   private void showAllUsers() {
     clientContext.user.showAllUsers();
