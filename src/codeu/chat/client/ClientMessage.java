@@ -111,16 +111,7 @@ public final class ClientMessage {
     } else {
       LOG.info("New message:, Author= %s UUID= %s", author, message.id);
       current = message;
-//      if(messageByID.containsKey(author.toString())){
-//	messageByID.get(author.toString()).add(message);
-  //    }
-    //  else{
-//	ArrayList<Message> a = new ArrayList<>();
-  //      a.add(message);
-//	messageByID.put(author.toString(), a);
-  //    }
     }
-
     updateMessages(false);
   }
 
