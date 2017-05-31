@@ -135,10 +135,11 @@ public final class ClientMessage {
        for(Message m : mess){
          System.out.println(" Time: " + m.creation + " Content "  + m.content);
        }
-    } else {
-    System.out.println("User has no messages to display");
+     } else {
+     System.out.println("User has no messages to display");
    }
-  }
+ }
+
   // Delete message, removes last message
   // m-del-last command
   public void deleteMessage() {
