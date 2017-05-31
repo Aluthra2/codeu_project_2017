@@ -54,4 +54,13 @@ public interface BasicController {
   //  Whether conversations can have the same title is undefined.
   Conversation newConversation(String title, Uuid owner);
 
+  // DELETE CONVERSATION
+  //
+  //   Delete a message from the server.
+  boolean deleteConversation(Uuid conversation);
+
+  // FIND NEW CURRENT
+  //
+  //   Finds a value to update currentSummary to in ClientConversation
+  Conversation getNextConversation();
 }

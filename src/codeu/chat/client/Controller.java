@@ -23,6 +23,7 @@ import codeu.chat.common.NetworkCode;
 import codeu.chat.common.User;
 import codeu.chat.common.Uuid;
 import codeu.chat.common.Uuids;
+import codeu.chat.common.ConversationSummary;
 
 import codeu.chat.util.Logger;
 import codeu.chat.util.Serializers;
@@ -41,7 +42,6 @@ public class Controller implements BasicController {
 
   @Override
   public Message newMessage(Uuid author, Uuid conversation, String body) {
-
     Message response = null;
 
     try (final Connection connection = source.connect()) {
@@ -134,5 +134,50 @@ public class Controller implements BasicController {
     }
 
     return response;
+  }
+
+  @Override
+  public boolean deleteConversation(Uuid conversation) {
+    boolean success = true;
+
+    try (final Connection connection = source.connect()) {
+      Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_CONVERSATION_REQUEST);
+      Uuids.SERIALIZER.write(connection.out(), conversation);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_CONVERSATION_RESPONSE) {
+        success = true;
+
+      } else {
+        System.out.println("Response from server failed.");
+        LOG.error("Response from server failed.");
+
+      }
+    } catch (Exception ex) {
+      System.out.println("Exception during call on server.");
+      LOG.error(ex, "Exception during call on server.");
+
+    }
+
+    return success;
+  }
+
+  @Override
+  public Conversation getNextConversation() {
+    Conversation next = null;
+    try (final Connection connection = source.connect()) {
+      Serializers.INTEGER.write(connection.out(), NetworkCode.GET_NEXT_CONVERSATION_REQUEST);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.GET_NEXT_CONVERSATION_RESPONSE) {
+        next = Serializers.nullable(Conversation.SERIALIZER).read(connection.in());
+
+      } else {
+        System.out.println("Response from server failed.");
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server." + ex.getLocalizedMessage());
+      LOG.error(ex, "Exception during call on server.");
+    }
+   return next;
   }
 }

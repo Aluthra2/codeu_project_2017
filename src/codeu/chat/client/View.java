@@ -96,7 +96,6 @@ public final class View implements BasicView, LogicalView{
 
   @Override
   public Collection<Conversation> getConversations(Collection<Uuid> ids) {
-
     final Collection<Conversation> conversations = new ArrayList<>();
 
     try (final Connection connection = source.connect()) {

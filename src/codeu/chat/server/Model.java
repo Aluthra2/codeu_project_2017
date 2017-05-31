@@ -102,23 +102,27 @@ public final class Model {
     conversationByText.insert(conversation.title, conversation);
   }
 
+  public StoreAccessor<Uuid, Conversation> conversationById() {
+    return conversationById;
+  }
+
   public void delete(Conversation conversation) {
     if(conversationById.contains(conversation.id)) {
       conversationById.delete(conversation.id);
+      System.out.println(conversationById.all().toString());
     }
 
     if(conversationByTime.contains(conversation.creation)) {
       conversationByTime.delete(conversation.creation);
+
     }
 
     if(conversationByText.contains(conversation.title)) {
       conversationByText.delete(conversation.title);
+
     }
   }
 
-  public StoreAccessor<Uuid, Conversation> conversationById() {
-    return conversationById;
-  }
 
   public StoreAccessor<Time, Conversation> conversationByTime() {
     return conversationByTime;
@@ -137,20 +141,14 @@ public final class Model {
   public void delete(Message message) {
     if(messageById.contains(message.id)) {
       messageById.delete(message.id);
-      LOG.info("Message: %s, was deleted from messageById", message.id);
-
     }
 
     if(messageByTime.contains(message.creation)) {
       messageByTime.delete(message.creation);
-      LOG.info("Message: %s, was deleted from messageByTime", message.id);
-
     }
 
     if(messageByText.contains(message.content)) {
       messageByText.delete(message.content);
-      LOG.info("Message: %s, was deleted from messageByText", message.id);
-
     }
   }
 
