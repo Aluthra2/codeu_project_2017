@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
+
 import codeu.chat.common.BasicController;
 import codeu.chat.common.Conversation;
 import codeu.chat.common.Message;
@@ -56,6 +57,19 @@ public final class Controller implements RawController, BasicController {
     return newUser(createId(), name, Time.now());
   }
 
+  public User newUser(String name, String nickName){
+    return newUser(createId(), name, Time.now(), nickName);
+  }
+
+  public User setAlias(Uuid id, String alias){
+    if(model.userById().first(id) == null){
+      return null;
+    } else {
+      model.userById().first(id).setAlias(alias);
+      return model.userById().first(id);
+    }
+  }
+
   @Override
   public User deleteUser(String name){
     return deleteUser(name, Time.now());
@@ -66,12 +80,32 @@ public final class Controller implements RawController, BasicController {
     return newConversation(createId(), title, owner, Time.now());
   }
 
+  //returns messages by specified user
+  public ArrayList<Message> searchByUserID(String authorName){
+    
+   String ID = model.userByText.first(authorName).id.toString();
+    
+   ArrayList<Message> messages = new ArrayList<>(); 
 
-  public ArrayList<Message> searchByUserID(String authorID){
-            ArrayList<Message> messages = model.messageByUserID.get(authorID);
-	    return messages;
-
+   if (model.messageByUserID.containsKey(ID)){
+      messages = model.messageByUserID.get(ID);
    }
+    
+   return messages;
+  }
+
+  //returns messages containing specified tag
+  public ArrayList<Message> searchByTag(String tag){
+
+    ArrayList<Message> messages = new ArrayList<>();
+   
+    if (model.tags.containsKey(tag)){ 
+       messages = model.tags.get(tag);
+    }
+ 
+   return messages;
+
+  }
 
   @Override
   public Message newMessage(Uuid id, Uuid author, Uuid conversation, String body, Time creationTime) {
@@ -133,7 +167,6 @@ public final class Controller implements RawController, BasicController {
 
     boolean success = true;
 
-
     if (foundMessage != null && foundUser != null && foundConversation != null) {
       model.delete(foundMessage);
 
@@ -159,7 +192,6 @@ public final class Controller implements RawController, BasicController {
           foundConversation.lastMessage = newLastMessage.id;
 
           LOG.info("Message deleted: %s", msg);
-
         }
 
       } else {
@@ -249,6 +281,36 @@ public final class Controller implements RawController, BasicController {
               id,
               name,
               creationTime);
+    }
+
+    return user;
+  }
+
+  public User newUser(Uuid id, String name, Time creationTime, String nickName) {
+
+    User user = null;
+
+    if (isIdFree(id)) {
+
+      user = new User(id, name, creationTime, nickName);
+      userNames.put(name,user);
+      model.add(user);
+
+      LOG.info(
+              "newUser success (user.id=%s user.name=%s user.time=%s user.nickName=%s)",
+              id,
+              name,
+              creationTime,
+              nickName);
+
+    } else {
+
+      LOG.info(
+              "newUser fail - id in use (user.id=%s user.name=%s user.time=%s user.nickName=%s)",
+              id,
+              name,
+              creationTime,
+              nickName);
     }
 
     return user;

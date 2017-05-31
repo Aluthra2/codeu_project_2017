@@ -41,7 +41,7 @@ public final class ClientMessage {
 
   private Message current = null;
 
-  private final Map<String, ArrayList<Message>> messageByID = new HashMap<>();
+  private final Map<Uuid, Message> messageByUuid = new HashMap<>();
 
   private Conversation conversationHead;
   private final List<Message> conversationContents = new ArrayList<>();
@@ -111,31 +111,30 @@ public final class ClientMessage {
     } else {
       LOG.info("New message:, Author= %s UUID= %s", author, message.id);
       current = message;
-//      if(messageByID.containsKey(author.toString())){
-//	messageByID.get(author.toString()).add(message);
-  //    }	
-    //  else{
-//	ArrayList<Message> a = new ArrayList<>();
-  //      a.add(message);
-//	messageByID.put(author.toString(), a);
-  //    }
     }
-
     updateMessages(false);
   }
 
 
-  //search all messages a user has sent by using the user's ID
-
-   public void searchByUserID(String authorID){
+  //diplay all messages a user has sent by using the user's name
+  public void searchByUser(String user){
 	 
-     ArrayList<Message>  mess =   controller.searchByUserID(authorID);
+    ArrayList<Message>  mess =   controller.searchByUserID(user);
 
-     if(mess.isEmpty() == false){
-     for(Message m : mess){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
+    if(!mess.isEmpty()){
+      for(Message m : mess){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
     }
     else System.out.println("User has no messages to display");
-   }
+  }
+ 
+  //display all messages sent containing a specified hashtag  
+  public void searchByTag(String tag){
+
+    ArrayList<Message> messagesByTag = controller.searchByTag(tag);
+    for(Message m : messagesByTag){System.out.println( " Time: " + m.creation + " Content "  + m.content);}
+  }
+
+
   // Delete message, removes last message
   // m-del-last command
   public void deleteMessage() {
@@ -176,6 +175,7 @@ public final class ClientMessage {
       }
     System.out.println("size of conversationContents: " + conversationContents.size());
     }
+  }
 
   // Delete message helper method
   private void deleteMessage(Message msg) {
@@ -307,7 +307,7 @@ public final class ClientMessage {
 
       //  Stay in loop until all messages read (up to safety limit)
 
-      while (!nextMessageId.equals(Uuids.NULL) && conversationContents.size() < MESSAGE_MAX_COUNT) {
+      while (!nextMessageId.equals(Uuid.NULL) && conversationContents.size() < MESSAGE_MAX_COUNT) {
 
         for (final Message msg : view.getMessages(nextMessageId, MESSAGE_FETCH_COUNT)) {
           conversationContents.add(msg);
@@ -338,6 +338,7 @@ public final class ClientMessage {
   // Print Message.  User context is used to map from author UUID to name.
   public static void printMessage(Message m, ClientUser userContext) {
     if (m == null) {
+      System.out.println("Null Message!");
     } else {
 
       // Display author name if available.  Otherwise display the author UUID.

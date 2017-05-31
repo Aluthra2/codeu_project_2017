@@ -91,6 +91,32 @@ public class Controller implements BasicController {
 
       Serializers.INTEGER.write(connection.out(), NetworkCode.NEW_USER_REQUEST);
       Serializers.STRING.write(connection.out(), name);
+      Serializers.STRING.write(connection.out(), "Not Entered");
+      LOG.info("newUser: Request completed.");
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.NEW_USER_RESPONSE) {
+        response = Serializers.nullable(User.SERIALIZER).read(connection.in());
+        LOG.info("newUser: Response completed.");
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return response;
+  }
+
+  public User newUser(String name, String nickName) {
+
+    User response = null;
+
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.NEW_USER_REQUEST);
+      Serializers.STRING.write(connection.out(), name);
+      Serializers.STRING.write(connection.out(), nickName);
       LOG.info("newUser: Request completed.");
 
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.NEW_USER_RESPONSE) {
@@ -128,6 +154,29 @@ public class Controller implements BasicController {
     }
 
     return response;
+  }
+
+  public boolean setAlias(User user, String nickName){
+    User response = null;
+
+    try (final Connection connection = source.connect()) {
+      Serializers.INTEGER.write(connection.out(), NetworkCode.NICKNAME_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), user.id);
+      Serializers.STRING.write(connection.out(), nickName);
+      LOG.info("setAlias: Request completed.");
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.NICKNAME_RESPONSE) {
+        response = Serializers.nullable(User.SERIALIZER).read(connection.in());
+        LOG.info("setAlias: Response completed.");
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return response != null;
   }
 
   @Override
@@ -198,27 +247,39 @@ public class Controller implements BasicController {
     }
    return next;
   }
-
-  public ArrayList<Message> searchByUserID(String authorID){
-	final ArrayList <Message> messagesbyuserid = new ArrayList<>();
- 	try (final Connection connection = source.connect()){
-		Serializers.INTEGER.write(connection.out(), NetworkCode.SEARCHREQUEST);
-		Serializers.STRING.write(connection.out(), authorID);
-		
-		if(Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE){
-
-		   messagesbyuserid.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
-		   
-               
-		}
-		}catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}	
-
-		return messagesbyuserid;
-	}
-
-
-	
-
-
   
+  //send to the server the user's name and receive the  messages by the user. This method returns the array of messages. 
+  public ArrayList<Message> searchByUserID(String author){
+    final ArrayList <Message> messagesbyuserid = new ArrayList<>();
+    try (final Connection connection = source.connect()){
+      Serializers.INTEGER.write(connection.out(), NetworkCode.SEARCHREQUEST);
+      Serializers.STRING.write(connection.out(), author);
+		
+      if(Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE){
+         messagesbyuserid.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
+      }
+	
+     }catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}	
+
+     return messagesbyuserid;
+   }
+
+  //This method sends a tag to the server and receives all the messages with this tag from the server.
+  //This method returns an array of these messages 
+  public ArrayList<Message> searchByTag(String tag){
+    final ArrayList <Message> messagesByTag = new ArrayList<>();
+    try (final Connection connection = source.connect()){
+      Serializers.INTEGER.write(connection.out(), NetworkCode.TAGREQUEST);
+      Serializers.STRING.write(connection.out(), tag);
+
+
+      if(Serializers.INTEGER.read(connection.in()) == NetworkCode.TAGRESPONSE){
+         messagesByTag.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
+      }
+              
+    }catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}
+
+    return messagesByTag;
+  }
+
 }
