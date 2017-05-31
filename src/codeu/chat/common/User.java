@@ -33,6 +33,7 @@ public final class User {
       Uuid.SERIALIZER.write(out, value.id);
       Serializers.STRING.write(out, value.name);
       Time.SERIALIZER.write(out, value.creation);
+      Serializers.STRING.write(out, value.alias);
 
     }
 
@@ -42,7 +43,8 @@ public final class User {
       return new User(
           Uuid.SERIALIZER.read(in),
           Serializers.STRING.read(in),
-          Time.SERIALIZER.read(in)
+          Time.SERIALIZER.read(in),
+          Serializers.STRING.read(in)
       );
 
     }
@@ -68,6 +70,10 @@ public final class User {
     this.name = name;
     this.creation = creation;
     this.alias = "Not Entered";
+  }
+
+  public void setAlias(String alias){
+    this.alias = alias;
   }
 
 }
