@@ -139,6 +139,7 @@ public final class ClientMessage {
      System.out.println("User has no messages to display");
    }
  }
+
   // Delete message, removes last message
   // m-del-last command
   public void deleteMessage() {
