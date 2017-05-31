@@ -13,10 +13,6 @@
 // limitations under the License.
 
 package codeu.chat.client;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.Thread;
-import java.util.Collection;
 import codeu.chat.common.BasicController;
 import codeu.chat.common.Conversation;
 import codeu.chat.common.Message;
@@ -27,7 +23,6 @@ import codeu.chat.util.Serializers;
 import codeu.chat.util.Uuid;
 import codeu.chat.util.connections.Connection;
 import codeu.chat.util.connections.ConnectionSource;
-import java.util.Collection;
 import java.util.ArrayList;
 
 public class Controller implements BasicController {
@@ -42,7 +37,6 @@ public class Controller implements BasicController {
 
   @Override
   public Message newMessage(Uuid author, Uuid conversation, String body) {
-
     Message response = null;
 
     try (final Connection connection = source.connect()) {
@@ -207,6 +201,51 @@ public class Controller implements BasicController {
     }
 
     return response;
+  }
+
+  @Override
+  public boolean deleteConversation(Uuid conversation) {
+    boolean success = true;
+
+    try (final Connection connection = source.connect()) {
+      Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_CONVERSATION_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), conversation);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_CONVERSATION_RESPONSE) {
+        success = true;
+
+      } else {
+        System.out.println("Response from server failed.");
+        LOG.error("Response from server failed.");
+
+      }
+    } catch (Exception ex) {
+      System.out.println("Exception during call on server.");
+      LOG.error(ex, "Exception during call on server.");
+
+    }
+
+    return success;
+  }
+
+  @Override
+  public Conversation getNextConversation() {
+    Conversation next = null;
+    try (final Connection connection = source.connect()) {
+      Serializers.INTEGER.write(connection.out(), NetworkCode.GET_NEXT_CONVERSATION_REQUEST);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.GET_NEXT_CONVERSATION_RESPONSE) {
+        next = Serializers.nullable(Conversation.SERIALIZER).read(connection.in());
+
+      } else {
+        System.out.println("Response from server failed.");
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server." + ex.getLocalizedMessage());
+      LOG.error(ex, "Exception during call on server.");
+    }
+   return next;
   }
   
   //send to the server the user's name and receive the  messages by the user. This method returns the array of messages. 

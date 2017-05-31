@@ -25,6 +25,8 @@ import codeu.chat.util.Serializers;
 import codeu.chat.util.Time;
 import codeu.chat.util.Uuid;
 
+import static codeu.chat.common.Uuids.hash;
+
 public final class Conversation {
 
   public static final Serializer<Conversation> SERIALIZER = new Serializer<Conversation>() {
@@ -81,5 +83,19 @@ public final class Conversation {
 
     this.summary = new ConversationSummary(id, owner, creation, title);
 
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(id);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(o instanceof Conversation) {
+      return Uuids.equals(this.id, ((Conversation) o).id);
+    } else {
+      return false;
+    }
   }
 }
