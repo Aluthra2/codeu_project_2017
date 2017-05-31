@@ -57,5 +57,7 @@ public final class NetworkCode {
       NICKNAME_REQUEST = 37,
       NICKNAME_RESPONSE = 38,
       SEARCHREQUEST = 40,
-      SEARCHRESPONSE = 41;
+      SEARCHRESPONSE = 41,
+      TAGREQUEST = 42,
+      TAGRESPONSE = 43;
 }

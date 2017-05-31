@@ -111,6 +111,7 @@ public final class ClientMessage {
     } else {
       LOG.info("New message:, Author= %s UUID= %s", author, message.id);
       current = message;
+
 //      if(messageByID.containsKey(author.toString())){
 //	messageByID.get(author.toString()).add(message);
   //    }
@@ -125,20 +126,24 @@ public final class ClientMessage {
   }
 
 
-  //search all messages a user has sent by using the user's ID
+  //diplay all messages a user has sent by using the user's name
+  public void searchByUser(String user){
+	 
+    ArrayList<Message>  mess =   controller.searchByUserID(user);
 
-   public void searchByUserID(String authorID){
+    if(!mess.isEmpty()){
+      for(Message m : mess){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
+    }
+    else System.out.println("User has no messages to display");
+  }
+ 
+  //display all messages sent containing a specified hashtag  
+  public void searchByTag(String tag){
 
-     ArrayList<Message>  mess =   controller.searchByUserID(authorID);
+    ArrayList<Message> messagesByTag = controller.searchByTag(tag);
+    for(Message m : messagesByTag){System.out.println( " Time: " + m.creation + " Content "  + m.content);}
+  }
 
-     if(mess.isEmpty() == false){
-       for(Message m : mess){
-         System.out.println(" Time: " + m.creation + " Content "  + m.content);
-       }
-     } else {
-     System.out.println("User has no messages to display");
-   }
- }
 
   // Delete message, removes last message
   // m-del-last command

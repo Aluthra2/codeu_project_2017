@@ -208,22 +208,39 @@ public class Controller implements BasicController {
 
     return response;
   }
+  
+  //send to the server the user's name and receive the  messages by the user. This method returns the array of messages. 
+  public ArrayList<Message> searchByUserID(String author){
+    final ArrayList <Message> messagesbyuserid = new ArrayList<>();
+    try (final Connection connection = source.connect()){
+      Serializers.INTEGER.write(connection.out(), NetworkCode.SEARCHREQUEST);
+      Serializers.STRING.write(connection.out(), author);
+		
+      if(Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE){
+         messagesbyuserid.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
+      }
+	
+     }catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}	
 
-  public ArrayList<Message> searchByUserID(String authorID){
-	final ArrayList <Message> messagesbyuserid = new ArrayList<>();
- 	try (final Connection connection = source.connect()){
+     return messagesbyuserid;
+   }
 
-		Serializers.INTEGER.write(connection.out(), NetworkCode.SEARCHREQUEST);
-		Serializers.STRING.write(connection.out(), authorID);
+  //This method sends a tag to the server and receives all the messages with this tag from the server.
+  //This method returns an array of these messages 
+  public ArrayList<Message> searchByTag(String tag){
+    final ArrayList <Message> messagesByTag = new ArrayList<>();
+    try (final Connection connection = source.connect()){
+      Serializers.INTEGER.write(connection.out(), NetworkCode.TAGREQUEST);
+      Serializers.STRING.write(connection.out(), tag);
 
-		if (Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE) {
-		   messagesbyuserid.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
-		   }
-		} catch(Exception ex) {
-      System.out.println("ERROR: Exception during call on server. Check log for details.");
-    }
-		return messagesbyuserid;
-	}
 
+      if(Serializers.INTEGER.read(connection.in()) == NetworkCode.TAGRESPONSE){
+         messagesByTag.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
+      }
+              
+    }catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}
+
+    return messagesByTag;
+  }
 
 }
