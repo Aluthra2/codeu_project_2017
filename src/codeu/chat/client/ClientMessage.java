@@ -342,6 +342,7 @@ public final class ClientMessage {
   // Print Message.  User context is used to map from author UUID to name.
   public static void printMessage(Message m, ClientUser userContext) {
     if (m != null) {
+      System.out.println("Null Message!");
     } else {
 
       // Display author name if available.  Otherwise display the author UUID.
