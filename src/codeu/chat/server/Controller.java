@@ -15,13 +15,28 @@
 package codeu.chat.server;
 
 import java.util.Iterator;
-
-import codeu.chat.common.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
+import codeu.chat.common.BasicController;
+import codeu.chat.common.Conversation;
+import codeu.chat.common.Message;
+import codeu.chat.common.RandomUuidGenerator;
+import codeu.chat.common.RawController;
+import codeu.chat.common.User;
 import codeu.chat.util.Logger;
+import codeu.chat.util.Time;
+import codeu.chat.util.Uuid;
 
 public final class Controller implements RawController, BasicController {
 
   private final static Logger.Log LOG = Logger.newLog(Controller.class);
+
+  private Map<String, User> userNames = new HashMap<>();
 
   private final Model model;
   private final Uuid.Generator uuidGenerator;
@@ -42,9 +57,21 @@ public final class Controller implements RawController, BasicController {
   }
 
   @Override
+  public User deleteUser(String name){
+    return deleteUser(name, Time.now());
+  }
+
+  @Override
   public Conversation newConversation(String title, Uuid owner) {
     return newConversation(createId(), title, owner, Time.now());
   }
+
+
+  public ArrayList<Message> searchByUserID(String authorID){
+            ArrayList<Message> messages = model.messageByUserID.get(authorID);
+	    return messages;
+
+   }
 
   @Override
   public Message newMessage(Uuid id, Uuid author, Uuid conversation, String body, Time creationTime) {
@@ -56,14 +83,14 @@ public final class Controller implements RawController, BasicController {
 
     if (foundUser != null && foundConversation != null && isIdFree(id)) {
 
-      message = new Message(id, Uuids.NULL, Uuids.NULL, creationTime, author, body);
+      message = new Message(id, Uuid.NULL, Uuid.NULL, creationTime, author, body);
       model.add(message);
       LOG.info("Message added: %s", message.id);
 
       // Find and update the previous "last" message so that it's "next" value
       // will point to the new message.
 
-      if (Uuids.equals(foundConversation.lastMessage, Uuids.NULL)) {
+      if (Uuid.equals(foundConversation.lastMessage, Uuid.NULL)) {
 
         // The conversation has no messages in it, that's why the last message is NULL (the first
         // message should be NULL too. Since there is no last message, then it is not possible
@@ -79,7 +106,7 @@ public final class Controller implements RawController, BasicController {
       // not change.
 
       foundConversation.firstMessage =
-              Uuids.equals(foundConversation.firstMessage, Uuids.NULL) ?
+              Uuid.equals(foundConversation.firstMessage, Uuid.NULL) ?
                       message.id :
                       foundConversation.firstMessage;
 
@@ -110,14 +137,14 @@ public final class Controller implements RawController, BasicController {
     if (foundMessage != null && foundUser != null && foundConversation != null) {
       model.delete(foundMessage);
 
-      if (Uuids.equals(foundConversation.lastMessage, msg)) {
+      if (Uuid.equals(foundConversation.lastMessage, msg)) {
         // This message was the conversation's last one
 
-        if (Uuids.equals(foundConversation.firstMessage, msg)) {
+        if (Uuid.equals(foundConversation.firstMessage, msg)) {
           // This message was the conversation's only message now the conversation will have no
           // messages in it, therefore the first and last message are NULL
-          foundConversation.firstMessage = Uuids.NULL;
-          foundConversation.lastMessage = Uuids.NULL;
+          foundConversation.firstMessage = Uuid.NULL;
+          foundConversation.lastMessage = Uuid.NULL;
 
           LOG.info("Message deleted: %s", msg);
 
@@ -128,7 +155,7 @@ public final class Controller implements RawController, BasicController {
           iteratorBefore = model.messageByTime().before(foundMessage.creation).iterator();
           final Message newLastMessage = findNewLastMessage(iteratorBefore);
 
-          newLastMessage.next = Uuids.NULL;
+          newLastMessage.next = Uuid.NULL;
           foundConversation.lastMessage = newLastMessage.id;
 
           LOG.info("Message deleted: %s", msg);
@@ -137,14 +164,14 @@ public final class Controller implements RawController, BasicController {
 
       } else {
 
-        if (Uuids.equals(foundConversation.firstMessage, msg)) {
+        if (Uuid.equals(foundConversation.firstMessage, msg)) {
           // This message was the first message in a conversation that has other messages
           // Update the first message value to the second message,
           // update the pointer of the second message
           iteratorAfter = model.messageByTime().after(foundMessage.creation).iterator();
           final Message newFirstMessage = findNewFirstMessage(iteratorAfter);
 
-          newFirstMessage.previous = Uuids.NULL;
+          newFirstMessage.previous = Uuid.NULL;
           foundConversation.firstMessage = newFirstMessage.id;
 
           LOG.info("Message deleted: %s", msg);
@@ -206,6 +233,7 @@ public final class Controller implements RawController, BasicController {
     if (isIdFree(id)) {
 
       user = new User(id, name, creationTime);
+      userNames.put(name,user);
       model.add(user);
 
       LOG.info(
@@ -223,6 +251,26 @@ public final class Controller implements RawController, BasicController {
               creationTime);
     }
 
+    return user;
+  }
+
+  @Override
+  public User deleteUser(String name, Time deletionTime){
+    User user = null;
+    if (userNames.containsKey(name)) {
+      user = userNames.get(name);
+      userNames.remove(name);
+      model.remove(user);
+      LOG.info(
+          "deleteUser success (user.id=%s user.name=%s user.time=%s)",
+          user.id,
+          user.name,
+          user.creation);
+    } else {
+      LOG.info(
+          "deleteUser failed - User not found (user.id=%s)",
+          name);
+    }
     return user;
   }
 

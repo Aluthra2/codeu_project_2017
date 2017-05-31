@@ -14,6 +14,8 @@
 
 package codeu.chat.common;
 
+import codeu.chat.util.Uuid;
+
 // BASIC CONTROLLER
 //
 //   The controller component in the Model-View-Controller pattern. This
@@ -44,6 +46,11 @@ public interface BasicController {
   //   state of the user on the server. Whether user names can be shared
   //   is undefined.
   User newUser(String name);
+
+  //DELETE USER
+  //
+  // Delete a user from the server
+  User deleteUser(String name);
 
   // NEW CONVERSATION
   //

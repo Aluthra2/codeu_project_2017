@@ -20,10 +20,9 @@ import java.util.Map;
 
 import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
-import codeu.chat.common.Uuid;
-import codeu.chat.common.Uuids;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
+import codeu.chat.util.Uuid;
 import codeu.chat.util.store.Store;
 
 public final class ClientConversation {
@@ -110,7 +109,7 @@ public final class ClientConversation {
     if (hasCurrent()) {
       if (isExistingConversation) {
         ConversationSummary conversation = summariesSortedByTitle.first(title);
-        boolean deletingCurrent = Uuids.equals(conversation.id, getCurrentId());
+        boolean deletingCurrent = Uuid.equals(conversation.id, getCurrentId());
         messageContext.deleteAllMessages();
         controller.deleteConversation(conversation.id);
 
@@ -143,8 +142,9 @@ public final class ClientConversation {
   }
 
   public void setCurrent(ConversationSummary conv) {
-    System.out.println("in setCurrent(), set current = " + conv);
-    currentSummary = conv; }
+    currentSummary = conv;
+  }
+
 
   public void showAllConversations() {
     updateAllConversations(false);

@@ -14,14 +14,16 @@
 
 package codeu.chat.client;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import codeu.chat.common.Conversation;
 import codeu.chat.common.ConversationSummary;
 import codeu.chat.common.Message;
-import codeu.chat.common.Uuid;
-import codeu.chat.common.Uuids;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
-
+import codeu.chat.util.Uuid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +41,7 @@ public final class ClientMessage {
 
   private Message current = null;
 
-  private final Map<Uuid, Message> messageByUuid = new HashMap<>();
+  private final Map<String, ArrayList<Message>> messageByID = new HashMap<>();
 
   private Conversation conversationHead;
   private final List<Message> conversationContents = new ArrayList<>();
@@ -109,12 +111,31 @@ public final class ClientMessage {
     } else {
       LOG.info("New message:, Author= %s UUID= %s", author, message.id);
       current = message;
-
+//      if(messageByID.containsKey(author.toString())){
+//	messageByID.get(author.toString()).add(message);
+  //    }	
+    //  else{
+//	ArrayList<Message> a = new ArrayList<>();
+  //      a.add(message);
+//	messageByID.put(author.toString(), a);
+  //    }
     }
 
     updateMessages(false);
   }
 
+
+  //search all messages a user has sent by using the user's ID
+
+   public void searchByUserID(String authorID){
+	 
+     ArrayList<Message>  mess =   controller.searchByUserID(authorID);
+
+     if(mess.isEmpty() == false){
+     for(Message m : mess){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
+    }
+    else System.out.println("User has no messages to display");
+   }
   // Delete message, removes last message
   // m-del-last command
   public void deleteMessage() {
@@ -153,9 +174,8 @@ public final class ClientMessage {
 
         LOG.error(" Error: message not found, please enter a valid index.");
       }
+    System.out.println("size of conversationContents: " + conversationContents.size());
     }
-  }
-
 
   // Delete message helper method
   private void deleteMessage(Message msg) {
@@ -294,8 +314,8 @@ public final class ClientMessage {
 
           // Race: message possibly added since conversation fetched.  If that occurs,
           // pretend the newer messages do not exist - they'll get picked up next time).
-          if (msg.next.equals(Uuids.NULL) || msg.id.equals(conversationHead.lastMessage)) {
-            msg.next = Uuids.NULL;
+          if (msg.next.equals(Uuid.NULL) || msg.id.equals(conversationHead.lastMessage)) {
+            msg.next = Uuid.NULL;
             break;
           }
         }
