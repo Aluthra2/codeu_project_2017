@@ -186,8 +186,18 @@ public final class Uuid {
     return parse(null, string.split("\\."), 0);
   }
 
-  private static Uuid parse(final Uuid root, String[] tokens, int index) throws IOException {
+  public static Uuid fromInteger(int integer) {
+    Uuid result = null;
+    try {
+      result = parse(Integer.toString(integer));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
+    return result;
+  }
+
+  private static Uuid parse(final Uuid root, String[] tokens, int index) throws IOException {
     final long id = Long.parseLong(tokens[index]);
 
     if ((id >> 32) != 0) {

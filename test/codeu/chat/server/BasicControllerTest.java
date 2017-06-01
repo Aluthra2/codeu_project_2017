@@ -45,7 +45,8 @@ public final class BasicControllerTest {
         user == null);
   }
 
-  @Test void testDeleteUser(){
+  @Test 
+  public void testDeleteUser(){
     final User user = controller.newUser("user");
     assertFalse(
         "Check that user has a valid reference",

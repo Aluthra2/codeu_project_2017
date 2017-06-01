@@ -55,4 +55,9 @@ public interface RawController {
   // already in use, the call will fail and null will be returned.
   Conversation newConversation(Uuid id, String title, Uuid owner, Time creationTime);
 
+  // DELETE CONVERSATION
+  //
+  //   Delete a message from the server.
+  boolean deleteConversation(Uuid conversation);
+
 }

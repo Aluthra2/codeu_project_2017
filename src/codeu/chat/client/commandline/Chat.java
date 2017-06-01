@@ -59,6 +59,7 @@ public final class Chat {
     System.out.println("   u-list-all    - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
+    System.out.println("   c-delete <title>           - delete the conversation corresponding to the given title.");
     System.out.println("   c-list-all       - list all conversations known to system.");
     System.out.println("   c-select <index> - select conversation from list.");
     System.out.println("Message commands:");
@@ -193,8 +194,17 @@ public final class Chat {
 
       if (!clientContext.user.hasCurrent()) {
         System.out.println("ERROR: Not signed in.");
+
+      } else if (!clientContext.conversation.hasCurrent()) {
+        System.out.println("ERROR: No conversation selected.");
+
       } else {
-        //TODO clientContext.conversation.deleteConversation();
+        if (!tokenScanner.hasNext()) {
+          System.out.println("ERROR: Conversation title not supplied.");
+        } else {
+          final String title = tokenScanner.nextLine().trim();
+          clientContext.conversation.deleteConversation(title);
+        }
       }
     }
 

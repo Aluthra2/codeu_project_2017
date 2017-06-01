@@ -14,7 +14,7 @@
 
 package codeu.chat.server;
 
-
+import java.util.Iterator;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -351,6 +351,28 @@ public final class Controller implements RawController, BasicController {
     }
 
     return conversation;
+  }
+
+  @Override
+  public boolean deleteConversation(Uuid conversation) {
+    boolean success = true;
+    final Conversation foundConversation = model.conversationById().first(conversation);
+
+    final User foundUser = model.userById().first(foundConversation.owner);
+
+
+    if (foundUser != null && foundConversation != null) {
+      model.delete(foundConversation);
+      LOG.info("Conversation deleted: " + foundConversation.id);
+
+    } else {
+      System.out.println("Error: Conversation not deleted.");
+      LOG.info("Error: Message not deleted: %s", conversation);
+
+      success = false;
+    }
+
+    return success;
   }
 
   private Uuid createId() {

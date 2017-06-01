@@ -284,6 +284,14 @@ public final class Server {
 
       Serializers.INTEGER.write(out, NetworkCode.DELETE_MESSAGE_RESPONSE);
 
+    } else if (type == NetworkCode.DELETE_CONVERSATION_REQUEST) {
+
+      final Uuid conversation = Uuid.SERIALIZER.read(in);
+
+      controller.deleteConversation(conversation);
+
+      Serializers.INTEGER.write(out, NetworkCode.DELETE_CONVERSATION_RESPONSE);
+
     } else {
 
       // In the case that the message was not handled make a dummy message with

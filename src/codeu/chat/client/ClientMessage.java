@@ -37,7 +37,7 @@ public final class ClientMessage {
 
   private Message current = null;
 
-  private final Map<String, ArrayList<Message>> messageByID = new HashMap<>();
+  private final Map<Uuid, Message> messageByUuid = new HashMap<>();
 
   private Conversation conversationHead;
   private final List<Message> conversationContents = new ArrayList<>();
@@ -119,8 +119,6 @@ public final class ClientMessage {
     } else {
       LOG.info("New message:, Author= %s UUID= %s", author, message.id);
       current = message;
-
-
     }
     updateMessages(false);
   }
@@ -128,7 +126,7 @@ public final class ClientMessage {
 
   // Display all messages a user has sent by using the user's name
   public void searchByUser(String user){
-	 
+
     ArrayList<Message>  mess =   controller.searchByUserID(user);
 
     if(!mess.isEmpty()){
@@ -136,11 +134,11 @@ public final class ClientMessage {
     }
     else System.out.println("User has no messages to display");
   }
- 
-  // Display all messages sent containing a specified hashtag  
-  public ArrayList<Message> searchByTag(String tag){
+  
+  public void searchByTag(String tag){
 
-    return controller.searchByTag(tag);
+    ArrayList<Message> messagesByTag = controller.searchByTag(tag);
+    for(Message m : messagesByTag){System.out.println( " Time: " + m.creation + " Content "  + m.content);}
   }
 
   // Delete message, removes last message
@@ -200,6 +198,7 @@ public final class ClientMessage {
   // Show all messages attached to the current conversation. This will balk if the conversation
   // has too many messages (use m-next and m-show instead).
   public void showAllMessages() {
+    updateMessages(true);
     if (conversationContents.size() == 0) {
       System.out.println(" Current Conversation has no messages");
     } else {
@@ -314,7 +313,7 @@ public final class ClientMessage {
   // Print Message.  User context is used to map from author UUID to name.
   public static void printMessage(Message m, ClientUser userContext) {
     if (m == null) {
-      System.out.println("Null message.");
+      System.out.println("Null Message!");
     } else {
 
       // Display author name if available.  Otherwise display the author UUID.

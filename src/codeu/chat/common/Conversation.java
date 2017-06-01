@@ -19,11 +19,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 import codeu.chat.util.Serializer;
 import codeu.chat.util.Serializers;
 import codeu.chat.util.Time;
 import codeu.chat.util.Uuid;
+
 
 public final class Conversation {
 
@@ -82,4 +84,30 @@ public final class Conversation {
     this.summary = new ConversationSummary(id, owner, creation, title);
 
   }
+
+  @Override
+  public int hashCode() {
+    return hash(id);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(o instanceof Conversation) {
+      return Uuid.equals(this.id, ((Conversation) o).id);
+    } else {
+      return false;
+    }
+  }
+
+  private static int hash(Uuid id) {
+
+    int hash = 0;
+
+    for (Uuid current = id; current != null; current = current.root()) {
+      hash ^= Objects.hash(current.id());
+    }
+
+    return hash;
+  }
+
 }
