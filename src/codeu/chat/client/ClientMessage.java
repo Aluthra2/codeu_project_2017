@@ -126,7 +126,7 @@ public final class ClientMessage {
   }
 
 
-  //diplay all messages a user has sent by using the user's name
+  // Display all messages a user has sent by using the user's name
   public void searchByUser(String user){
 	 
     ArrayList<Message>  mess =   controller.searchByUserID(user);
@@ -137,11 +137,10 @@ public final class ClientMessage {
     else System.out.println("User has no messages to display");
   }
  
-  //display all messages sent containing a specified hashtag  
+  // Display all messages sent containing a specified hashtag  
   public ArrayList<Message> searchByTag(String tag){
 
     return controller.searchByTag(tag);
-    //for(Message m : messagesByTag){System.out.println( " Time: " + m.creation + " Content "  + m.content);}
   }
 
   // Delete message, removes last message
