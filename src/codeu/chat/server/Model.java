@@ -191,9 +191,17 @@ public final class Model {
       messageByText.delete(message.content);
     }
 
-    if(messageByUserID.containsKey(message.author)) {
-      messageByUserID.remove(message.author);
+    if(messageByUserID.containsKey(message.author.toString())) {
+     	ArrayList<Message> a = new ArrayList<>();
+	a = messageByUserID.get(message.author.toString());
+	for(Message m : a){
+	     if(m.id == message.id){
+		a.remove(m);
+	        break;
+	     }
+	}
     }
+
   }
 
 
