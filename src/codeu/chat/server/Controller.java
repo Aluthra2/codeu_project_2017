@@ -375,18 +375,6 @@ public final class Controller implements RawController, BasicController {
     return success;
   }
 
-  public Conversation getNextConversation() {
-    Iterator<Conversation> iterator = model.conversationByTime().before(Time.now()).iterator();
-    Conversation conversation = null;
-
-    if(iterator.next() != null) {
-      conversation = iterator.next();
-    }
-
-    return conversation;
-  }
-
-
   private Uuid createId() {
 
     Uuid candidate;

@@ -227,26 +227,6 @@ public class Controller implements BasicController {
 
     return success;
   }
-
-  @Override
-  public Conversation getNextConversation() {
-    Conversation next = null;
-    try (final Connection connection = source.connect()) {
-      Serializers.INTEGER.write(connection.out(), NetworkCode.GET_NEXT_CONVERSATION_REQUEST);
-
-      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.GET_NEXT_CONVERSATION_RESPONSE) {
-        next = Serializers.nullable(Conversation.SERIALIZER).read(connection.in());
-
-      } else {
-        System.out.println("Response from server failed.");
-        LOG.error("Response from server failed.");
-      }
-    } catch (Exception ex) {
-      System.out.println("ERROR: Exception during call on server." + ex.getLocalizedMessage());
-      LOG.error(ex, "Exception during call on server.");
-    }
-   return next;
-  }
   
   //send to the server the user's name and receive the  messages by the user. This method returns the array of messages. 
   public ArrayList<Message> searchByUserID(String author){
