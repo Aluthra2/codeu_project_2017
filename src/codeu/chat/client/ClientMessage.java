@@ -135,7 +135,7 @@ public final class ClientMessage {
     else System.out.println("User has no messages to display");
   }
   
-  public void searchByTag(String tag){
+  public ArrayList<Message> searchByTag(String tag){
 
     ArrayList<Message> messagesByTag = controller.searchByTag(tag);
     for(Message m : messagesByTag){System.out.println( " Time: " + m.creation + " Content "  + m.content);}
