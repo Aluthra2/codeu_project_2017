@@ -58,6 +58,7 @@ public final class Chat {
     System.out.println("   u-list-all    - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
+    System.out.println("   c-delete <title>           - delete the conversation corresponding to the given title.");
     System.out.println("   c-list-all       - list all conversations known to system.");
     System.out.println("   c-select <index> - select conversation from list.");
     System.out.println("Message commands:");
@@ -68,8 +69,9 @@ public final class Chat {
     System.out.println("   m-list-all       - list all messages in the current conversation.");
     System.out.println("   m-next <index>   - index of next message to view.");
     System.out.println("   m-show <count>   - show next <count> messages.");
-    System.out.println("   searchId [UUID: xxx.xxx.xxxxxxxxxx]  -show all messages from user with specified UUID string");
-}
+    System.out.println("   searchByName <username>  -show all messages from user");  
+    System.out.println("   searchTag <#hashtagName>  -show all messages with specified hashtag");
+ }
 
   // Prompt for new command.
   private void promptForCommand() {
@@ -89,13 +91,20 @@ public final class Chat {
 
       alive = false;
 
-    } if (token.equals("searchId")) {
+    }else if (token.equals("searchByName")) {
+	
+     if (tokenScanner.hasNext()){
+       clientContext.message.searchByUser(tokenScanner.nextLine().trim());
+     }
 
-	if(tokenScanner.hasNext()){
-	   clientContext.message.searchByUserID(tokenScanner.nextLine().trim());
-         }
-    }
-      else if (token.equals("help")) {
+    }else if (token.equals("searchTag")){
+	
+     if(tokenScanner.hasNext()){
+       clientContext.message.searchByTag(tokenScanner.nextLine().trim());
+     }
+
+    } else if (token.equals("help")) {
+
 
       help();
 
@@ -183,8 +192,17 @@ public final class Chat {
 
       if (!clientContext.user.hasCurrent()) {
         System.out.println("ERROR: Not signed in.");
+
+      } else if (!clientContext.conversation.hasCurrent()) {
+        System.out.println("ERROR: No conversation selected.");
+
       } else {
-        //TODO clientContext.conversation.deleteConversation();
+        if (!tokenScanner.hasNext()) {
+          System.out.println("ERROR: Conversation title not supplied.");
+        } else {
+          final String title = tokenScanner.nextLine().trim();
+          clientContext.conversation.deleteConversation(title);
+        }
       }
     }
 
