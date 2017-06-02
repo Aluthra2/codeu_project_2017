@@ -14,7 +14,7 @@
 
 package codeu.chat.server;
 
-
+import java.util.Iterator;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,12 +80,32 @@ public final class Controller implements RawController, BasicController {
     return newConversation(createId(), title, owner, Time.now());
   }
 
+  //returns messages by specified user
+  public ArrayList<Message> searchByUserID(String authorName){
+    
+   String ID = model.userByText.first(authorName).id.toString();
+    
+   ArrayList<Message> messages = new ArrayList<>(); 
 
-  public ArrayList<Message> searchByUserID(String authorID){
-            ArrayList<Message> messages = model.messageByUserID.get(authorID);
-	    return messages;
-
+   if (model.messageByUserID.containsKey(ID)){
+      messages = model.messageByUserID.get(ID);
    }
+    
+   return messages;
+  }
+
+  //returns messages containing specified tag
+  public ArrayList<Message> searchByTag(String tag){
+
+    ArrayList<Message> messages = new ArrayList<>();
+   
+    if (model.tags.containsKey(tag)){ 
+       messages = model.tags.get(tag);
+    }
+ 
+   return messages;
+
+  }
 
   @Override
   public Message newMessage(Uuid id, Uuid author, Uuid conversation, String body, Time creationTime) {
@@ -331,6 +351,28 @@ public final class Controller implements RawController, BasicController {
     }
 
     return conversation;
+  }
+
+  @Override
+  public boolean deleteConversation(Uuid conversation) {
+    boolean success = true;
+    final Conversation foundConversation = model.conversationById().first(conversation);
+
+    final User foundUser = model.userById().first(foundConversation.owner);
+
+
+    if (foundUser != null && foundConversation != null) {
+      model.delete(foundConversation);
+      LOG.info("Conversation deleted: " + foundConversation.id);
+
+    } else {
+      System.out.println("Error: Conversation not deleted.");
+      LOG.info("Error: Message not deleted: %s", conversation);
+
+      success = false;
+    }
+
+    return success;
   }
 
   private Uuid createId() {

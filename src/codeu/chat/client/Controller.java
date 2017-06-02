@@ -13,10 +13,6 @@
 // limitations under the License.
 
 package codeu.chat.client;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.Thread;
-import java.util.Collection;
 import codeu.chat.common.BasicController;
 import codeu.chat.common.Conversation;
 import codeu.chat.common.Message;
@@ -27,7 +23,6 @@ import codeu.chat.util.Serializers;
 import codeu.chat.util.Uuid;
 import codeu.chat.util.connections.Connection;
 import codeu.chat.util.connections.ConnectionSource;
-import java.util.Collection;
 import java.util.ArrayList;
 
 public class Controller implements BasicController {
@@ -42,7 +37,6 @@ public class Controller implements BasicController {
 
   @Override
   public Message newMessage(Uuid author, Uuid conversation, String body) {
-
     Message response = null;
 
     try (final Connection connection = source.connect()) {
@@ -209,21 +203,63 @@ public class Controller implements BasicController {
     return response;
   }
 
-  public ArrayList<Message> searchByUserID(String authorID){
-	final ArrayList <Message> messagesbyuserid = new ArrayList<>();
- 	try (final Connection connection = source.connect()){
+  @Override
+  public boolean deleteConversation(Uuid conversation) {
+    boolean success = true;
 
-		Serializers.INTEGER.write(connection.out(), NetworkCode.SEARCHREQUEST);
-		Serializers.STRING.write(connection.out(), authorID);
+    try (final Connection connection = source.connect()) {
+      Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_CONVERSATION_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), conversation);
 
-		if (Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE) {
-		   messagesbyuserid.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
-		   }
-		} catch(Exception ex) {
-      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_CONVERSATION_RESPONSE) {
+        success = true;
+
+      } else {
+        System.out.println("Response from server failed.");
+        LOG.error("Response from server failed.");
+
+      }
+    } catch (Exception ex) {
+      System.out.println("Exception during call on server.");
+      LOG.error(ex, "Exception during call on server.");
+
     }
-		return messagesbyuserid;
-	}
 
+    return success;
+  }
+  
+  //send to the server the user's name and receive the  messages by the user. This method returns the array of messages. 
+  public ArrayList<Message> searchByUserID(String author){
+    final ArrayList <Message> messagesbyuserid = new ArrayList<>();
+    try (final Connection connection = source.connect()){
+      Serializers.INTEGER.write(connection.out(), NetworkCode.SEARCHREQUEST);
+      Serializers.STRING.write(connection.out(), author);
+		
+      if(Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE){
+         messagesbyuserid.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
+      }
+	
+     }catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}	
+
+     return messagesbyuserid;
+   }
+
+  //This method sends a tag to the server and receives all the messages with this tag from the server.
+  //This method returns an array of these messages 
+  public ArrayList<Message> searchByTag(String tag){
+    final ArrayList <Message> messagesByTag = new ArrayList<>();
+    try (final Connection connection = source.connect()){
+      Serializers.INTEGER.write(connection.out(), NetworkCode.TAGREQUEST);
+      Serializers.STRING.write(connection.out(), tag);
+
+
+      if(Serializers.INTEGER.read(connection.in()) == NetworkCode.TAGRESPONSE){
+         messagesByTag.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
+      }
+              
+    }catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}
+
+    return messagesByTag;
+  }
 
 }
