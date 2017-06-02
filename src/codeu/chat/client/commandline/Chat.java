@@ -23,6 +23,7 @@ import codeu.chat.common.ConversationSummary;
 import codeu.chat.util.Logger;
 import codeu.chat.client.ClientUser;
 import codeu.chat.util.Uuid;
+import codeu.chat.common.Message;
 
 // Chat - top-level client application.
 public final class Chat {
@@ -100,7 +101,8 @@ public final class Chat {
     }else if (token.equals("searchTag")){
 	
      if(tokenScanner.hasNext()){
-       clientContext.message.searchByTag(tokenScanner.nextLine().trim());
+       ArrayList<Message> messagesByTag = clientContext.message.searchByTag(tokenScanner.nextLine().trim());
+       for(Message m : messagesByTag){System.out.println("User: " + clientContext.user.getName(m.author) + " Time: " + m.creation + " Content "  + m.content);}
      }
 
     } else if (token.equals("help")) {
