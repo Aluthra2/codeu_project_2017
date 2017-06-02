@@ -116,9 +116,9 @@ public final class ClientMessage {
   }
 
 
-  //diplay all messages a user has sent by using the user's name
+  // Diplay all messages a user has sent by using the user's name
   public void searchByUser(String user){
-	 
+
     ArrayList<Message>  mess =   controller.searchByUserID(user);
 
     if(!mess.isEmpty()){
@@ -126,14 +126,12 @@ public final class ClientMessage {
     }
     else System.out.println("User has no messages to display");
   }
- 
-  //display all messages sent containing a specified hashtag  
-  public void searchByTag(String tag){
 
-    ArrayList<Message> messagesByTag = controller.searchByTag(tag);
-    for(Message m : messagesByTag){System.out.println( " Time: " + m.creation + " Content "  + m.content);}
+  // Display all messages sent containing a specified hashtag
+  public ArrayList<Message> searchByTag(String tag){
+
+    return  controller.searchByTag(tag);
   }
-
 
   // Delete message, removes last message
   // m-del-last command
@@ -203,6 +201,7 @@ public final class ClientMessage {
   // Show all messages attached to the current conversation. This will balk if the conversation
   // has too many messages (use m-next and m-show instead).
   public void showAllMessages() {
+    updateMessages(true);
     if (conversationContents.size() == 0) {
       System.out.println("Current Conversation has no messages.");
 

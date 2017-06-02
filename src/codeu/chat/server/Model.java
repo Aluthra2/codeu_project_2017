@@ -191,12 +191,28 @@ public final class Model {
       messageByText.delete(message.content);
     }
 
-    if(messageByUserID.containsKey(message.author)) {
-      messageByUserID.remove(message.author);
+    if(messageByUserID.containsKey(message.author.toString())) {
+      ArrayList<Message> a = new ArrayList<>();
+      a = messageByUserID.get(message.author.toString());
+      for(Message m : a){
+        if(m.id == message.id){
+           a.remove(m);
+           break;
+        }
+      }
     }
+
+    Pattern hashtag = Pattern.compile("(#\\w+)\\b");
+    Matcher tagCheck = hashtag.matcher(message.content);
+    while(tagCheck.find()){
+
+      if(tags.containsKey(tagCheck.group(1))){
+         tags.get(tagCheck.group(1)).remove(message);
+
+      }
+     }
+
   }
-
-
   public StoreAccessor<Uuid, Message> messageById() {
     return messageById;
   }
