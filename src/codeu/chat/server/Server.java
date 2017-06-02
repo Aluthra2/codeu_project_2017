@@ -292,14 +292,7 @@ public final class Server {
 
       Serializers.INTEGER.write(out, NetworkCode.DELETE_CONVERSATION_RESPONSE);
 
-    } else if(type == NetworkCode.GET_NEXT_CONVERSATION_REQUEST) {
-
-        final Conversation next = controller.getNextConversation();
-        Serializers.INTEGER.write(out, NetworkCode.GET_NEXT_CONVERSATION_RESPONSE);
-        Conversation.SERIALIZER.write(out, next);
-    }
-
-    else {
+    } else {
 
       // In the case that the message was not handled make a dummy message with
       // the type "NO_MESSAGE" so that the client still gets something.

@@ -16,6 +16,7 @@ package codeu.chat.client;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import codeu.chat.common.Conversation;
@@ -132,13 +133,18 @@ public final class ClientConversation {
   }
 
   private ConversationSummary getNext() {
-    Conversation conversation = controller.getNextConversation();
-    if(summariesByUuid.containsKey(conversation.id)) {
-      return summariesByUuid.get(conversation.id);
+    Iterator<ConversationSummary> iterator = getConversationSummaries().iterator();
+    ConversationSummary next = null;
+
+    if (summariesByUuid.size() == 1) {
+      return next;
     } else {
-      LOG.info("getNextConversation() could not another Conversation to set as current.");
-      return null;
+      while (iterator.next().equals(currentSummary)) {
+        next = iterator.next();
+      }
     }
+
+    return next;
   }
 
   public void setCurrent(ConversationSummary conv) {

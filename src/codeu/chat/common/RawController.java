@@ -60,11 +60,4 @@ public interface RawController {
   //   Delete a message from the server.
   boolean deleteConversation(Uuid conversation);
 
-  // FIND NEW CURRENT
-  //
-  //   Finds a value to update currentSummary to in ClientConversation
-  Conversation getNextConversation();
-
-
-
 }
