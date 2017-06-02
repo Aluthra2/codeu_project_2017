@@ -137,8 +137,8 @@ public final class ClientMessage {
   
   public ArrayList<Message> searchByTag(String tag){
 
-    ArrayList<Message> messagesByTag = controller.searchByTag(tag);
-    for(Message m : messagesByTag){System.out.println( " Time: " + m.creation + " Content "  + m.content);}
+    return  controller.searchByTag(tag);
+   
   }
 
   // Delete message, removes last message
