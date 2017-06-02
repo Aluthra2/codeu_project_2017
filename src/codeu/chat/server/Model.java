@@ -202,6 +202,18 @@ public final class Model {
 	}
     }
 
+    Pattern hashtag = Pattern.compile("(#\\w+)\\b");
+    Matcher tagCheck = hashtag.matcher(message.content);
+    while(tagCheck.find()){
+
+        if(tags.containsKey(tagCheck.group(1))){
+           tags.get(tagCheck.group(1)).remove(message);
+
+        }
+    }
+
+
+
   }
 
 
