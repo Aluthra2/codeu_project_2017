@@ -24,11 +24,6 @@ import codeu.chat.common.Message;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Method;
 import codeu.chat.util.Uuid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 public final class ClientMessage {
 
@@ -36,6 +31,7 @@ public final class ClientMessage {
 
   private final static int MESSAGE_MAX_COUNT = 100;
   private final static int MESSAGE_FETCH_COUNT = 5;
+
   private final Controller controller;
   private final View view;
 
@@ -99,6 +95,18 @@ public final class ClientMessage {
     return conversationContents;
   }
 
+  private Message setCurrentForDelete(List<Message> conversationContents) {
+
+    Message current;
+    if(conversationContents.size() > 1) {
+      current = conversationContents.get(conversationContents.size() - 2); //TODO: what should current be set to here?
+    } else {
+      current = null;
+    }
+
+    return current;
+  }
+
   // For m-add command.
   public void addMessage(Uuid author, Uuid conversation, String body) {
     final boolean validInputs = isValidBody(body) && (author != null) && (conversation != null);
@@ -107,7 +115,7 @@ public final class ClientMessage {
 
     if (message == null) {
       System.out.format("Error: message not created - %s.\n",
-              (validInputs) ? "server error" : "bad input value");
+          (validInputs) ? "server error" : "bad input value");
     } else {
       LOG.info("New message:, Author= %s UUID= %s", author, message.id);
       current = message;
@@ -116,80 +124,72 @@ public final class ClientMessage {
   }
 
 
-  //search all messages a user has sent by using the user's ID
+  // Display all messages a user has sent by using the user's name
+  public void searchByUser(String user){
 
-   public void searchByUserID(String authorID){
+    ArrayList<Message>  mess =   controller.searchByUserID(user);
 
-     ArrayList<Message>  mess =   controller.searchByUserID(authorID);
-
-     if(mess.isEmpty() == false){
-       for(Message m : mess){
-         System.out.println(" Time: " + m.creation + " Content "  + m.content);
-       }
-    } else {
-    System.out.println("User has no messages to display");
-   }
+    if(!mess.isEmpty()){
+      for(Message m : mess){System.out.println(" Time: " + m.creation + " Content "  + m.content);}
+    }
+    else System.out.println("User has no messages to display");
   }
+  
+  public ArrayList<Message> searchByTag(String tag){
+
+    return  controller.searchByTag(tag);
+   
+  }
+
   // Delete message, removes last message
   // m-del-last command
   public void deleteMessage() {
-    if (currentMessageCount() == 0) {
-      System.out.println("Current Conversation has no messages.");
+    if(conversationContents.size() == 0) {
+      System.out.println(" Current Conversation has no messages");
 
     } else {
-      if (controller.deleteMessage(conversationHead.lastMessage, conversationHead.id)) {
-        resetCurrent(currentMessageCount() == 1);
-        LOG.info("Deleted message: UUID= %s", conversationHead.lastMessage);
+
+      if(controller.deleteMessage(conversationHead.lastMessage, conversationHead.id)) {
+        current = setCurrentForDelete(conversationContents);
 
       } else {
-        LOG.error("Error: Message could not be deleted.");
-
+        LOG.info("Error: Failed to delete message.");
       }
     }
+
+
+
+    updateMessages(false);
   }
 
   // Delete message, removes message corresponding to given index, (m-delete <index> command)
   // calls helper method
-  public void deleteMessage(String index) { //TODO: Use an ordered hash map for linear time. https://github.com/google/guava
+  public void deleteMessage(String index) {
+    System.out.println("delete message called on index" + index);
     int msgIndex = Integer.valueOf(index);
-    if (msgIndex == (currentMessageCount() - 1)) {
-      // Message to be deleted is the last message in the conversation,
-      // so m-del-last command is called
-      deleteMessage();
-
-    } else {
-      if (msgIndex < currentMessageCount()) {
-        Message msg = conversationContents.get(msgIndex);
-        deleteMessage(msg);
-        updateMessages(true);
-        LOG.info("Deleted message: UUID= %s", msg.id);
-
-      } else {
-
-        LOG.error(" Error: message not found, please enter a valid index.");
-      }
     System.out.println("size of conversationContents: " + conversationContents.size());
     }
-  }
 
   // Delete message helper method
-  private void deleteMessage(Message msg) {
-    if (currentMessageCount() == 0) {
+  public void deleteMessage(Message msg) {
+    if(conversationContents.size() == 0) {
       LOG.error("Error: Message could not be deleted, current Conversation has no messages");
 
     } else {
-        controller.deleteMessage(msg.id, conversationHead.id);
+      controller.deleteMessage(msg.id, conversationHead.id);
+      current = setCurrentForDelete(conversationContents);
     }
+    updateMessages(false);
   }
 
-  // Delete all messages
+  // Delete all messages.TODO
   public void deleteAllMessages() {
     if(conversationContents.size() == 0) {
-      System.out.println("Current Conversation has no messages.");
-
+      System.out.println(" Current Conversation has no messages");
     } else {
-      for (int i = conversationContents.size() - 1; i > -1; i--) {
-        deleteMessage(String.valueOf(i));
+      for(final Message m : conversationContents) {
+        System.out.println("Now deleting: " + m.content);
+        deleteMessage(m);
       }
     }
   }
@@ -198,9 +198,9 @@ public final class ClientMessage {
   // Show all messages attached to the current conversation. This will balk if the conversation
   // has too many messages (use m-next and m-show instead).
   public void showAllMessages() {
+    updateMessages(true);
     if (conversationContents.size() == 0) {
-      System.out.println("Current Conversation has no messages.");
-
+      System.out.println(" Current Conversation has no messages");
     } else {
       for (final Message m : conversationContents) {
         printMessage(m, userContext);
@@ -225,8 +225,6 @@ public final class ClientMessage {
     }
   }
 
-
-
   private void showNextMessages(int count) {
     Method.notImplemented();
   }
@@ -242,7 +240,7 @@ public final class ClientMessage {
       // Fetch/refetch all the messages.
       conversationContents.clear();
       LOG.info("Refetch all messages: replaceAll=%s firstMessage=%s", replaceAll,
-              conversationHead.firstMessage);
+               conversationHead.firstMessage);
       return conversationHead.firstMessage;
     } else {
       // Locate last known message. Its next, if any, becomes our starting point.
@@ -252,19 +250,15 @@ public final class ClientMessage {
 
   private Uuid getCurrentTailMessageId() {
     Uuid nextMessageId = conversationContents.get(conversationContents.size() - 1).id;
-
     final List<Message> messageTail = new ArrayList<>(view.getMessages(nextMessageId, 1));
-
     if (messageTail.size() > 0) {
       final Message msg = messageTail.get(0);
       nextMessageId = msg.next;
-
     } else {
       // fall back.
       LOG.warning("Failed to get tail of messages, starting from %s", nextMessageId);
       conversationContents.clear();
       nextMessageId = conversationHead.firstMessage;
-
     }
     return nextMessageId;
   }
@@ -273,38 +267,30 @@ public final class ClientMessage {
   // Currently rereads the entire message chain.
   public void updateMessages(boolean replaceAll) {
     updateMessages(conversationContext.getCurrent(), replaceAll);
-
   }
 
   // Update the list of messages for the given conversation.
   // Currently rereads the entire message chain.
   public void updateMessages(ConversationSummary conversation, boolean replaceAll) {
-
     if (conversation == null) {
       LOG.error("conversation argument is null - do nothing.");
-
       return;
     }
     conversationHead = conversationContext.getConversation(conversation.id);
-
-
-
     if (conversationHead == null) {
       LOG.info("ConversationHead is null");
-
     } else {
-
       LOG.info("ConversationHead: Title=\"%s\" UUID=%s first=%s last=%s\n",
-              conversationHead.title, conversationHead.id, conversationHead.firstMessage,
-              conversationHead.lastMessage);
+          conversationHead.title, conversationHead.id, conversationHead.firstMessage,
+          conversationHead.lastMessage);
 
       Uuid nextMessageId = getCurrentMessageFetchId(replaceAll);
 
       //  Stay in loop until all messages read (up to safety limit)
-
       while (!nextMessageId.equals(Uuid.NULL) && conversationContents.size() < MESSAGE_MAX_COUNT) {
 
         for (final Message msg : view.getMessages(nextMessageId, MESSAGE_FETCH_COUNT)) {
+
           conversationContents.add(msg);
 
           // Race: message possibly added since conversation fetched.  If that occurs,
@@ -316,17 +302,11 @@ public final class ClientMessage {
         }
         nextMessageId = conversationContents.get(conversationContents.size() - 1).next;
       }
-
-
       LOG.info("Retrieved %d messages for conversation %s (%s).\n",
-              conversationContents.size(), conversationHead.id, conversationHead.title);
-
-
+          conversationContents.size(), conversationHead.id, conversationHead.title);
 
       // Set current to first message of conversation.
       current = (conversationContents.size() > 0) ? conversationContents.get(0) : null;
-
-
     }
   }
 
@@ -340,7 +320,7 @@ public final class ClientMessage {
       final String authorName = (userContext == null) ? null : userContext.getName(m.author);
 
       System.out.format(" Author: %s   Id: %s created: %s\n   Body: %s\n",
-              (authorName == null) ? m.author : authorName, m.id, m.creation, m.content);
+          (authorName == null) ? m.author : authorName, m.id, m.creation, m.content);
     }
   }
 

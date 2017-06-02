@@ -29,6 +29,8 @@ import codeu.chat.util.store.StoreAccessor;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class Model {
 
@@ -62,7 +64,7 @@ public final class Model {
 
   private final Store<Uuid, User> userById = new Store<>(UUID_COMPARE);
   private final Store<Time, User> userByTime = new Store<>(TIME_COMPARE);
-  private final Store<String, User> userByText = new Store<>(STRING_COMPARE);
+  protected final Store<String, User> userByText = new Store<>(STRING_COMPARE);
 
   private final Store<Uuid, Conversation> conversationById = new Store<>(UUID_COMPARE);
   private final Store<Time, Conversation> conversationByTime = new Store<>(TIME_COMPARE);
@@ -71,8 +73,8 @@ public final class Model {
   private final Store<Uuid, Message> messageById = new Store<>(UUID_COMPARE);
   private final Store<Time, Message> messageByTime = new Store<>(TIME_COMPARE);
   private final Store<String, Message> messageByText = new Store<>(STRING_COMPARE);
-  
-  public final HashMap<String, ArrayList<Message>> messageByUserID = new HashMap<>();
+  protected final HashMap<String, ArrayList<Message>> messageByUserID = new HashMap<>();
+  protected final HashMap<String, ArrayList<Message>> tags = new HashMap<>();
 
   private final Uuid.Generator userGenerations = new LinearUuidGenerator(null, 1, Integer.MAX_VALUE);
   private Uuid currentUserGeneration = userGenerations.make();
@@ -113,23 +115,27 @@ public final class Model {
     conversationByText.insert(conversation.title, conversation);
   }
 
+  public StoreAccessor<Uuid, Conversation> conversationById() {
+    return conversationById;
+  }
+
   public void delete(Conversation conversation) {
     if(conversationById.contains(conversation.id)) {
       conversationById.delete(conversation.id);
+      System.out.println(conversationById.all().toString());
     }
 
     if(conversationByTime.contains(conversation.creation)) {
       conversationByTime.delete(conversation.creation);
+
     }
 
     if(conversationByText.contains(conversation.title)) {
       conversationByText.delete(conversation.title);
+
     }
   }
 
-  public StoreAccessor<Uuid, Conversation> conversationById() {
-    return conversationById;
-  }
 
   public StoreAccessor<Time, Conversation> conversationByTime() {
     return conversationByTime;
@@ -144,8 +150,8 @@ public final class Model {
     messageByTime.insert(message.creation, message);
     messageByText.insert(message.content, message);
     if(messageByUserID.containsKey(message.author.toString())){
-	    messageByUserID.get(message.author.toString()).add(message);
-	}
+        messageByUserID.get(message.author.toString()).add(message);
+    }
     else{
 
 	ArrayList<Message> a = new ArrayList<>();
@@ -153,26 +159,61 @@ public final class Model {
 	messageByUserID.put(message.author.toString(), a);
 	}
 
+    Pattern hashtag = Pattern.compile("(#\\w+)\\b");
+    Matcher tagCheck = hashtag.matcher(message.content);
+    while(tagCheck.find()){
+  
+        if(tags.containsKey(tagCheck.group(1))){
+	   tags.get(tagCheck.group(1)).add(message);
+
+	}else{
+	   ArrayList<Message> tagMessages = new ArrayList<>();
+	   tagMessages.add(message);
+	   tags.put(tagCheck.group(1), tagMessages);
+
+	}         
+    }
+   
   }
+
+   
 
   public void delete(Message message) {
     if(messageById.contains(message.id)) {
       messageById.delete(message.id);
-      LOG.info("Message: %s, was deleted from messageById", message.id);
-
     }
 
     if(messageByTime.contains(message.creation)) {
       messageByTime.delete(message.creation);
-      LOG.info("Message: %s, was deleted from messageByTime", message.id);
-
     }
 
     if(messageByText.contains(message.content)) {
       messageByText.delete(message.content);
-      LOG.info("Message: %s, was deleted from messageByText", message.id);
-
     }
+
+    if(messageByUserID.containsKey(message.author.toString())) {
+     	ArrayList<Message> a = new ArrayList<>();
+	a = messageByUserID.get(message.author.toString());
+	for(Message m : a){
+	     if(m.id == message.id){
+		a.remove(m);
+	        break;
+	     }
+	}
+    }
+
+    Pattern hashtag = Pattern.compile("(#\\w+)\\b");
+    Matcher tagCheck = hashtag.matcher(message.content);
+    while(tagCheck.find()){
+
+        if(tags.containsKey(tagCheck.group(1))){
+           tags.get(tagCheck.group(1)).remove(message);
+
+        }
+    }
+
+
+
   }
 
 

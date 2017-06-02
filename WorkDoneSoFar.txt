@@ -41,7 +41,7 @@ Still Need to implement:
 -Laura's Work:
 
 -Cristina's Work:
---implemented a searchbyID that returns all of the messages sent by a user
+--implemented a searchbyID that returns all of the messages sent by a user using client to server interaction
 --model stores a hashmap containing arraylist of messages mapped by a the uuid string of the author of those messages
 --Still need to handle cases where the user types in an invalid string for the uuid string of the user
 
@@ -53,4 +53,7 @@ Still Need to implement:
 
 -Laura's Work:
 
--Cristina's Work:
+-Cristina's Work: 
+-User no longer has to copy and paste uuid string to searchByID. They can search messages by the user's name instead. Controller handles finding the corresponding ID.
+-implemented a Hashmap into the model to store all messages with a given hashtag
+-implemented a searchByTag method to display all messages containing a specified hashtag

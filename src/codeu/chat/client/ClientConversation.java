@@ -16,6 +16,7 @@ package codeu.chat.client;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import codeu.chat.common.Conversation;
@@ -98,52 +99,65 @@ public final class ClientConversation {
       LOG.info("New conversation: Title= \"%s\" UUID= %s", conv.title, conv.id);
 
       currentSummary = conv.summary;
-
       updateAllConversations(currentSummary != null);
     }
   }
 
+  public void deleteConversation(String title) {
+    final boolean isExistingConversation = summariesSortedByTitle.contains(title);
 
-  // Delete conversation, (c-del command?)
-  public void deleteConversation() {
-    //delete all messages within a conversation
-    if(currentConversation == null) {
-      System.out.format("Error: conversation not deleted, - %s.\n", "no current conversation");
-    } else {
+
+    if (hasCurrent()) {
+      if (isExistingConversation) {
+        ConversationSummary conversation = summariesSortedByTitle.first(title);
+        boolean deletingCurrent = Uuid.equals(conversation.id, getCurrentId());
         messageContext.deleteAllMessages();
-      if(view.getAllConversations().contains(currentConversation.summary)) {
-        view.getAllConversations().remove(currentConversation.summary);
-      }
-      if (summariesByUuid.containsKey(currentConversation.id)) {
-        summariesByUuid.remove(currentConversation.id);
+        controller.deleteConversation(conversation.id);
 
-        if (summariesSortedByTitle.contains(currentConversation.title)) {
-          summariesSortedByTitle.delete(currentConversation.title);
+        if (deletingCurrent) {
+          // We are deleting the current conversation
+          currentSummary = getNext();
+          updateAllConversations(true);
+
+        } else {
+          // We are NOT deleting the current conversation
+          // Just delete the conversation, current stays the same.
+          updateAllConversations(false);
         }
       }
-      }
-    }
-
-  //TODO: Remove Unused Code.
-    //delete this conversation
-    //   remove it from where it is being kept track of
-    //   set current conversation to null
-
-    /*
-    if (currentConversation == null) {
-      System.out.format("Error: conversation not deleted, - %s.\n", "no current conversation");
-    } else if () {
-      //TODO:Laura
+    } else {
+      System.out.println("No Conversations to delete.");
+      LOG.info("No Conversations to delete.");
     }
 
   }
 
-  */
-  public void setCurrent(ConversationSummary conv) { currentSummary = conv; }
+  private ConversationSummary getNext() {
+    Iterator<ConversationSummary> iterator = getConversationSummaries().iterator();
+    ConversationSummary next = null;
+
+    if (summariesByUuid.size() == 1) {
+      return next;
+    } else {
+      while (iterator.next().equals(currentSummary)) {
+        next = iterator.next();
+      }
+    }
+
+    return next;
+  }
+
+  public void setCurrent(ConversationSummary conv) {
+    currentSummary = conv;
+  }
+
 
   public void showAllConversations() {
     updateAllConversations(false);
 
+    if(summariesByUuid.values().size() == 0) {
+      System.out.println("No Conversations.");
+    }
     for (final ConversationSummary c : summariesByUuid.values()) {
       printConversation(c, userContext);
     }
@@ -180,7 +194,6 @@ public final class ClientConversation {
       }
     }
   }
-
   public int conversationsCount() {
    return summariesByUuid.size();
   }
@@ -193,7 +206,6 @@ public final class ClientConversation {
   // If the input currentChanged is true, then re-establish the state of
   // the current Conversation, including its messages.
   public void updateAllConversations(boolean currentChanged) {
-
     summariesByUuid.clear();
     summariesSortedByTitle = new Store<>(String.CASE_INSENSITIVE_ORDER);
 
@@ -224,4 +236,5 @@ public final class ClientConversation {
   public static void printConversation(ConversationSummary c) {
     printConversation(c, null);
   }
+
 }
