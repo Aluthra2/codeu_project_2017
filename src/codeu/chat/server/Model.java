@@ -191,14 +191,15 @@ public final class Model {
       messageByText.delete(message.content);
     }
 
-    if(messageByUserID.containsKey(message.author.toString())){
-      messageByUserID.get(message.author.toString()).add(message);
-    }
-    else{
-
+    if(messageByUserID.containsKey(message.author.toString())) {
       ArrayList<Message> a = new ArrayList<>();
-      a.add(message);
-      messageByUserID.put(message.author.toString(), a);
+      a = messageByUserID.get(message.author.toString());
+      for(Message m : a){
+        if(m.id == message.id){
+           a.remove(m);
+           break;
+        }
+      }
     }
 
     Pattern hashtag = Pattern.compile("(#\\w+)\\b");
@@ -206,18 +207,12 @@ public final class Model {
     while(tagCheck.find()){
 
       if(tags.containsKey(tagCheck.group(1))){
-         tags.get(tagCheck.group(1)).add(message);
-
-      }else{
-           ArrayList<Message> tagMessages = new ArrayList<>();
-           tagMessages.add(message);
-           tags.put(tagCheck.group(1), tagMessages);
+         tags.get(tagCheck.group(1)).remove(message);
 
       }
-    }
+     }
+
   }
-
-
   public StoreAccessor<Uuid, Message> messageById() {
     return messageById;
   }
