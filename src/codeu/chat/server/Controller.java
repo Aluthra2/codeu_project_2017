@@ -57,10 +57,12 @@ public final class Controller implements RawController, BasicController {
     return newUser(createId(), name, Time.now());
   }
 
+  // Overloaded Method for Nickname
   public User newUser(String name, String nickName){
     return newUser(createId(), name, Time.now(), nickName);
   }
 
+  // Set Nickname method
   public User setAlias(Uuid id, String alias){
     if(model.userById().first(id) == null){
       return null;
@@ -70,6 +72,7 @@ public final class Controller implements RawController, BasicController {
     }
   }
 
+  // Delete user Method
   @Override
   public User deleteUser(String name){
     return deleteUser(name, Time.now());
@@ -80,29 +83,29 @@ public final class Controller implements RawController, BasicController {
     return newConversation(createId(), title, owner, Time.now());
   }
 
-  //returns messages by specified user
+  // Returns messages by specified user
   public ArrayList<Message> searchByUserID(String authorName){
-    
+
    String ID = model.userByText.first(authorName).id.toString();
-    
-   ArrayList<Message> messages = new ArrayList<>(); 
+
+   ArrayList<Message> messages = new ArrayList<>();
 
    if (model.messageByUserID.containsKey(ID)){
       messages = model.messageByUserID.get(ID);
    }
-    
+
    return messages;
   }
 
-  //returns messages containing specified tag
+  // Returns messages containing specified tag
   public ArrayList<Message> searchByTag(String tag){
 
     ArrayList<Message> messages = new ArrayList<>();
-   
-    if (model.tags.containsKey(tag)){ 
+
+    if (model.tags.containsKey(tag)){
        messages = model.tags.get(tag);
     }
- 
+
    return messages;
 
   }
@@ -156,6 +159,7 @@ public final class Controller implements RawController, BasicController {
     return message;
   }
 
+  // Delete Message method
   @Override
   public boolean deleteMessage(Uuid msg, Uuid conversation) {
     final Message foundMessage = model.messageById().first(msg);
@@ -286,6 +290,7 @@ public final class Controller implements RawController, BasicController {
     return user;
   }
 
+  // Overloaded newUser() method
   public User newUser(Uuid id, String name, Time creationTime, String nickName) {
 
     User user = null;

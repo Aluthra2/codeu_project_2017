@@ -58,6 +58,7 @@ public final class ClientUser {
     return clean;
   }
 
+  //Checks for Duplicate User
   public boolean duplicateUser(String uName){
     User user = usersByName.first(uName);
     if (user == null){
@@ -77,7 +78,6 @@ public final class ClientUser {
 
   public boolean signInUser(String name) {
     updateUsers();
-
     final User prev = current;
     if (name != null) {
       final User newCurrent = usersByName.first(name);
@@ -99,8 +99,7 @@ public final class ClientUser {
   }
 
 
-//Adding a User
-//Set it up so that it works if an alias is entered!
+  // Adding a User
   public void addUser(String name) {
     final boolean validInputs = isValidName(name);
     final boolean duplicates = duplicateUser(name);
@@ -119,7 +118,7 @@ public final class ClientUser {
   }
 
 
-  //Adding a User with a nickName
+  // Adding a User with a nickName - Overloaded Method
   public void addUser(String name, String nickName) {
     final boolean validInputs = isValidName(name);
     final boolean duplicates = duplicateUser(name);
@@ -138,7 +137,7 @@ public final class ClientUser {
     }
   }
 
-  //Deleting a User
+  // Deleting a User
   public void deleteUser(String name){
     if(userNames.containsKey(name)){
       User userObject = userNames.get(name);
@@ -176,6 +175,7 @@ public final class ClientUser {
     }
   }
 
+  // Get the nickname of User
   public String getAlias(String name){
     try{
       final User user = usersByName.first(name);
@@ -187,6 +187,7 @@ public final class ClientUser {
   }
 }
 
+  // Set the nickaname of a User.
   public void setAlias(String nickname, String uName){
     try{
       final User user = usersByName.first(uName);

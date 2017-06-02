@@ -59,6 +59,7 @@ public class Controller implements BasicController {
     return response;
   }
 
+  // Delete Message Controller Method
   @Override
   public boolean deleteMessage(Uuid msg, Uuid conversation) {
     boolean success = false;
@@ -108,6 +109,7 @@ public class Controller implements BasicController {
     return response;
   }
 
+  // Overloaded newUser() method for Controller
   public User newUser(String name, String nickName) {
 
     User response = null;
@@ -133,6 +135,7 @@ public class Controller implements BasicController {
     return response;
   }
 
+  // Controller Method for deleteUser()
   @Override
   public User deleteUser(String name){
     User response = null;
@@ -156,6 +159,7 @@ public class Controller implements BasicController {
     return response;
   }
 
+  // Controller method for setAlias()
   public boolean setAlias(User user, String nickName){
     User response = null;
 
@@ -203,6 +207,7 @@ public class Controller implements BasicController {
     return response;
   }
 
+  // Controller method for deleteConversation()
   @Override
   public boolean deleteConversation(Uuid conversation) {
     boolean success = true;
@@ -227,25 +232,25 @@ public class Controller implements BasicController {
 
     return success;
   }
-  
-  //send to the server the user's name and receive the  messages by the user. This method returns the array of messages. 
+
+  // Send to the server the user's name and receive the  messages by the user. This method returns the array of messages.
   public ArrayList<Message> searchByUserID(String author){
     final ArrayList <Message> messagesbyuserid = new ArrayList<>();
     try (final Connection connection = source.connect()){
       Serializers.INTEGER.write(connection.out(), NetworkCode.SEARCHREQUEST);
       Serializers.STRING.write(connection.out(), author);
-		
-      if(Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE){
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.SEARCHRESPONSE){
          messagesbyuserid.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
       }
-	
-     }catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}	
+
+     } catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}
 
      return messagesbyuserid;
    }
 
   //This method sends a tag to the server and receives all the messages with this tag from the server.
-  //This method returns an array of these messages 
+  //This method returns an array of these messages
   public ArrayList<Message> searchByTag(String tag){
     final ArrayList <Message> messagesByTag = new ArrayList<>();
     try (final Connection connection = source.connect()){
@@ -253,11 +258,11 @@ public class Controller implements BasicController {
       Serializers.STRING.write(connection.out(), tag);
 
 
-      if(Serializers.INTEGER.read(connection.in()) == NetworkCode.TAGRESPONSE){
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.TAGRESPONSE){
          messagesByTag.addAll(Serializers.collection(Message.SERIALIZER).read(connection.in()));
       }
-              
-    }catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}
+
+    } catch(Exception ex){ System.out.println("ERROR: Exception during call on server. Check log for details.");}
 
     return messagesByTag;
   }
