@@ -57,27 +57,27 @@ This is not needed to get started with the project.
   *If 'help' is written on the client the commands come up for the new features*
 
   New User Functionality
-  1. Deleting user (u-delete <username>)
+  1. Deleting user (u-delete [username])
      The client that created the user can also delete the user by passing in this command with the correct username.
 
-  2. Nicknames on startup (u-add <username> [alias])
+  2. Nicknames on startup (u-add [username] {alias})
      When a user is created, a nickname can be assigned to that user on the command line.
 
-  3. Nicknames set at a later time (u-set <alias> <username>)
+  3. Nicknames set at a later time (u-set [alias] [username])
      Set a nickname for any user at any time using the above command.
 
-  4. Nickname retrieval (u-get-alias <username>)
+  4. Nickname retrieval (u-get-alias [username])
      Returns the nickname of a given user.
 
   5. Handling Duplicate Usernames
      The same username cannot be used for multiple people. Protections are set up for this now.
 
   New Conversation Functionality
-  1. Full Conversations can now be deleted (c-delete <title>)
+  1. Full Conversations can now be deleted (c-delete [title])
      Conversations can be deleted provided the title of the Conversation.
 
   New Messages Functionality
-  1. Deleting a Message (m-delete <index>)
+  1. Deleting a Message (m-delete [index])
      Can now delete any specific message provided the index of the message.
 
   2. Deleting the last message in the Conversation (m-del-last)
@@ -86,10 +86,10 @@ This is not needed to get started with the project.
   3. Deleting all messages in the conversation but not the conversation itself. (m-del-all)
      Deletes all messages in the current conversation but not the conversation itself.
 
-  4. Search for Messages from a specific user (searchByName <username>)
+  4. Search for Messages from a specific user (searchByName [username])
      Returns all messages from the specific user.
 
-  5. Search for Messages from a specific hashtag. (searchTag <#hashtagName)
+  5. Search for Messages from a specific hashtag. (searchTag [#hashtagName])
      Returns all messages with that specific hashtag.
 
 All Features are synced across clients.
