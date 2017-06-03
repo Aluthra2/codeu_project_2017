@@ -42,9 +42,16 @@ public interface RawController {
   // use, the call will fail and null will be returned.
   User newUser(Uuid id, String name, Time creationTime);
 
-  //Delete User
+
+  // NEW USER
   //
-  //Deletes a User from the model with a specific id.
+  // Add a new user with a nickname to the model with a specific id. If the id is already in
+  // use, the call will fail and null will be returned.
+  User newUser(Uuid id, String name, Time creationTime, String nickname);
+
+  // DELETE USER
+  //
+  // Deletes a User from the model with a specific id.
   User deleteUser(String name, Time deletionTime);
 
 

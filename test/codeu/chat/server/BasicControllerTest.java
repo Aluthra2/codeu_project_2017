@@ -70,6 +70,17 @@ public final class BasicControllerTest {
   }
 
   @Test
+  public void testNicknameConstructor() {
+    final User user = controller.newUser("user", "nickname");
+    assertFalse (
+        "Check that user has a valid reference",
+        user == null);
+    assertFalse(
+            "Check that nickname has a valid reference",
+            user.alias == null);
+  }
+
+  @Test
   public void testAddConversation() {
 
     final User user = controller.newUser("user");

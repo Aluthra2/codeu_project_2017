@@ -58,12 +58,12 @@ public final class Controller implements RawController, BasicController {
   }
 
   // Overloaded Method for Nickname
-  public User newUser(String name, String nickName){
+  public User newUser(String name, String nickName) {
     return newUser(createId(), name, Time.now(), nickName);
   }
 
   // Set Nickname method
-  public User setAlias(Uuid id, String alias){
+  public User setAlias(Uuid id, String alias) {
     if(model.userById().first(id) == null){
       return null;
     } else {
@@ -74,7 +74,7 @@ public final class Controller implements RawController, BasicController {
 
   // Delete user Method
   @Override
-  public User deleteUser(String name){
+  public User deleteUser(String name) {
     return deleteUser(name, Time.now());
   }
 
@@ -84,7 +84,7 @@ public final class Controller implements RawController, BasicController {
   }
 
   // Returns messages by specified user
-  public ArrayList<Message> searchByUserID(String authorName){
+  public ArrayList<Message> searchByUserID(String authorName) {
 
    String ID = model.userByText.first(authorName).id.toString();
 
@@ -98,7 +98,7 @@ public final class Controller implements RawController, BasicController {
   }
 
   // Returns messages containing specified tag
-  public ArrayList<Message> searchByTag(String tag){
+  public ArrayList<Message> searchByTag(String tag) {
 
     ArrayList<Message> messages = new ArrayList<>();
 
