@@ -47,9 +47,14 @@ public interface BasicController {
   //   is undefined.
   User newUser(String name);
 
-  //DELETE USER
+  // NEW USER - OVERLOADED
   //
-  // Delete a user from the server
+  //  Create a new User with a nickname on the server.
+  User newUser(String name, String nickname);
+
+  // DELETE USER
+  //
+  //  Delete a user from the server.
   User deleteUser(String name);
 
   // NEW CONVERSATION
