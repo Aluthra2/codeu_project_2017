@@ -76,6 +76,8 @@ public final class ClientMessage {
   }
 
   public Message getCurrent() {
+    updateMessages(true);
+    resetCurrent(true);
     return current;
   }
 
@@ -149,6 +151,7 @@ public final class ClientMessage {
 
       }
     }
+    updateMessages(true);
   }
 
   // Delete message, removes message corresponding to given index, (m-delete <index> command)
@@ -178,8 +181,9 @@ public final class ClientMessage {
     } else {
       System.out.println("Error: message not deleted, please provide a number index.");
       LOG.error("Error: message not deleted, please provide a number ndex.");
-      
+
     }
+    updateMessages(true);
   }
 
   // Delete message helper method
@@ -190,10 +194,12 @@ public final class ClientMessage {
     } else {
         controller.deleteMessage(msg.id, conversationHead.id);
     }
+    updateMessages(true);
   }
 
   // Delete all messages
   public void deleteAllMessages() {
+    updateMessages(true);
     if(conversationContents.size() == 0) {
       System.out.println("Current Conversation has no messages.");
 
@@ -202,6 +208,7 @@ public final class ClientMessage {
         deleteMessage(String.valueOf(i));
       }
     }
+    updateMessages(true);
   }
 
   // For m-list-all command.
@@ -231,6 +238,7 @@ public final class ClientMessage {
   // Accept an int for number of messages to attempt to show (1 by default).
   // Negative values go from newest to oldest.
   public void showMessages(int count) {
+    updateMessages(true);
     for (final Message m : conversationContents) {
       printMessage(m, userContext);
     }
