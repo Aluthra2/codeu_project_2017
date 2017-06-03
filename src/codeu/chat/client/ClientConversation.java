@@ -107,7 +107,6 @@ public final class ClientConversation {
   public void deleteConversation(String title) {
     final boolean isExistingConversation = summariesSortedByTitle.contains(title);
 
-
     if (hasCurrent()) {
       if (isExistingConversation) {
         ConversationSummary conversation = summariesSortedByTitle.first(title);
@@ -125,12 +124,14 @@ public final class ClientConversation {
           // Just delete the conversation, current stays the same.
           updateAllConversations(false);
         }
+      } else {
+        System.out.println("No Conversation found with given title.");
+        LOG.error("No Conversation found with given title.");
       }
     } else {
       System.out.println("No Conversations to delete.");
       LOG.info("No Conversations to delete.");
     }
-
   }
 
   // Helper for Delete Conversation
