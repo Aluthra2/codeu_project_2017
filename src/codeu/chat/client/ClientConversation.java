@@ -103,6 +103,7 @@ public final class ClientConversation {
     }
   }
 
+  // Delete Conversation method
   public void deleteConversation(String title) {
     final boolean isExistingConversation = summariesSortedByTitle.contains(title);
 
@@ -132,6 +133,7 @@ public final class ClientConversation {
 
   }
 
+  // Helper for Delete Conversation
   private ConversationSummary getNext() {
     Iterator<ConversationSummary> iterator = getConversationSummaries().iterator();
     ConversationSummary next = null;

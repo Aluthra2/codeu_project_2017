@@ -45,10 +45,10 @@ public final class BasicControllerTest {
         user == null);
   }
 
-  @Test 
-  public void testDeleteUser(){
+  @Test
+  public void testDeleteUser() {
     final User user = controller.newUser("user");
-    assertFalse(
+    assertFalse (
         "Check that user has a valid reference",
         user == null);
     final User deletedUser = controller.deleteUser(user.name);

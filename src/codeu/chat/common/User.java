@@ -63,7 +63,8 @@ public final class User {
     this.alias = alias;
 
   }
-  //Overloaded Constructor
+
+  // Overloaded Constructor
   public User(Uuid id, String name, Time creation){
 
     this.id = id;
@@ -72,6 +73,7 @@ public final class User {
     this.alias = "Not Entered";
   }
 
+  // Set Nickname Method
   public void setAlias(String alias){
     this.alias = alias;
   }

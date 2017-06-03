@@ -56,22 +56,22 @@ public final class Chat {
     System.out.println("   u-delete <name> - delete a User");
     System.out.println("   u-set <alias> <UserName> - add a nickname for a user.");
     System.out.println("   u-get-alias <UserName> - get the nickname of chosen user.");
-    System.out.println("   u-list-all    - list all users known to system.");
+    System.out.println("   u-list-all  - list all users known to system.");
     System.out.println("Conversation commands:");
     System.out.println("   c-add <title>    - add a new conversation.");
-    System.out.println("   c-delete <title>           - delete the conversation corresponding to the given title.");
+    System.out.println("   c-delete <title> - delete the conversation corresponding to the given title.");
     System.out.println("   c-list-all       - list all conversations known to system.");
     System.out.println("   c-select <index> - select conversation from list.");
     System.out.println("Message commands:");
     System.out.println("   m-add <body>     - add a new message to the current conversation.");
-    System.out.println("   m-delete <index>            - deletes message at a given index.");
-    System.out.println("   m-del-last           - deletes the last message.");
-    System.out.println("   m-del-all            - delete all messages in the Conversation.");
+    System.out.println("   m-delete <index> - deletes message at a given index.");
+    System.out.println("   m-del-last       - deletes the last message.");
+    System.out.println("   m-del-all        - delete all messages in the Conversation.");
     System.out.println("   m-list-all       - list all messages in the current conversation.");
     System.out.println("   m-next <index>   - index of next message to view.");
     System.out.println("   m-show <count>   - show next <count> messages.");
-    System.out.println("   searchByName <username>  -show all messages from user");  
-    System.out.println("   searchTag <#hashtagName>  -show all messages with specified hashtag");
+    System.out.println("   searchByName <username>  - show all messages from user");
+    System.out.println("   searchTag <#hashtagName>  - show all messages with specified hashtag");
  }
 
   // Prompt for new command.
@@ -92,21 +92,22 @@ public final class Chat {
 
       alive = false;
 
-    }else if (token.equals("searchByName")) {
-	
+    } else if (token.equals("searchByName")) { //Serches for Messages by a specific User
+
      if (tokenScanner.hasNext()){
        clientContext.message.searchByUser(tokenScanner.nextLine().trim());
      }
 
-    }else if (token.equals("searchTag")){
-	
+   } else if (token.equals("searchTag")){ //Serches for Messages by a specific hashtag.
+
      if(tokenScanner.hasNext()){
        ArrayList<Message> messagesByTag = clientContext.message.searchByTag(tokenScanner.nextLine().trim());
-       for(Message m : messagesByTag){System.out.println("User: " + clientContext.user.getName(m.author) + " Time: " + m.creation + " Content "  + m.content);}
+       for(Message m : messagesByTag) {
+         System.out.println("User: " + clientContext.user.getName(m.author) + " Time: " + m.creation + " Content "  + m.content);
+       }
      }
 
     } else if (token.equals("help")) {
-
 
       help();
 
@@ -130,30 +131,30 @@ public final class Chat {
 
       showCurrent();
 
-    } else if (token.equals("u-add")) {
+    } else if (token.equals("u-add")) { //Adds a user
 
       String userName = "";
       String nickName = "";
-     if (!tokenScanner.hasNext()) {
+      if (!tokenScanner.hasNext()) { //Changed from .hasNextLine to .hasNext so 2 commands could be processed. Also eliminates spaces in usernames.
         System.out.println("ERROR: Username not supplied.");
       } else {
         userName = tokenScanner.next();
           if (tokenScanner.hasNext()) {
             nickName = tokenScanner.next();
-            addUser(userName, nickName);
+            addUser(userName, nickName); //Adds a user with a nickName
           } else {
-            addUser(userName);
+            addUser(userName); //Adds a user with no nickname
           }
       }
 
-    } else if (token.equals("u-delete")){
+    } else if (token.equals("u-delete")){ //Deletes a user.
       if(!tokenScanner.hasNext()){
         System.out.println("ERROR: Username not supplied.");
       } else {
         deleteUser(tokenScanner.next());
       }
 
-    } else if (token.equals("u-set")){
+    } else if (token.equals("u-set")){ //Sets a nickName for a user.
 
       String uName = "";
       String nickName = "";
@@ -170,7 +171,7 @@ public final class Chat {
         setAlias(nickName, uName);
       }
 
-    } else if (token.equals("u-get-alias")){
+    } else if (token.equals("u-get-alias")){ //returns a nickname for a user.
         getAlias(tokenScanner.next());
 
     } else if (token.equals("u-list-all")) {
@@ -190,7 +191,7 @@ public final class Chat {
         }
       }
 
-    } else if (token.equals("c-delete")) {
+    } else if (token.equals("c-delete")) { //Deletes a conversation.
 
       if (!clientContext.user.hasCurrent()) {
         System.out.println("ERROR: Not signed in.");
@@ -234,7 +235,7 @@ public final class Chat {
         }
       }
 
-    } else if (token.equals("m-delete")) {
+    } else if (token.equals("m-delete")) { //Deletes a message at a specific index (Starts at 0).
       if (!clientContext.conversation.hasCurrent()) {
         System.out.println("ERROR: No conversation selected.");
       } else {
@@ -245,14 +246,14 @@ public final class Chat {
         }
       }
 
-    } else if (token.equals("m-del-last")) {
+    } else if (token.equals("m-del-last")) { //Deletes the last message.
       if (!clientContext.conversation.hasCurrent()) {
         System.out.println("ERROR: No conversation selected.");
       } else {
         clientContext.message.deleteMessage();
       }
 
-    } else if (token.equals("m-del-all")) {
+    } else if (token.equals("m-del-all")) { //Deletes all messages but not the conversation.
       if (!clientContext.conversation.hasCurrent()) {
         System.out.println("ERROR: No conversation selected.");
       } else {
@@ -377,21 +378,23 @@ public final class Chat {
     clientContext.user.addUser(name);
   }
 
+  // Overloaded method
+  // Add a new user with a nickname
   private void addUser(String name, String nickname) {
     clientContext.user.addUser(name, nickname);
   }
 
-  //Delete a User
+  // Delete a User
   private void deleteUser(String name){
     clientContext.user.deleteUser(name);
   }
 
-  //Get Alias of user
+  // Get Alias of user
   private void getAlias(String name) {
     clientContext.user.getAlias(name);
   }
 
-  //Set Alias of a user
+  // Set Alias of a user
   private void setAlias(String nickname, String id){
     clientContext.user.setAlias(nickname, id);
 
@@ -402,6 +405,7 @@ public final class Chat {
     clientContext.user.showAllUsers();
   }
 
+  // Handles command
   public boolean handleCommand(Scanner lineScanner) {
 
     try {
@@ -418,6 +422,7 @@ public final class Chat {
     return alive;
   }
 
+  // Selects Conversation
   public void selectConversation(Scanner lineScanner) {
 
     clientContext.conversation.updateAllConversations(false);
