@@ -58,6 +58,18 @@ public final class BasicControllerTest {
   }
 
   @Test
+  public void testDuplicateUser() {
+    final User user = controller.newUser("user");
+    assertFalse (
+        "Check that user has a valid reference",
+        user == null);
+    final User duplicateUser = controller.newUser(user.name);
+    assertFalse(
+        "Check that user has a valid reference",
+        duplicateUser == null);
+  }
+
+  @Test
   public void testAddConversation() {
 
     final User user = controller.newUser("user");
