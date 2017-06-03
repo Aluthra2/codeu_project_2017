@@ -70,10 +70,12 @@ public final class ClientConversation {
   }
 
   public boolean hasCurrent() {
+    updateCurrentConversation();
     return (currentSummary != null);
   }
 
   public ConversationSummary getCurrent() {
+    updateCurrentConversation();
     return currentSummary;
   }
 
@@ -84,6 +86,7 @@ public final class ClientConversation {
   }
 
   public void showCurrent() {
+    updateCurrentConversation();
     printConversation(currentSummary, userContext);
   }
 
@@ -105,8 +108,8 @@ public final class ClientConversation {
 
   // Delete Conversation method
   public void deleteConversation(String title) {
+    updateAllConversations(true);
     final boolean isExistingConversation = summariesSortedByTitle.contains(title);
-
 
     if (hasCurrent()) {
       if (isExistingConversation) {
@@ -125,12 +128,15 @@ public final class ClientConversation {
           // Just delete the conversation, current stays the same.
           updateAllConversations(false);
         }
+      } else {
+        System.out.println("No Conversation found with given title.");
+        LOG.error("No Conversation found with given title.");
       }
     } else {
       System.out.println("No Conversations to delete.");
       LOG.info("No Conversations to delete.");
     }
-
+    updateAllConversations(true);
   }
 
   // Helper for Delete Conversation

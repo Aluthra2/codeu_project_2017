@@ -73,6 +73,7 @@ public final class ClientUser {
   }
 
   public User getCurrent() {
+    updateUsers();
     return current;
   }
 
@@ -192,6 +193,7 @@ public final class ClientUser {
 
   // Set the nickaname of a User.
   public void setAlias(String nickname, String uName){
+    updateUsers();
     try{
       final User user = usersByName.first(uName);
       boolean result = controller.setAlias(user, nickname);
