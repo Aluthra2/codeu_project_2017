@@ -79,6 +79,31 @@ public final class RawControllerTest {
   }
 
   @Test
+  public void testDuplicateUser() {
+    final User user = controller.newUser(userId, "user", Time.now());
+
+    assertFalse(
+        "Check that user has a valid reference",
+        user == null);
+    assertTrue(
+        "Check that the user has the correct id",
+        Uuid.equals(user.id, userId));
+
+    final User duplicateUser = controller.newUser(userId, "user", Time.now());
+
+    assertTrue(
+        "Check that user has an invalid reference",
+        duplicateUser == null);
+    if (duplicateUser == null) {
+      return;
+    } else {
+      assertTrue(
+          "Check that the user has the correct id",
+          Uuid.equals(duplicateUser.id, userId));
+    }
+  }
+
+  @Test
   public void testAddConversation() {
 
     final User user = controller.newUser(userId, "user", Time.now());
