@@ -177,6 +177,7 @@ public final class ClientUser {
 
   // Get the nickname of User
   public String getAlias(String name){
+    updateUsers();
     try{
       final User user = usersByName.first(name);
       System.out.println(user.alias);
