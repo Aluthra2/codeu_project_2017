@@ -58,7 +58,7 @@ public final class RawControllerTest {
   }
 
   @Test
-  public void testDeleteUser(){
+  public void testDeleteUser() {
     final User user = controller.newUser(userId, "user", Time.now());
 
     assertFalse(

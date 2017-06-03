@@ -5,7 +5,7 @@
 ## DISCLAIMER
 
 CODEU is a program created by Google to develop the skills of future software
-engineers. This project is not an offical Google Product. This project is a
+engineers. This project is not an official Google Product. This project is a
 playground for those looking to develop their coding and software engineering
 skills.
 
@@ -28,45 +28,18 @@ JAVA&nbsp;7 when working with this project.
        $ sh make.sh
        ```
 
-  1. To test the project:
+  2. To test the project:
        ```
        $ sh test.sh
        ```
 
-  1. To run the project you will need to run both the client and the server. Run
-     the following two commands in separate shells:
+  3. To run the project you will need to run both the client and the server. Run
+     the following two commands in separate shells: (Command Line Client is the client we chose to work with)
 
        ```
-       $ sh run_server.sh <team_id> <team_secret> <port> <persistent-dir>
-       $ sh run_client.sh <host> <port>
+       $ sh run_server.sh 100.101 ABABAB 2007 bin
+       $ sh run_client.sh localhost 2007
        ```
-
-     You must specify the following startup arguments for `run_server.sh:
-     + `<team_id>` and `<team_secret>`: a numeric id for your team, and a secret
-       code, which are used to authenticate your server with the Relay server.
-       You can specify any integer value for `<team_id>`, and a value expressed
-       in hexadecimal format (using numbers `0-9` and letters in the range
-       `A-F`) for `<team_secret>` when you launch the server in your local setup
-       since it will not connect to the Relay server.
-     + `<port>`: the TCP port that your Server will listen on for connections
-       from the Client. You can use any value between 1024 and 65535, as long as
-       there is no other service currently listening on that port in your
-       system. The server will return an error:
-
-         ```
-         java.net.BindException: Address already in use (Bind failed)
-         ```
-
-       if the port is already in use.
-     + `<persistent-dir>`: the path where you want the server to save data between
-       runs.
-
-     The startup arguments for `run_client.sh` are the following:
-     + `<host>`: the hostname or IP address of the computer on which the server
-       is listening. If you are running server and client on the same computer,
-       you can use `localhost` here.
-     + `<port>`: the port on which your server is listening. Must be the same
-       port number you have specified when you launched `run_server.sh`.
 
 All running images write informational and exceptional events to log files.
 The default setting for log messages is "INFO". You may change this to get
@@ -78,6 +51,48 @@ for more information.
 In addition to your team's client and server, the project also includes a
 Relay Server and a script that runs it (`run_relay.sh`).
 This is not needed to get started with the project.
+
+## New Features added to project
+
+  *If 'help' is written on the client the commands come up for the new features*
+
+  New User Functionality
+  1. Deleting user (u-delete [username])
+     The client that created the user can also delete the user by passing in this command with the correct username.
+
+  2. Nicknames on startup (u-add [username] {alias})
+     When a user is created, a nickname can be assigned to that user on the command line.
+
+  3. Nicknames set at a later time (u-set [alias] [username])
+     Set a nickname for any user at any time using the above command.
+
+  4. Nickname retrieval (u-get-alias [username])
+     Returns the nickname of a given user.
+
+  5. Handling Duplicate Usernames
+     The same username cannot be used for multiple people. Protections are set up for this now.
+
+  New Conversation Functionality
+  1. Full Conversations can now be deleted (c-delete [title])
+     Conversations can be deleted provided the title of the Conversation.
+
+  New Messages Functionality
+  1. Deleting a Message (m-delete [index])
+     Can now delete any specific message provided the index of the message.
+
+  2. Deleting the last message in the Conversation (m-del-last)
+     Deletes the last message in the Conversation.
+
+  3. Deleting all messages in the conversation but not the conversation itself. (m-del-all)
+     Deletes all messages in the current conversation but not the conversation itself.
+
+  4. Search for Messages from a specific user (searchByName [username])
+     Returns all messages from the specific user.
+
+  5. Search for Messages from a specific hashtag. (searchTag [#hashtagName])
+     Returns all messages with that specific hashtag.
+
+All Features are synced across clients.
 
 
 ## Finding your way around the project

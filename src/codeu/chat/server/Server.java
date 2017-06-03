@@ -143,7 +143,7 @@ public final class Server {
       Serializers.INTEGER.write(out, NetworkCode.NEW_USER_RESPONSE);
       Serializers.nullable(User.SERIALIZER).write(out, user);
 
-    } else if (type == NetworkCode.NICKNAME_REQUEST){
+    } else if (type == NetworkCode.NICKNAME_REQUEST) {
 
       final Uuid uuid = Uuid.SERIALIZER.read(in);
       final String alias = Serializers.STRING.read(in);
@@ -163,20 +163,20 @@ public final class Server {
       Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_RESPONSE);
       Serializers.nullable(Conversation.SERIALIZER).write(out, conversation);
 
-    } else if (type == NetworkCode.SEARCHREQUEST){
+    } else if (type == NetworkCode.SEARCHREQUEST) {
 
       final String authorID = Serializers.STRING.read(in);
       ArrayList<Message> mes = controller.searchByUserID(authorID);
- 
+
       Serializers.INTEGER.write(out, NetworkCode.SEARCHRESPONSE);
       Serializers.collection(Message.SERIALIZER).write(out, mes);
 
 
-    } else if(type == NetworkCode.TAGREQUEST){
+    } else if(type == NetworkCode.TAGREQUEST) {
 
       final String tag = Serializers.STRING.read(in);
       ArrayList<Message> messagesByTag = controller.searchByTag(tag);
-     
+
       Serializers.INTEGER.write(out, NetworkCode.TAGRESPONSE);
       Serializers.collection(Message.SERIALIZER).write(out, messagesByTag);
 

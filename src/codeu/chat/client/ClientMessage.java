@@ -116,7 +116,7 @@ public final class ClientMessage {
   }
 
 
-  // Diplay all messages a user has sent by using the user's name
+  // Diplay all messages a user has sent by using the user's username
   public void searchByUser(String user){
 
     ArrayList<Message>  mess =   controller.searchByUserID(user);
@@ -152,8 +152,8 @@ public final class ClientMessage {
   }
 
   // Delete message, removes message corresponding to given index, (m-delete <index> command)
-  // calls helper method
-  public void deleteMessage(String index) { //TODO: Use an ordered hash map for linear time. https://github.com/google/guava
+  // Calls helper method
+  public void deleteMessage(String index) {
     int msgIndex = Integer.valueOf(index);
     if (msgIndex == (currentMessageCount() - 1)) {
       // Message to be deleted is the last message in the conversation,
