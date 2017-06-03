@@ -58,6 +58,21 @@ public final class RawControllerTest {
   }
 
   @Test
+  public void testAddUserWithNickname() {
+    final User user = controller.newUser(userId, "user", Time.now(), "nickName");
+
+    assertFalse(
+        "Check that user has a valid reference",
+        user == null);
+    assertTrue(
+            "Check that the user has the correct id",
+            Uuid.equals(user.id, userId));
+    assertFalse(
+            "Check that nickname has a valid reference",
+             user.alias == null);
+  }
+
+  @Test
   public void testDeleteUser() {
     final User user = controller.newUser(userId, "user", Time.now());
 
@@ -94,6 +109,7 @@ public final class RawControllerTest {
     assertTrue(
         "Check that user has an invalid reference",
         duplicateUser == null);
+
     if (duplicateUser == null) {
       return;
     } else {
