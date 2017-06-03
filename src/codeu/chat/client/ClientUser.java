@@ -101,6 +101,7 @@ public final class ClientUser {
 
   // Adding a User
   public void addUser(String name) {
+    updateUsers();
     final boolean validInputs = isValidName(name);
     final boolean duplicates = duplicateUser(name);
     final boolean validAndNotDuplicate = (!duplicates && validInputs);
@@ -120,6 +121,7 @@ public final class ClientUser {
 
   // Adding a User with a nickName - Overloaded Method
   public void addUser(String name, String nickName) {
+    updateUsers();
     final boolean validInputs = isValidName(name);
     final boolean duplicates = duplicateUser(name);
     final boolean validAndNotDuplicate = (!duplicates && validInputs);
