@@ -154,24 +154,31 @@ public final class ClientMessage {
   // Delete message, removes message corresponding to given index, (m-delete <index> command)
   // Calls helper method
   public void deleteMessage(String index) {
-    int msgIndex = Integer.valueOf(index);
-    if (msgIndex == (currentMessageCount() - 1)) {
-      // Message to be deleted is the last message in the conversation,
-      // so m-del-last command is called
-      deleteMessage();
+    if (index.matches("[0-9]+")) {
+      int msgIndex = Integer.valueOf(index);
 
-    } else {
-      if (msgIndex < currentMessageCount()) {
-        Message msg = conversationContents.get(msgIndex);
-        deleteMessage(msg);
-        updateMessages(true);
-        LOG.info("Deleted message: UUID= %s", msg.id);
+      if (msgIndex == (currentMessageCount() - 1)) {
+        // Message to be deleted is the last message in the conversation,
+        // so m-del-last command is called
+        deleteMessage();
 
       } else {
+        if (msgIndex < currentMessageCount()) {
+          Message msg = conversationContents.get(msgIndex);
+          deleteMessage(msg);
+          updateMessages(true);
+          System.out.format("Deleted message: UUID= %s\n", msg.id);
+          LOG.info("Deleted message: UUID= %s", msg.id);
 
-        LOG.error(" Error: message not found, please enter a valid index.");
+        } else {
+          System.out.println(" Error: message not found, please enter a valid index.");
+          LOG.error(" Error: message not found, please enter a valid index.");
+        }
       }
-    System.out.println("size of conversationContents: " + conversationContents.size());
+    } else {
+      System.out.println("Error: message not deleted, please provide a number index.");
+      LOG.error("Error: message not deleted, please provide a number ndex.");
+      
     }
   }
 
